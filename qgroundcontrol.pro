@@ -769,6 +769,11 @@ AndroidBuild {
 }
 
 #-------------------------------------------------------------------------------------
+# Collision Avoidance
+include(src/CollisionAvoidance/CollisionAvoidance.pri)
+
+
+#-------------------------------------------------------------------------------------
 #
 # Post link configuration
 #
