@@ -87,4 +87,5 @@ LIBS += \
     -lboost_regex
 
 DISTFILES += \
-    $$PWD/CollisionAvoidance.qml
+    $$PWD/CollisionAvoidance.qml \
+    $$PWD/FlightDisplayViewCollisionAvoidance.qml

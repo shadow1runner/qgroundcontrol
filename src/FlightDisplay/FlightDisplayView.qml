@@ -62,10 +62,12 @@ QGCView {
     readonly property string _mapName:                  "FlightDisplayView"
     readonly property string _showMapBackgroundKey:     "/showMapBackground"
     readonly property string _mainIsMapKey:             "MainFlyWindowIsMap"
-    readonly property string _PIPVisibleKey:            "IsPIPVisible"
+    readonly property string _LeftPipVisibleKey:        "IsPIPVisible"
+    readonly property string _RightPipVisibleKey:       "IsCollisionPIPVisible"
 
-    property bool _mainIsMap:           QGroundControl.loadBoolGlobalSetting(_mainIsMapKey,  true)
-    property bool _isPipVisible:        QGroundControl.loadBoolGlobalSetting(_PIPVisibleKey, true)
+    property bool _mainIsMap:                           QGroundControl.loadBoolGlobalSetting(_mainIsMapKey,  true)
+    property bool _isLeftPipVisible:                    QGroundControl.loadBoolGlobalSetting(_LeftPipVisibleKey, true)
+    property bool _isRightPipVisible:                   QGroundControl.loadBoolGlobalSetting(_RightPipVisibleKey, true)
 
     property real _roll:                _activeVehicle ? _activeVehicle.roll.value    : _defaultRoll
     property real _pitch:               _activeVehicle ? _activeVehicle.pitch.value   : _defaultPitch
@@ -84,34 +86,109 @@ QGCView {
 
     FlightDisplayViewController { id: _controller }
 
-    function setStates() {
-        if(_mainIsMap) {
-            //-- Adjust Margins
-            _flightMapContainer.state   = "fullMode"
-            _flightVideo.state          = "pipMode"
-            //-- Save/Restore Map Zoom Level
+    function doStateTransition(sender) { // sender can either be `_leftPipControl` ("LEFT") or `_rightPipControl` ("RIGHT") or undefined (INIT only)
+        if(!sender) {
+            // INIT
+            _flightMapContainer.state = "full"
+            _flightVideo.state = "leftPip"
+            _flightCollisionAvoidance.state = "rightPip"
+            return
+        }
+
+        var leftClicked = sender==_leftPipControl // otherwise it must have been the right PIP
+
+        if(_flightMapContainer.state==="full" && _flightVideo.state==="leftPip" && _flightCollisionAvoidance.state==="rightPip") {
+            if(leftClicked) {
+                _flightMapContainer.state = "leftPip"
+                _flightVideo.state = "full"
+                _flightCollisionAvoidance.state = "rightPip"
+            } else {
+                _flightMapContainer.state = "rightPip"
+                _flightVideo.state = "leftPip"
+                _flightCollisionAvoidance.state = "full"
+            }
+        } else if(_flightMapContainer.state==="leftPip" && _flightVideo.state==="full" && _flightCollisionAvoidance.state==="rightPip") {
+            if(leftClicked) {
+                _flightMapContainer.state = "full"
+                _flightVideo.state = "leftPip"
+                _flightCollisionAvoidance.state = "rightPip"
+            } else {
+                _flightMapContainer.state = "leftPip"
+                _flightVideo.state = "rightPip"
+                _flightCollisionAvoidance.state = "full"
+            }
+        } else if(_flightMapContainer.state==="leftPip" && _flightVideo.state==="rightPip" && _flightCollisionAvoidance.state==="full") {
+            if(leftClicked) {
+                _flightMapContainer.state = "full"
+                _flightVideo.state = "rightPip"
+                _flightCollisionAvoidance.state = "leftPip"
+            } else {
+                _flightMapContainer.state = "leftPip"
+                _flightVideo.state = "full"
+                _flightCollisionAvoidance.state = "rightPip"
+            }
+        } else if(_flightMapContainer.state==="full" && _flightVideo.state==="rightPip" && _flightCollisionAvoidance.state==="leftPip") {
+            if(leftClicked) {
+                _flightMapContainer.state = "leftPip"
+                _flightVideo.state = "rightPip"
+                _flightCollisionAvoidance.state = "full"
+            } else {
+                _flightMapContainer.state = "rightPip"
+                _flightVideo.state = "full"
+                _flightCollisionAvoidance.state = "leftPip"
+            }
+        } else if(_flightMapContainer.state==="rightPip" && _flightVideo.state==="full" && _flightCollisionAvoidance.state==="leftPip") {
+            if(leftClicked) {
+                _flightMapContainer.state = "rightPip"
+                _flightVideo.state = "leftPip"
+                _flightCollisionAvoidance.state = "full"
+            } else {
+                _flightMapContainer.state = "full"
+                _flightVideo.state = "rightPip"
+                _flightCollisionAvoidance.state = "leftPip"
+            }
+        } else if(_flightMapContainer.state==="rightPip" && _flightVideo.state==="leftPip" && _flightCollisionAvoidance.state==="full") {
+            if(leftClicked) {
+                _flightMapContainer.state = "rightPip"
+                _flightVideo.state = "full"
+                _flightCollisionAvoidance.state = "leftPip"
+            } else {
+                _flightMapContainer.state = "full"
+                _flightVideo.state = "leftPip"
+                _flightCollisionAvoidance.state = "rightPip"
+            }
+        }
+
+        if(!_mainIsMap && _flightMapContainer.state==="full") {
+            // flight map gets maximized -> restore zoom (or save if not yet present)
             if(_savedZoomLevel != 0)
                 _flightMap.zoomLevel = _savedZoomLevel
             else
                 _savedZoomLevel = _flightMap.zoomLevel
-        } else {
-            //-- Adjust Margins
-            _flightMapContainer.state   = "pipMode"
-            _flightVideo.state          = "fullMode"
-            //-- Set Map Zoom Level
+
+        } else if(_mainIsMap && _flightMapContainer.state!=="full") {
+            // flight map gets minimized
             _savedZoomLevel = _flightMap.zoomLevel
             _flightMap.zoomLevel = _savedZoomLevel - 3
         }
-    }
 
-    function setPipVisibility(state) {
-        _isPipVisible = state;
-        QGroundControl.saveBoolGlobalSetting(_PIPVisibleKey, state)
+        _mainIsMap = _flightMapContainer.state==="full"
+        QGroundControl.saveBoolGlobalSetting(_mainIsMapKey, _mainIsMap)
     }
 
     function px4JoystickCheck() {
         if (_activeVehicle && !_activeVehicle.px4Firmware && (QGroundControl.virtualTabletJoystick || _activeVehicle.joystickEnabled)) {
             px4JoystickSupport.open()
+        }
+    }
+
+    function setPipVisibility(id, state) {
+        if(id===_leftPipControl) {
+            _isLeftPipVisible = state;
+            QGroundControl.saveBoolGlobalSetting(_LeftPipVisibleKey, state)
+        } else if(id===_rightPipControl) {
+            _isRightPipVisible = state;
+            QGroundControl.saveBoolGlobalSetting(_RightPipVisibleKey, state)
         }
     }
 
@@ -136,7 +213,7 @@ QGCView {
 
     Component.onCompleted: {
         widgetsLoader.source = "FlightDisplayViewWidgets.qml"
-        setStates()
+        doStateTransition(undefined)
         px4JoystickCheck()
     }
 
@@ -149,25 +226,44 @@ QGCView {
         //   width/height has no effect.
         Item {
             id: _flightMapContainer
-            z:  _mainIsMap ? _panel.z + 1 : _panel.z + 2
-            anchors.left:   _panel.left
             anchors.bottom: _panel.bottom
-            visible:        _mainIsMap || _isPipVisible
-            width:          _mainIsMap ? _panel.width  : pipSize
-            height:         _mainIsMap ? _panel.height : pipSize * (9/16)
             states: [
                 State {
-                    name:   "pipMode"
+                    name:   "leftPip"
                     PropertyChanges {
                         target:             _flightMapContainer
                         anchors.margins:    ScreenTools.defaultFontPixelHeight
+                        anchors.leftMargin: 0
+                        anchors.left:       _leftPipControl.left
+                        width:              pipSize
+                        height:             pipSize * (9/16)
+                        z:                  _panel.z + 2
+                        visible:            _isLeftPipVisible
                     }
                 },
                 State {
-                    name:   "fullMode"
+                    name:   "full"
                     PropertyChanges {
                         target:             _flightMapContainer
                         anchors.margins:    0
+                        anchors.left:       _panel.left
+                        width:              _panel.width
+                        height:             _panel.height
+                        z:                  _panel.z + 1
+                        visible:            true
+                    }
+                },
+                State {
+                    name:   "rightPip"
+                    PropertyChanges {
+                        target:             _flightMapContainer
+                        anchors.margins:    ScreenTools.defaultFontPixelHeight
+                        anchors.leftMargin: 0
+                        anchors.left:       _rightPipControl.left
+                        width:              pipSize
+                        height:             pipSize * (9/16)
+                        z:                  _panel.z + 2
+                        visible:            _isRightPipVisible
                     }
                 }
             ]
@@ -180,46 +276,129 @@ QGCView {
         //-- Video View
         FlightDisplayViewVideo {
             id:             _flightVideo
-            z:              _mainIsMap ? _panel.z + 2 : _panel.z + 1
-            width:          !_mainIsMap ? _panel.width  : pipSize
-            height:         !_mainIsMap ? _panel.height : pipSize * (9/16)
-            anchors.left:   _panel.left
             anchors.bottom: _panel.bottom
-            visible:        _controller.hasVideo && (!_mainIsMap || _isPipVisible)
             states: [
                 State {
-                    name:   "pipMode"
+                    name:   "leftPip"
                     PropertyChanges {
-                        target: _flightVideo
+                        target:             _flightVideo
                         anchors.margins:    ScreenTools.defaultFontPixelHeight
+                        anchors.leftMargin: 0
+                        anchors.left:       _leftPipControl.left
+                        width:              pipSize
+                        height:             pipSize * (9/16)
+                        z:                  _panel.z + 2
+                        visible:            _controller.hasVideo && _isLeftPipVisible
                     }
                 },
                 State {
-                    name:   "fullMode"
+                    name:   "full"
                     PropertyChanges {
-                        target: _flightVideo
+                        target:             _flightVideo
                         anchors.margins:    0
+                        anchors.left:       _panel.left
+                        width:              _panel.width
+                        height:             _panel.height
+                        z:                  _panel.z + 1
+                        visible:            true
+                    }
+                },
+                State {
+                    name:   "rightPip"
+                    PropertyChanges {
+                        target:             _flightVideo
+                        anchors.margins:    ScreenTools.defaultFontPixelHeight
+                        anchors.leftMargin: 0
+                        anchors.left:       _rightPipControl.left
+                        width:              pipSize
+                        height:             pipSize * (9/16)
+                        z:                  _panel.z + 2
+                        visible:            _controller.hasVideo && _isRightPipVisible
+                    }
+                }
+            ]
+        }
+
+        //-- Collision Avoidance View
+        FlightDisplayViewCollisionAvoidance {
+            id:             _flightCollisionAvoidance
+            anchors.bottom: _panel.bottom
+            states: [
+                State {
+                    name:   "leftPip"
+                    PropertyChanges {
+                        target:             _flightCollisionAvoidance
+                        anchors.margins:    ScreenTools.defaultFontPixelHeight
+                        anchors.leftMargin: 0
+                        anchors.left:       _leftPipControl.left
+                        width:              pipSize
+                        height:             pipSize * (9/16)
+                        z:                  _panel.z + 2
+                        visible:            _isLeftPipVisible
+                    }
+                },
+                State {
+                    name:   "full"
+                    PropertyChanges {
+                        target:             _flightCollisionAvoidance
+                        anchors.margins:    0
+                        anchors.left:       _panel.left
+                        width:              _panel.width
+                        height:             _panel.height
+                        z:                  _panel.z + 1
+                        visible:            true
+                    }
+                },
+                State {
+                    name:   "rightPip"
+                    PropertyChanges {
+                        target:             _flightCollisionAvoidance
+                        anchors.margins:    ScreenTools.defaultFontPixelHeight
+                        anchors.leftMargin: 0
+                        anchors.left:       _rightPipControl.left
+                        width:              pipSize
+                        height:             pipSize * (9/16)
+                        z:                  _panel.z + 2
+                        visible:            _isRightPipVisible
                     }
                 }
             ]
         }
 
         QGCPipable {
-            id:                 _flightVideoPipControl
+            id:                 _leftPipControl
             z:                  _flightVideo.z + 3
             width:              pipSize
             height:             pipSize * (9/16)
             anchors.left:       _panel.left
             anchors.bottom:     _panel.bottom
             anchors.margins:    ScreenTools.defaultFontPixelHeight
-            isHidden:           !_isPipVisible
+            isHidden:           !_isLeftPipVisible
             isDark:             isBackgroundDark
             onActivated: {
-                _mainIsMap = !_mainIsMap
-                setStates()
+                doStateTransition(_leftPipControl)
             }
             onHideIt: {
-                setPipVisibility(!state)
+                setPipVisibility(_leftPipControl, !state)
+            }
+        }
+
+        QGCPipable {
+            id:                 _rightPipControl
+            z:                  _flightCollisionAvoidance.z + 3
+            width:              pipSize
+            height:             pipSize * (9/16)
+            anchors.left:       _leftPipControl.right
+            anchors.bottom:     _panel.bottom
+            anchors.margins:    ScreenTools.defaultFontPixelHeight
+            anchors.leftMargin: 5
+            isHidden:           !_isRightPipVisible
+            isDark:             isBackgroundDark
+            onActivated: {
+                doStateTransition(_rightPipControl)
+            }
+            onHideIt: {
+                setPipVisibility(_rightPipControl, !state)
             }
         }
 
@@ -242,10 +421,10 @@ QGCView {
         Loader {
             id:                         multiTouchItem
             z:                          _panel.z + 5
-            width:                      parent.width  - (_flightVideoPipControl.width / 2)
+            width:                      parent.width  - (_leftPipControl.width / 2)
             height:                     Math.min(parent.height * 0.25, ScreenTools.defaultFontPixelWidth * 16)
             visible:                    QGroundControl.virtualTabletJoystick
-            anchors.bottom:             _flightVideoPipControl.top
+            anchors.bottom:             _leftPipControl.top
             anchors.bottomMargin:       ScreenTools.defaultFontPixelHeight * 2
             anchors.horizontalCenter:   parent.horizontalCenter
             source:                     "qrc:/qml/VirtualJoystick.qml"
