@@ -66,6 +66,7 @@ This file is part of the QGROUNDCONTROL project
 #include "UASInfoWidget.h"
 #include "HILDockWidget.h"
 #include "LogDownload.h"
+#include "CollisionAvoidanceWidget.h"
 #endif
 
 #ifndef __ios__
@@ -88,7 +89,8 @@ enum DockWidgetTypes {
     INFO_VIEW,
     HIL_CONFIG,
     ANALYZE,
-    LOG_DOWNLOAD
+    LOG_DOWNLOAD,
+    COLLISION_AVOIDANCE = 99
 };
 
 static const char *rgDockWidgetNames[] = {
@@ -99,7 +101,8 @@ static const char *rgDockWidgetNames[] = {
     "Info View",
     "HIL Config",
     "Analyze",
-    "Log Download"
+    "Log Download",
+    "COLLISION AVOIDANCE"
 };
 
 #define ARRAY_SIZE(ARRAY) (sizeof(ARRAY) / sizeof(ARRAY[0]))
@@ -363,6 +366,9 @@ bool MainWindow::_createInnerDockWidget(const QString& widgetName)
                 break;
             case INFO_VIEW:
                 widget= new QGCTabbedInfoView(widgetName, action, this);
+                break;
+            case COLLISION_AVOIDANCE:
+                widget = new CollisionAvoidanceWidget(widgetName, action, this);
                 break;
         }
         if(action->data().toInt() == INFO_VIEW) {

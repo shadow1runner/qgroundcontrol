@@ -43,6 +43,8 @@
 
 #include <QDebug>
 
+#include "OwnFlow.h"
+
 #include "VideoStreaming.h"
 
 #include "QGC.h"

@@ -1,4 +1,4 @@
-message("Adding Serial Java Classes")
+message("Adding Collision Avoidance stuff")
 
 HEADERS += \
     $$PWD/opticalflow/BufferedFrameGrabber.h \
@@ -19,7 +19,9 @@ HEADERS += \
     $$PWD/opticalflow/helper/ThreadWarmupHelper.h \
     $$PWD/opticalflow/Kalman.h \
     $$PWD/opticalflow/OwnFlow.h \
-    $$PWD/opticalflow/RandomCollider.h
+    $$PWD/opticalflow/RandomCollider.h \
+    $$PWD/CollisionAvoidanceController.h \
+    $$PWD/CollisionAvoidanceWidget.h
 
 SOURCES += \
     $$PWD/opticalflow/BufferedFrameGrabber.cpp \
@@ -32,17 +34,19 @@ SOURCES += \
     $$PWD/opticalflow/Kalman.cpp \
     # $$PWD/opticalflow/main.cpp \
     $$PWD/opticalflow/OwnFlow.cpp \
-    $$PWD/opticalflow/RandomCollider.cpp
+    $$PWD/opticalflow/RandomCollider.cpp \
+    $$PWD/CollisionAvoidanceController.cpp \
+    $$PWD/CollisionAvoidanceWidget.cpp
 
 
 #-------------------------------------------------------------------------------------
 # OpenCV
-INCLUDEPATH += 
+INCLUDEPATH += \
     "/usr/include/" \
     "/usr/include/opencv" \
     "/usr/include/opencv2"
 
-LIBS += 
+LIBS += \
     -L/usr/local/lib/ \
     -lopencv_core \
     -lopencv_highgui \
@@ -59,7 +63,7 @@ LIBS +=
     -lopencv_superres \
     -lopencv_video \
     -lopencv_videoio \
-    -lopencv_videostab 
+    -lopencv_videostab
     #-lopencv_optflow
 
 #-------------------------------------------------------------------------------------
@@ -73,7 +77,7 @@ DEFINES += BOOST_SYSTEM_NO_DEPRECATED # http://stackoverflow.com/a/18877
 INCLUDEPATH += 
     /usr/include/boost
 
-LIBS += 
+LIBS += \
     -L/usr/lib/ \
     -lboost_system \
     -lboost_thread \
@@ -81,3 +85,6 @@ LIBS +=
     -lboost_program_options \
     -lboost_filesystem \
     -lboost_regex
+
+DISTFILES += \
+    $$PWD/CollisionAvoidance.qml

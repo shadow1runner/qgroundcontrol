@@ -201,7 +201,7 @@ INCLUDEPATH += \
     src/VehicleSetup \
     src/ViewWidgets \
     src/QtLocationPlugin \
-    src/QtLocationPlugin/QMLControl \
+    src/QtLocationPlugin/QMLControl
 
 FORMS += \
     src/ui/MainWindow.ui \
@@ -770,6 +770,10 @@ AndroidBuild {
 
 #-------------------------------------------------------------------------------------
 # Collision Avoidance
+ INCLUDEPATH += \
+    src/CollisionAvoidance \
+    src/CollisionAvoidance/opticalflow
+
 include(src/CollisionAvoidance/CollisionAvoidance.pri)
 
 
