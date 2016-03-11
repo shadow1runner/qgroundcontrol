@@ -47,9 +47,6 @@ QGCView {
     QGCPalette { id: qgcPal; colorGroupEnabled: enabled }
 
     property real availableHeight: parent.height
-
-    readonly property bool isBackgroundDark: _mainIsMap ? (_flightMap ? _flightMap.isSatelliteMap : true) : true
-
     property var _activeVehicle:    multiVehicleManager.activeVehicle
 
     readonly property real _defaultRoll:                0
@@ -214,6 +211,7 @@ QGCView {
             FlightDisplayViewMap {
                 id:             _flightMap
                 anchors.fill:   parent
+                flightWidgets:  widgetsLoader.item
             }
         }
 
