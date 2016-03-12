@@ -102,6 +102,7 @@
 #include "LogDownloadController.h"
 #include "PX4AirframeLoader.h"
 #include "ValuesWidgetController.h"
+#include "CollisionAvoidanceController.h"
 
 #ifndef __ios__
     #include "SerialLink.h"
@@ -457,6 +458,7 @@ void QGCApplication::_initCommon(void)
     qmlRegisterType<FlightDisplayViewController>        ("QGroundControl.Controllers", 1, 0, "FlightDisplayViewController");
     qmlRegisterType<ValuesWidgetController>             ("QGroundControl.Controllers", 1, 0, "ValuesWidgetController");
     qmlRegisterType<QGCMobileFileDialogController>      ("QGroundControl.Controllers", 1, 0, "QGCMobileFileDialogController");
+    qmlRegisterType<CollisionAvoidanceController>       ("QGroundControl.Controllers", 1, 0, "CollisionAvoidanceController");
 
 #ifndef __mobile__
     qmlRegisterType<ViewWidgetController>           ("QGroundControl.Controllers", 1, 0, "ViewWidgetController");

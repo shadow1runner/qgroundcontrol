@@ -44,7 +44,6 @@ public:
     Q_PROPERTY(VideoReceiver*   videoReceiver                     MEMBER _videoReceiver            CONSTANT);
 
     Q_PROPERTY(bool             videoRunning                      READ   videoRunning              NOTIFY videoRunningChanged);
-    Q_PROPERTY(bool             hasCollisionAvoidanceStream       READ hasCollisionAvoidanceStream NOTIFY hasCollisionAvoidanceStreamChanged);
 
 #if defined(QGC_GST_STREAMING)
     bool    hasVideo            () { return true; }
@@ -53,11 +52,9 @@ public:
 #endif
 
     bool videoRunning() { return _videoRunning; }
-    bool hasCollisionAvoidanceStream() { return _hasCollisionAvoidanceStream; }
 
 signals:
     void videoRunningChanged();
-    void hasCollisionAvoidanceStreamChanged();
 
 private:
     void _updateTimer(void);
@@ -69,7 +66,6 @@ private:
 #if defined(QGC_GST_STREAMING)
     QTimer          _frameTimer;
 #endif
-    bool            _hasCollisionAvoidanceStream;
 };
 
 #endif

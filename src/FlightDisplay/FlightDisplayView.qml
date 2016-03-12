@@ -87,6 +87,7 @@ QGCView {
     property real _savedZoomLevel:      0
 
     FlightDisplayViewController { id: _controller }
+    CollisionAvoidanceController { id: _caController }
 
     function doStateTransition(sender) { // sender can either be `_leftPipControl` or `_rightPipControl`
         var mode = (sender===_leftPipControl ? "leftPip" : "rightPip")
@@ -261,7 +262,7 @@ QGCView {
                         target:             _flightCollisionAvoidance
                         anchors.fill:       _leftPipControl
                         z:                  _panel.z + 2
-                        visible:            _isLeftPipVisible
+                        visible:            _caController.hasCollisionAvoidanceStream && _isLeftPipVisible
                     }
                 },
                 State {
@@ -279,7 +280,7 @@ QGCView {
                         target:             _flightCollisionAvoidance
                         anchors.fill:       _rightPipControl
                         z:                  _panel.z + 2
-                        visible:            _isRightPipVisible
+                        visible:            _caController.hasCollisionAvoidanceStream && _isRightPipVisible
                     }
                 }
             ]

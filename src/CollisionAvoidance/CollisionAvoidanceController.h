@@ -9,28 +9,29 @@
 #include "AutoPilotPlugin.h"
 #include "FactPanelController.h"
 
-class CollisionAvoidanceController : public FactPanelController
+class CollisionAvoidanceController : public QObject
 {
     Q_OBJECT
 
 public:
-    CollisionAvoidanceController(void);
+    CollisionAvoidanceController(QObject* parent = NULL);
 
-//    Q_PROPERTY(QString customQmlFile MEMBER _customQmlFile NOTIFY customQmlFileChanged)
+    Q_PROPERTY(bool hasCollisionAvoidanceStream       READ hasCollisionAvoidanceStream NOTIFY hasCollisionAvoidanceStreamChanged);
+    Q_INVOKABLE void setHasCollisionAvoidanceStream  (bool);
+    
+    bool hasCollisionAvoidanceStream() { return _hasCollisionAvoidanceStream; }
 
-//    Q_INVOKABLE void sendCommand    (int commandId, QVariant componentId, QVariant confirm, QVariant param1, QVariant param2, QVariant param3, QVariant param4, QVariant param5, QVariant param6, QVariant param7);
-//    Q_INVOKABLE void selectQmlFile  (void);
-//    Q_INVOKABLE void clearQmlFile   (void);
+    void hasCollisionAvoidanceStreamChanged();
 
 signals:
-//    void customQmlFileChanged   (const QString& customQmlFile);
+   void hasCollisionAvoidanceStreamChanged (const bool newValue);
 
 private slots:
     void _activeVehicleChanged  (Vehicle* activeVehicle);
 
 private:
     UASInterface*       _uas;
-//    QString             _customQmlFile;
+    bool 				_hasCollisionAvoidanceStream;
 //    static const char*  _settingsKey;
 };
 
