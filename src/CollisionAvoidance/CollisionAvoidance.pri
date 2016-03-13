@@ -21,7 +21,8 @@ HEADERS += \
     $$PWD/opticalflow/OwnFlow.h \
     $$PWD/opticalflow/RandomCollider.h \
     $$PWD/CollisionAvoidanceController.h \
-    $$PWD/CollisionAvoidanceWidget.h
+    $$PWD/CollisionAvoidanceWidget.h \
+    $$PWD/OpenCVQuickPaintedItem.h
 
 SOURCES += \
     $$PWD/opticalflow/BufferedFrameGrabber.cpp \
@@ -36,7 +37,8 @@ SOURCES += \
     $$PWD/opticalflow/OwnFlow.cpp \
     $$PWD/opticalflow/RandomCollider.cpp \
     $$PWD/CollisionAvoidanceController.cpp \
-    $$PWD/CollisionAvoidanceWidget.cpp
+    $$PWD/CollisionAvoidanceWidget.cpp \
+    $$PWD/OpenCVQuickPaintedItem.cpp
 
 
 #-------------------------------------------------------------------------------------
@@ -74,7 +76,7 @@ DEFINES += BOOST_THREAD_USE_LIB
 #DEFINES += BOOST_THREAD_LINUX
 DEFINES += BOOST_SYSTEM_NO_DEPRECATED # http://stackoverflow.com/a/18877
 
-INCLUDEPATH += 
+INCLUDEPATH += \
     /usr/include/boost
 
 LIBS += \
@@ -85,6 +87,8 @@ LIBS += \
     -lboost_program_options \
     -lboost_filesystem \
     -lboost_regex
+
+#-------------------------------------------------------------------------------------
 
 DISTFILES += \
     $$PWD/CollisionAvoidance.qml \

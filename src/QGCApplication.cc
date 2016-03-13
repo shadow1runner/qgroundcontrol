@@ -44,6 +44,7 @@
 #include <QDebug>
 
 #include "OwnFlow.h"
+#include "OpenCVQuickPaintedItem.h"
 
 #include "VideoStreaming.h"
 
@@ -458,7 +459,6 @@ void QGCApplication::_initCommon(void)
     qmlRegisterType<FlightDisplayViewController>        ("QGroundControl.Controllers", 1, 0, "FlightDisplayViewController");
     qmlRegisterType<ValuesWidgetController>             ("QGroundControl.Controllers", 1, 0, "ValuesWidgetController");
     qmlRegisterType<QGCMobileFileDialogController>      ("QGroundControl.Controllers", 1, 0, "QGCMobileFileDialogController");
-    qmlRegisterType<CollisionAvoidanceController>       ("QGroundControl.Controllers", 1, 0, "CollisionAvoidanceController");
 
 #ifndef __mobile__
     qmlRegisterType<ViewWidgetController>           ("QGroundControl.Controllers", 1, 0, "ViewWidgetController");
@@ -472,6 +472,9 @@ void QGCApplication::_initCommon(void)
     qmlRegisterSingletonType<QGroundControlQmlGlobal>   ("QGroundControl",                          1, 0, "QGroundControl",         qgroundcontrolQmlGlobalSingletonFactory);
     qmlRegisterSingletonType<ScreenToolsController>     ("QGroundControl.ScreenToolsController",    1, 0, "ScreenToolsController",  screenToolsControllerSingletonFactory);
     qmlRegisterSingletonType<MavlinkQmlSingleton>       ("QGroundControl.Mavlink",                  1, 0, "Mavlink",                mavlinkQmlSingletonFactory);
+
+    qmlRegisterType<OpenCVQuickPaintedItem>             ("HW",                     1, 0, "OpenCVQuickPaintedItem");
+    qmlRegisterType<CollisionAvoidanceController>       ("HW.Controllers",         1, 0, "CollisionAvoidanceController");
 }
 
 bool QGCApplication::_initForNormalAppBoot(void)

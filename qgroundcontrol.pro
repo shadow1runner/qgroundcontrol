@@ -772,7 +772,8 @@ AndroidBuild {
 # Collision Avoidance
  INCLUDEPATH += \
     src/CollisionAvoidance \
-    src/CollisionAvoidance/opticalflow
+    src/CollisionAvoidance/opticalflow \
+    src/CollisionAvoidance/opticalflow/helper
 
 include(src/CollisionAvoidance/CollisionAvoidance.pri)
 
