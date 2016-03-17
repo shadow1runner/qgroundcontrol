@@ -50,7 +50,7 @@ QGCView {
     QGCPalette { id: qgcPal; colorGroupEnabled: enabled }
 
     property real availableHeight: parent.height
-    property var _activeVehicle:    multiVehicleManager.activeVehicle
+    property var _activeVehicle:    QGroundControl.multiVehicleManager.activeVehicle
 
     readonly property real _defaultRoll:                0
     readonly property real _defaultPitch:               0
@@ -152,7 +152,7 @@ QGCView {
     }
 
     Connections {
-        target: multiVehicleManager
+        target: QGroundControl.multiVehicleManager
         onActiveVehicleChanged: px4JoystickCheck()
     }
 

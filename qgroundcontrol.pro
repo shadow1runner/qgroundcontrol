@@ -103,13 +103,15 @@ MacBuild {
     QMAKE_INFO_PLIST    = Custom-Info.plist
     ICON                = $${BASEDIR}/resources/icons/macx.icns
     OTHER_FILES        += Custom-Info.plist
+equals(QT_MAJOR_VERSION, 5) | greaterThan(QT_MINOR_VERSION, 5) {
+    LIBS               += -framework ApplicationServices
+}
 }
 
 iOSBuild {
     BUNDLE.files        = $$files($$PWD/ios/AppIcon*.png) $$PWD/ios/QGCLaunchScreen.xib
     QMAKE_BUNDLE_DATA  += BUNDLE
     LIBS               += -framework AVFoundation
-    OBJECTIVE_SOURCES  += src/audio/QGCAudioWorker_iOS.mm
     #-- Info.plist (need an "official" one for the App Store)
     ForAppStore {
         message(App Store Build)
@@ -364,6 +366,16 @@ HEADERS += \
     src/ViewWidgets/LogDownloadController.h \
     src/ViewWidgets/ViewWidgetController.h \
 }
+
+iOSBuild {
+    OBJECTIVE_SOURCES += \
+        src/audio/QGCAudioWorker_iOS.mm \
+        src/MobileScreenMgr.mm \
+}
+AndroidBuild {
+    SOURCES += src/MobileScreenMgr.cc \
+}
+
 
 SOURCES += \
     src/audio/QGCAudioWorker.cpp \
