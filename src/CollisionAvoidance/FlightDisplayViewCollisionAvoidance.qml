@@ -12,25 +12,40 @@ import QGroundControl.Vehicle       1.0
 
 Item {
     id: root
+    property var _activeVehicle:  QGroundControl.multiVehicleManager.activeVehicle
+    QGCPalette { id: qgcPal; colorGroupEnabled: panel.enabled }
+    
     Rectangle {
         id:             noVideo
         anchors.fill:   parent
         color:          Qt.rgba(0,0,0,0.75)
 //        visible:        !_controller.hasCollisionAvoidanceStream
         QGCLabel {
-            text:               "NO STREAM DATA"
+            text:               "NO ANALOG STREAM DATA"
             font.weight:        Font.DemiBold
             color:              "white"
             font.pixelSize:     _mainIsMap ? 12 * ScreenTools.fontHRatio : 20 * ScreenTools.fontHRatio
             anchors.centerIn:   parent
         }
     }
-//    QGCVideoBackground {
-//        anchors.fill:   parent
-//        display:        _controller.videoSurface
-//        receiver:       _controller.videoReceiver
-//        visible:        _controller.videoRunning
-//        runVideo:       true
-//    }
-}
 
+    QGCViewPanel {
+        id:             panel
+        anchors.fill:   parent
+
+        QGCLabel {
+            id:             titleLabel
+            text:           "Collision Avoidance Camera"
+            font.weight:    Font.DemiBold
+        }
+
+        Image {
+            source:     _activeVehicle ? "image://OwnFlow/" + _activeVehicle.id + "/" + _activeVehicle.flowImageIndex : ""
+            width:      parent.width * 0.5
+            height:     width * 0.75
+            cache:      false
+            anchors.centerIn: parent
+            fillMode: Image.PreserveAspectFit
+        }
+    }
+}

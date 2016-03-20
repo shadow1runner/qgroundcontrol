@@ -38,7 +38,6 @@ import QGroundControl.Vehicle       1.0
 import QGroundControl.Controllers   1.0
 import QGroundControl.FactSystem    1.0
 
-import HW               1.0
 import HW.Controllers   1.0
 
 /// Flight Display View

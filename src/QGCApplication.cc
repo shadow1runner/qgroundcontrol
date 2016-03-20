@@ -44,7 +44,6 @@
 #include <QDebug>
 
 #include "OwnFlow.h"
-#include "OpenCVQuickPaintedItem.h"
 
 #include "VideoStreaming.h"
 
@@ -473,7 +472,6 @@ void QGCApplication::_initCommon(void)
     qmlRegisterSingletonType<ScreenToolsController>     ("QGroundControl.ScreenToolsController",    1, 0, "ScreenToolsController",  screenToolsControllerSingletonFactory);
     qmlRegisterSingletonType<MavlinkQmlSingleton>       ("QGroundControl.Mavlink",                  1, 0, "Mavlink",                mavlinkQmlSingletonFactory);
 
-    qmlRegisterType<OpenCVQuickPaintedItem>             ("HW",                     1, 0, "OpenCVQuickPaintedItem");
     qmlRegisterType<CollisionAvoidanceController>       ("HW.Controllers",         1, 0, "CollisionAvoidanceController");
 }
 

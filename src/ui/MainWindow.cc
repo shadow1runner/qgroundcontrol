@@ -67,6 +67,7 @@ This file is part of the QGROUNDCONTROL project
 #include "HILDockWidget.h"
 #include "LogDownload.h"
 #include "CollisionAvoidanceWidget.h"
+#include "CollisionAvoidanceDataProvider.h"
 #endif
 
 #ifndef __ios__
@@ -172,6 +173,10 @@ MainWindow::MainWindow()
     // Image provider
     QQuickImageProvider* pImgProvider = dynamic_cast<QQuickImageProvider*>(qgcApp()->toolbox()->imageProvider());
     _mainQmlWidgetHolder->getEngine()->addImageProvider(QLatin1String("QGCImages"), pImgProvider);
+
+    // Collision Avoidance Data Provider
+    QQuickImageProvider* pCaProvider = dynamic_cast<QQuickImageProvider*>(qgcApp()->toolbox()->collisionAvoidanceDataProvider());
+    _mainQmlWidgetHolder->getEngine()->addImageProvider(QLatin1String("OwnFlow"), pCaProvider);
 
     // Set dock options
     setDockOptions(0);

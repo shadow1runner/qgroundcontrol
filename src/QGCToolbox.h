@@ -41,6 +41,7 @@ class QGCMapEngineManager;
 class QGCApplication;
 class QGCImageProvider;
 class UASMessageHandler;
+class CollisionAvoidanceDataProvider;
 
 /// This is used to manage all of our top level services/tools
 class QGCToolbox {
@@ -62,6 +63,7 @@ public:
     QGCMapEngineManager*        mapEngineManager(void)          { return _mapEngineManager; }
     QGCImageProvider*           imageProvider()                 { return _imageProvider; }
     UASMessageHandler*          uasMessageHandler(void)         { return _uasMessageHandler; }
+    CollisionAvoidanceDataProvider*  collisionAvoidanceDataProvider(void)         { return _collisionAvoidanceDataProvider; }
 
 private:
     GAudioOutput*               _audioOutput;
@@ -78,6 +80,7 @@ private:
     MultiVehicleManager*        _multiVehicleManager;
     QGCMapEngineManager*         _mapEngineManager;
     UASMessageHandler*          _uasMessageHandler;
+    CollisionAvoidanceDataProvider*          _collisionAvoidanceDataProvider;
 };
 
 /// This is the base class for all tools

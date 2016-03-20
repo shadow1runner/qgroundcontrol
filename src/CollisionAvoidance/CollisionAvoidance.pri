@@ -22,7 +22,7 @@ HEADERS += \
     $$PWD/opticalflow/RandomCollider.h \
     $$PWD/CollisionAvoidanceController.h \
     $$PWD/CollisionAvoidanceWidget.h \
-    $$PWD/OpenCVQuickPaintedItem.h
+    $$PWD/CollisionAvoidanceDataProvider.h
 
 SOURCES += \
     $$PWD/opticalflow/BufferedFrameGrabber.cpp \
@@ -38,7 +38,7 @@ SOURCES += \
     $$PWD/opticalflow/RandomCollider.cpp \
     $$PWD/CollisionAvoidanceController.cpp \
     $$PWD/CollisionAvoidanceWidget.cpp \
-    $$PWD/OpenCVQuickPaintedItem.cpp
+    $$PWD/CollisionAvoidanceDataProvider.cpp
 
 
 #-------------------------------------------------------------------------------------
