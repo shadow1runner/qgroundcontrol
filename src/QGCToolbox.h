@@ -41,6 +41,7 @@ class QGCMapEngineManager;
 class QGCApplication;
 class QGCImageProvider;
 class UASMessageHandler;
+class OwnFlowHandler;
 class CollisionAvoidanceDataProvider;
 
 /// This is used to manage all of our top level services/tools
@@ -63,6 +64,7 @@ public:
     QGCMapEngineManager*        mapEngineManager(void)          { return _mapEngineManager; }
     QGCImageProvider*           imageProvider()                 { return _imageProvider; }
     UASMessageHandler*          uasMessageHandler(void)         { return _uasMessageHandler; }
+    OwnFlowHandler*             ownFlowHandler(void)            { return _ownFlowHandler; }
     CollisionAvoidanceDataProvider*  collisionAvoidanceDataProvider(void)         { return _collisionAvoidanceDataProvider; }
 
 private:
@@ -80,6 +82,7 @@ private:
     MultiVehicleManager*        _multiVehicleManager;
     QGCMapEngineManager*         _mapEngineManager;
     UASMessageHandler*          _uasMessageHandler;
+    OwnFlowHandler*             _ownFlowHandler;
     CollisionAvoidanceDataProvider*          _collisionAvoidanceDataProvider;
 };
 

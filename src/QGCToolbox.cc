@@ -35,6 +35,7 @@
 #include "QGCImageProvider.h"
 #include "UASMessageHandler.h"
 #include "QGCMapEngineManager.h"
+#include "OwnFlowHandler.h"
 #include "CollisionAvoidanceDataProvider.h"
 
 QGCToolbox::QGCToolbox(QGCApplication* app)
@@ -52,6 +53,7 @@ QGCToolbox::QGCToolbox(QGCApplication* app)
     , _multiVehicleManager(NULL)
     , _mapEngineManager(NULL)
     , _uasMessageHandler(NULL)
+    , _ownFlowHandler(NULL)
     , _collisionAvoidanceDataProvider(NULL)
 {
     _audioOutput =              new GAudioOutput(app);
@@ -69,6 +71,7 @@ QGCToolbox::QGCToolbox(QGCApplication* app)
     _mapEngineManager =       new QGCMapEngineManager(app);
     _uasMessageHandler =        new UASMessageHandler(app);
     _collisionAvoidanceDataProvider =        new CollisionAvoidanceDataProvider(app);
+    _ownFlowHandler =           new OwnFlowHandler(app);
 
     _audioOutput->setToolbox(this);
     _autopilotPluginManager->setToolbox(this);
@@ -85,6 +88,7 @@ QGCToolbox::QGCToolbox(QGCApplication* app)
     _mapEngineManager->setToolbox(this);
     _uasMessageHandler->setToolbox(this);
     _collisionAvoidanceDataProvider->setToolbox(this);
+    _ownFlowHandler->setToolbox(this);
 }
 
 QGCToolbox::~QGCToolbox()
@@ -102,6 +106,7 @@ QGCToolbox::~QGCToolbox()
     delete _mapEngineManager;
     delete _multiVehicleManager;
     delete _uasMessageHandler;
+    delete _ownFlowHandler;
     delete _collisionAvoidanceDataProvider;
 }
 
