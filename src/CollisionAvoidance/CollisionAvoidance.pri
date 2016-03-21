@@ -8,6 +8,7 @@ HEADERS += \
     $$PWD/opticalflow/Divergence.h \
     $$PWD/opticalflow/FocusOfExpansionCalculator.h \
     $$PWD/opticalflow/FocusOfExpansionDto.h \
+    $$PWD/opticalflow/helper/QtHelper.h \
     $$PWD/opticalflow/helper/AvgWatch.h \
     $$PWD/opticalflow/helper/ConsoleDisplayer.h \
     $$PWD/opticalflow/helper/Displayer.h \
@@ -31,6 +32,7 @@ SOURCES += \
     $$PWD/opticalflow/Divergence.cpp \
     $$PWD/opticalflow/FocusOfExpansionCalculator.cpp \
     $$PWD/opticalflow/FocusOfExpansionDto.cpp \
+    $$PWD/opticalflow/helper/QtHelper.cpp \
     $$PWD/opticalflow/helper/DrawHelper.cpp \
     $$PWD/opticalflow/helper/HeatMap.cpp \
     $$PWD/opticalflow/Kalman.cpp \
@@ -41,6 +43,10 @@ SOURCES += \
     $$PWD/CollisionAvoidanceWidget.cpp \
     $$PWD/OwnFlowHandler.cpp \
     $$PWD/CollisionAvoidanceDataProvider.cpp
+
+INCLUDEPATH += \
+    $$PWD/opticalflow \
+    $$PWD/opticalflow/helper
 
 
 #-------------------------------------------------------------------------------------

@@ -6,10 +6,17 @@
 #include <QObject>
 #include <QQmlListProperty>
 #include <QQuickImageProvider>
+#include <QThread>
+#include <QDebug>
 
 #include <opencv2/core.hpp>
 
 #include "QGCToolbox.h"
+#include "BufferedFrameGrabber.h"
+#include "OwnFlow.h"
+#include "Converter.h"
+#include "FocusOfExpansionDto.h"
+#include "CollisionAvoidanceDataProvider.h"
 
 class OwnFlowHandler : public QGCTool
 {
@@ -17,6 +24,9 @@ public:
     OwnFlowHandler    				  (QGCApplication* app);
     ~OwnFlowHandler   				  ();
 
+    void start();
+    void stop();
+    
     // Overrides from QGCTool
     virtual void setToolbox(QGCToolbox* toolbox);
 
@@ -40,8 +50,15 @@ private:
 	int DIVERGENCE_PATCHSIZE;
 	double DIVERGENCE_THRESHOLD;
 
+    hw::BufferedFrameGrabber * frame_grabber;
+    
+    QThread ownFlowThread;
+    hw::OwnFlow * ownFlow;
+    
+    QThread converterThread;
+    hw::Converter * converter;
 
-	CollisionAvoidanceDataProvider * _collisionAvoidanceDataProvider;
+    CollisionAvoidanceDataProvider * _collisionAvoidanceDataProvider;
 };
 
 
