@@ -43,6 +43,18 @@ void OwnFlowHandler::start()
 {
     converterThread.start();
     ownFlowThread.start();
+
+    // initialize baseFrame
+    converter->convertImage(frame_grabber->next());
+
+    int i = 0;
+    while(i<3) { // frame_grabber.has_next()) {
+        auto currentFrame = frame_grabber->next();
+        converter->convertImage(currentFrame);
+        //ownFlow.processImage(currentFrame);
+
+        // a.processEvents();
+    }
 }
 
 void OwnFlowHandler::stop()
@@ -76,8 +88,8 @@ void OwnFlowHandler::loadSettings()
     // Load defaults from settings
     QSettings settings;
     settings.beginGroup("QGC_COLLISION_AVOIDANCE");
-    FILENAME = settings.value("FILENAME", "res/rl/go5.mp4").toString().toStdString();
-    OUTPUT_DIR = settings.value("OUTPUT_DIR", "res/out/RandomCollider/cpp/frame_").toString().toStdString();
+    FILENAME = settings.value("FILENAME", "CollisionAvoidance/res/rl/go5.mp4").toString().toStdString();
+    OUTPUT_DIR = settings.value("OUTPUT_DIR", "CollisionAvoidance/res/out/RandomCollider/cpp/frame_").toString().toStdString();
     SUBSAMPLE_AMOUNT = settings.value("SUBSAMPLE_AMOUNT", 2).toInt();
     PARTICLES = settings.value("PARTICLES", 20000).toInt();
     WINDOW_SIZE = settings.value("WINDOW_SIZE", 5).toInt();
