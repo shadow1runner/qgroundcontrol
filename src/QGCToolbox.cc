@@ -35,6 +35,7 @@
 #include "QGCImageProvider.h"
 #include "UASMessageHandler.h"
 #include "QGCMapEngineManager.h"
+#include "FollowMe.h"
 #include "OwnFlowHandler.h"
 #include "CollisionAvoidanceDataProvider.h"
 
@@ -53,6 +54,7 @@ QGCToolbox::QGCToolbox(QGCApplication* app)
     , _multiVehicleManager(NULL)
     , _mapEngineManager(NULL)
     , _uasMessageHandler(NULL)
+    , _followMe(NULL)
     , _ownFlowHandler(NULL)
     , _collisionAvoidanceDataProvider(NULL)
 {
@@ -70,6 +72,7 @@ QGCToolbox::QGCToolbox(QGCApplication* app)
     _multiVehicleManager =      new MultiVehicleManager(app);
     _mapEngineManager =       new QGCMapEngineManager(app);
     _uasMessageHandler =        new UASMessageHandler(app);
+    _followMe =                 new FollowMe(app);
     _collisionAvoidanceDataProvider =        new CollisionAvoidanceDataProvider(app);
     _ownFlowHandler =           new OwnFlowHandler(app);
 
@@ -87,6 +90,7 @@ QGCToolbox::QGCToolbox(QGCApplication* app)
     _multiVehicleManager->setToolbox(this);
     _mapEngineManager->setToolbox(this);
     _uasMessageHandler->setToolbox(this);
+    _followMe->setToolbox(this);
     _collisionAvoidanceDataProvider->setToolbox(this);
     _ownFlowHandler->setToolbox(this);
 }
@@ -106,6 +110,7 @@ QGCToolbox::~QGCToolbox()
     delete _mapEngineManager;
     delete _multiVehicleManager;
     delete _uasMessageHandler;
+    delete _followMe;
     delete _ownFlowHandler;
     delete _collisionAvoidanceDataProvider;
 }

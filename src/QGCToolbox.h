@@ -33,6 +33,7 @@ class FlightMapSettings;
 class GAudioOutput;
 class HomePositionManager;
 class JoystickManager;
+class FollowMe;
 class LinkManager;
 class MAVLinkProtocol;
 class MissionCommands;
@@ -64,6 +65,7 @@ public:
     QGCMapEngineManager*        mapEngineManager(void)          { return _mapEngineManager; }
     QGCImageProvider*           imageProvider()                 { return _imageProvider; }
     UASMessageHandler*          uasMessageHandler(void)         { return _uasMessageHandler; }
+    FollowMe*                   followMe(void)                  { return _followMe; }
     OwnFlowHandler*             ownFlowHandler(void)            { return _ownFlowHandler; }
     CollisionAvoidanceDataProvider*  collisionAvoidanceDataProvider(void)         { return _collisionAvoidanceDataProvider; }
 
@@ -82,6 +84,7 @@ private:
     MultiVehicleManager*        _multiVehicleManager;
     QGCMapEngineManager*         _mapEngineManager;
     UASMessageHandler*          _uasMessageHandler;
+    FollowMe*                   _followMe;
     OwnFlowHandler*             _ownFlowHandler;
     CollisionAvoidanceDataProvider*          _collisionAvoidanceDataProvider;
 };
