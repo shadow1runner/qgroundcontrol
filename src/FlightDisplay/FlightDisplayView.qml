@@ -44,11 +44,9 @@ import HW.Controllers   1.0
 QGCView {
     id:             root
     viewPanel:      _panel
-    topDialogMargin: height - availableHeight
 
     QGCPalette { id: qgcPal; colorGroupEnabled: enabled }
 
-    property real availableHeight: parent.height
     property var _activeVehicle:    QGroundControl.multiVehicleManager.activeVehicle
 
     readonly property real _defaultRoll:                0
@@ -327,14 +325,11 @@ QGCView {
 
         //-- Widgets
         Loader {
-            id:                 widgetsLoader
-            z:                  _panel.z + 4
-            anchors.right:      parent.right
-            anchors.left:       parent.left
-            anchors.bottom:     parent.bottom
-            height:             availableHeight
-            asynchronous:       true
-            visible:            status == Loader.Ready
+            id:             widgetsLoader
+            z:              _panel.z + 4
+            anchors.fill:   parent
+            asynchronous:   true
+            visible:        status == Loader.Ready
 
             property bool isBackgroundDark: root.isBackgroundDark
             property var qgcView: root

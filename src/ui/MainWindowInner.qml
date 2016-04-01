@@ -42,13 +42,12 @@ Item {
     readonly property string _planViewSource:   "MissionEditor.qml"
     readonly property string _setupViewSource:  "SetupView.qml"
 
-    QGCPalette { id: __qgcPal; colorGroupEnabled: true }
+    QGCPalette { id: qgcPal; colorGroupEnabled: true }
 
     property real   tbHeight:           ScreenTools.isMobile ? (ScreenTools.isTinyScreen ? (mainWindow.width * 0.0666) : (mainWindow.width * 0.05)) : ScreenTools.defaultFontPixelSize * 4
     property int    tbCellHeight:       tbHeight * 0.75
     property real   tbSpacing:          ScreenTools.isMobile ? width * 0.00824 : 9.54
     property real   tbButtonWidth:      tbCellHeight * 1.35
-    property real   availableHeight:    height - tbHeight
     property real   menuButtonWidth:    (tbButtonWidth * 2) + (tbSpacing * 4) + 1
     property var    gcsPosition:        QtPositioning.coordinate()  // Starts as invalid coordinate
     property var    currentPopUp:       null
@@ -284,21 +283,29 @@ Item {
     }
 
     FlightDisplayView {
-        id:                 flightView
-        anchors.fill:       parent
-        availableHeight:    mainWindow.availableHeight
-        visible:            true
+        id:             flightView
+        anchors.left:   parent.left
+        anchors.right:  parent.right
+        anchors.top:    toolBar.bottom
+        anchors.bottom: parent.bottom
+        visible:        true
     }
 
     Loader {
         id:                 planViewLoader
-        anchors.fill:       parent
+        anchors.left:   parent.left
+        anchors.right:  parent.right
+        anchors.top:    toolBar.bottom
+        anchors.bottom: parent.bottom
         visible:            false
     }
 
     Loader {
         id:                 setupViewLoader
-        anchors.fill:       parent
+        anchors.left:   parent.left
+        anchors.right:  parent.right
+        anchors.top:    toolBar.bottom
+        anchors.bottom: parent.bottom
         visible:            false
     }
 
@@ -381,7 +388,7 @@ Item {
     //-------------------------------------------------------------------------
     //-- Critical Message Area
     Rectangle {
-        id:                 criticalMmessageArea
+        id: criticalMmessageArea
 
         function close() {
             //-- Are there messages in the waiting queue?
@@ -401,7 +408,7 @@ Item {
 
         width:              mainWindow.width  * 0.55
         height:             ScreenTools.defaultFontPixelHeight * ScreenTools.fontHRatio * 6
-        color:              Qt.rgba(0,0,0,0.8)
+        color:              qgcPal.window
         visible:            false
         radius:             ScreenTools.defaultFontPixelHeight * 0.5
         anchors.horizontalCenter:   parent.horizontalCenter
@@ -425,6 +432,7 @@ Item {
             boundsBehavior:     Flickable.StopAtBounds
             pixelAligned:       true
             clip:               true
+
             TextEdit {
                 id:             criticalMessageText
                 width:          criticalMmessageArea.width - criticalClose.width - (ScreenTools.defaultFontPixelHeight * 2)
@@ -433,12 +441,12 @@ Item {
                 textFormat:     TextEdit.RichText
                 font.weight:    Font.DemiBold
                 wrapMode:       TextEdit.WordWrap
-                color:          "#fdfd3b"
+                color:          qgcPal.warningText
             }
         }
 
         //-- Dismiss Critical Message
-        Image {
+        QGCColoredImage {
             id:                 criticalClose
             anchors.margins:    ScreenTools.defaultFontPixelHeight
             anchors.top:        parent.top
@@ -447,8 +455,8 @@ Item {
             height:             ScreenTools.defaultFontPixelHeight * 1.5
             source:             "/res/XDelete.svg"
             fillMode:           Image.PreserveAspectFit
-            mipmap:             true
-            smooth:             true
+            color:              qgcPal.warningText
+
             MouseArea {
                 anchors.fill:   parent
                 onClicked: {
@@ -458,7 +466,7 @@ Item {
         }
 
         //-- More text below indicator
-        Image {
+        QGCColoredImage {
             anchors.margins:    ScreenTools.defaultFontPixelHeight
             anchors.bottom:     parent.bottom
             anchors.right:      parent.right
@@ -466,9 +474,9 @@ Item {
             height:             ScreenTools.defaultFontPixelHeight * 1.5
             source:             "/res/ArrowDown.svg"
             fillMode:           Image.PreserveAspectFit
-            mipmap:             true
-            smooth:             true
             visible:            criticalMessageText.lineCount > 5
+            color:              qgcPal.warningText
+
             MouseArea {
                 anchors.fill:   parent
                 onClicked: {

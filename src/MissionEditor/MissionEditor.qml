@@ -43,7 +43,6 @@ QGCView {
     property bool syncNeeded: controller.visualItems.dirty // Unsaved changes, visible to parent container
 
     viewPanel:          panel
-    topDialogMargin:    height - mainWindow.availableHeight
 
     // zOrder comes from the Loader in MainWindow.qml
     z: QGroundControl.zOrderTopMost
@@ -64,6 +63,7 @@ QGCView {
     property var    _currentMissionItem
     property bool   _firstVehiclePosition:  true
     property var    activeVehiclePosition:  _activeVehicle ? _activeVehicle.coordinate : QtPositioning.coordinate()
+    property bool   _lightWidgetBorders:    editorMap.isSatelliteMap
 
     onActiveVehiclePositionChanged: updateMapToVehiclePosition()
 
@@ -457,7 +457,7 @@ QGCView {
                 // Mission Item Editor
                 Item {
                     id:             missionItemEditor
-                    height:         mainWindow.availableHeight
+                    anchors.top:    parent.top
                     anchors.bottom: parent.bottom
                     anchors.right:  parent.right
                     width:          _rightPanelWidth
@@ -509,31 +509,27 @@ QGCView {
                     }
                 }
 
-                Item {
-                    id:     toolbarSpacer
-                    height: mainWindow.tbHeight
-                    width:  1
-                }
-
                 //-- Vertical Tool Buttons
                 Column {
-                    id:                         toolColumn
-                    anchors.margins:            ScreenTools.defaultFontPixelHeight
-                    anchors.left:               parent.left
-                    anchors.top:                toolbarSpacer.bottom
-                    spacing:                    ScreenTools.defaultFontPixelHeight
+                    id:                 toolColumn
+                    anchors.margins:    ScreenTools.defaultFontPixelHeight
+                    anchors.left:       parent.left
+                    anchors.top:        parent.top
+                    spacing:            ScreenTools.defaultFontPixelHeight
 
                     RoundButton {
-                        id:                 addMissionItemsButton
-                        buttonImage:        "/qmlimages/MapAddMission.svg"
-                        z:                  QGroundControl.zOrderWidgets
+                        id:             addMissionItemsButton
+                        buttonImage:    "/qmlimages/MapAddMission.svg"
+                        z:              QGroundControl.zOrderWidgets
+                        lightBorders:   _lightWidgetBorders
                     }
 
                     RoundButton {
-                        id:                 addShapeButton
-                        buttonImage:        "/qmlimages/MapDrawShape.svg"
-                        z:                  QGroundControl.zOrderWidgets
-                        visible:            QGroundControl.experimentalSurvey
+                        id:             addShapeButton
+                        buttonImage:    "/qmlimages/MapDrawShape.svg"
+                        z:              QGroundControl.zOrderWidgets
+                        visible:        QGroundControl.experimentalSurvey
+                        lightBorders:   _lightWidgetBorders
 
                         onClicked: {
                             var coordinate = editorMap.center
@@ -557,6 +553,7 @@ QGCView {
                         dropDownComponent:  syncDropDownComponent
                         enabled:            !controller.syncInProgress
                         rotateImage:        controller.syncInProgress
+                        lightBorders:       _lightWidgetBorders
                     }
 
                     DropButton {
@@ -566,6 +563,7 @@ QGCView {
                         viewportMargins:    ScreenTools.defaultFontPixelWidth / 2
                         exclusiveGroup:     _dropButtonsExclusiveGroup
                         z:                  QGroundControl.zOrderWidgets
+                        lightBorders:       _lightWidgetBorders
 
                         dropDownComponent: Component {
                             Column {
@@ -615,6 +613,7 @@ QGCView {
                         viewportMargins:    ScreenTools.defaultFontPixelWidth / 2
                         exclusiveGroup:     _dropButtonsExclusiveGroup
                         z:                  QGroundControl.zOrderWidgets
+                        lightBorders:       _lightWidgetBorders
 
                         dropDownComponent: Component {
                             Column {
@@ -646,10 +645,12 @@ QGCView {
 
                     //-- Zoom Map In
                     RoundButton {
-                        id:                 mapZoomPlus
-                        visible:            !ScreenTools.isTinyScreen && !ScreenTools.isShortScreen
-                        buttonImage:        "/qmlimages/ZoomPlus.svg"
-                        z:                  QGroundControl.zOrderWidgets
+                        id:             mapZoomPlus
+                        visible:        !ScreenTools.isTinyScreen && !ScreenTools.isShortScreen
+                        buttonImage:    "/qmlimages/ZoomPlus.svg"
+                        z:              QGroundControl.zOrderWidgets
+                        lightBorders:   _lightWidgetBorders
+
                         onClicked: {
                             if(editorMap)
                                 editorMap.zoomLevel += 0.5
@@ -659,10 +660,12 @@ QGCView {
 
                     //-- Zoom Map Out
                     RoundButton {
-                        id:                 mapZoomMinus
-                        visible:            !ScreenTools.isTinyScreen && !ScreenTools.isShortScreen
-                        buttonImage:        "/qmlimages/ZoomMinus.svg"
-                        z:                  QGroundControl.zOrderWidgets
+                        id:             mapZoomMinus
+                        visible:        !ScreenTools.isTinyScreen && !ScreenTools.isShortScreen
+                        buttonImage:    "/qmlimages/ZoomMinus.svg"
+                        z:              QGroundControl.zOrderWidgets
+                        lightBorders:   _lightWidgetBorders
+
                         onClicked: {
                             if(editorMap)
                                 editorMap.zoomLevel -= 0.5
