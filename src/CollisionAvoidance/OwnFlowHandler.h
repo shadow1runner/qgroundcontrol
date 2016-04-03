@@ -59,6 +59,10 @@ private:
     hw::Converter * converter;
 
     CollisionAvoidanceDataProvider * _collisionAvoidanceDataProvider;
+
+public slots:
+    void foeReady(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence);
+
 };
 
 

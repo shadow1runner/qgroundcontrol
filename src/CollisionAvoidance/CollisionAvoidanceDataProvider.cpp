@@ -25,12 +25,14 @@ along with QGROUNDCONTROL. If not, see <http://www.gnu.org/licenses/>.
 * @file
 *   @brief Image Provider
 *
-*   @author Gus Grubba <mavlink@grubba.com>
+*   @author Helmut Wolf
 *
 */
 
 
 #include "CollisionAvoidanceDataProvider.h"
+#include "MultiVehicleManager.h"
+#include "Vehicle.h"
 
 #include <QPainter>
 #include <QFont>
@@ -98,6 +100,10 @@ void CollisionAvoidanceDataProvider::foeReady(const cv::Mat& frame, std::shared_
   std::cout << "inlierProportion: " << foeFiltered->getInlierProportion() << std::endl;
   std::cout << "numberOfInliers: " << foeFiltered->getNumberOfInliers() << std::endl;
   std::cout << "numberOfParticles: " << foeFiltered->getNumberOfParticles() <<std::endl;
+
+  auto * const activeVehicle = _toolbox->multiVehicleManager()->activeVehicle();
+  if(activeVehicle!=NULL)
+     activeVehicle->increaseCollisionAvoidanceImageIndex();
 }    
 
 void CollisionAvoidanceDataProvider::opticalFlowReady(const cv::Mat& opticalFlow)

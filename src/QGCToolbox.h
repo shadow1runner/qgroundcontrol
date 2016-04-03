@@ -25,6 +25,7 @@
 #define QGCToolbox_h
 
 #include <QObject>
+#include <QThread>
 
 class AutoPilotPluginManager;
 class FactSystem;
@@ -87,6 +88,8 @@ private:
     FollowMe*                   _followMe;
     OwnFlowHandler*             _ownFlowHandler;
     CollisionAvoidanceDataProvider*          _collisionAvoidanceDataProvider;
+
+    QThread* _ownFlowHandlerThread;
 };
 
 /// This is the base class for all tools

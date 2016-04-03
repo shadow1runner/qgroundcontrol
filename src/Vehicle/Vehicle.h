@@ -274,6 +274,7 @@ public:
     Q_PROPERTY(bool                 joystickEnabled         READ joystickEnabled    WRITE setJoystickEnabled NOTIFY joystickEnabledChanged)
     Q_PROPERTY(bool                 active                  READ active             WRITE setActive     NOTIFY activeChanged)
     Q_PROPERTY(int                  flowImageIndex          READ flowImageIndex                         NOTIFY flowImageIndexChanged)
+    Q_PROPERTY(int                  collisionAvoidanceImageIndex READ collisionAvoidanceImageIndex NOTIFY collisionAvoidanceImageIndexChanged)
     Q_PROPERTY(int                  rcRSSI                  READ rcRSSI                                 NOTIFY rcRSSIChanged)
     Q_PROPERTY(bool                 px4Firmware             READ px4Firmware                            CONSTANT)
     Q_PROPERTY(bool                 apmFirmware             READ apmFirmware                            CONSTANT)
@@ -451,6 +452,8 @@ public:
 
     int  flowImageIndex() { return _flowImageIndex; }
 
+    int  collisionAvoidanceImageIndex() { return _collisionAvoidanceImageIndex; }
+
     /// Requests the specified data stream from the vehicle
     ///     @param stream Stream which is being requested
     ///     @param rate Rate at which to send stream in Hz
@@ -514,6 +517,11 @@ public:
     bool containsLink(LinkInterface* link) { return _links.contains(link); }
     void doCommandLong(int component, MAV_CMD command, float param1 = 0.0f, float param2 = 0.0f, float param3 = 0.0f, float param4 = 0.0f, float param5 = 0.0f, float param6 = 0.0f, float param7 = 0.0f);
 
+    void increaseCollisionAvoidanceImageIndex (void) {
+        auto tmp = _collisionAvoidanceImageIndex;
+        ++_collisionAvoidanceImageIndex;
+    }
+
 public slots:
     void setLatitude(double latitude);
     void setLongitude(double longitude);
@@ -557,6 +565,7 @@ signals:
     void currentConfigChanged   ();
     void currentStateChanged    ();
     void flowImageIndexChanged  ();
+    void collisionAvoidanceImageIndexChanged();
     void rcRSSIChanged          (int rcRSSI);
 
     /// New RC channel values
@@ -713,6 +722,8 @@ private:
     JoystickManager*            _joystickManager;
 
     int                         _flowImageIndex;
+
+    int                         _collisionAvoidanceImageIndex;
 
     bool _allLinksInactiveSent; ///< true: allLinkInactive signal already sent one time
 

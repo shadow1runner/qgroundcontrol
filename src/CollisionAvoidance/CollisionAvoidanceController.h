@@ -16,6 +16,7 @@ public:
 
     Q_PROPERTY(bool hasCollisionAvoidanceStream       READ hasCollisionAvoidanceStream NOTIFY hasCollisionAvoidanceStreamChanged);
     Q_INVOKABLE void setHasCollisionAvoidanceStream  (bool);
+    Q_INVOKABLE void onStartStopClicked              (bool started);
     
     bool hasCollisionAvoidanceStream() { return _hasCollisionAvoidanceStream; }
 

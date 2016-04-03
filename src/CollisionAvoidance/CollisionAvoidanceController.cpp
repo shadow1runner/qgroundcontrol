@@ -26,6 +26,7 @@
 
 #include <QSettings>
 #include <QUrl>
+#include <QDebug>
 
 CollisionAvoidanceController::CollisionAvoidanceController(QObject* parent)
     : QObject(parent)
@@ -40,13 +41,18 @@ CollisionAvoidanceController::CollisionAvoidanceController(QObject* parent)
     connect(qgcApp()->toolbox()->multiVehicleManager(), &MultiVehicleManager::activeVehicleChanged, this, &CollisionAvoidanceController::_activeVehicleChanged);
 }
 
-void CollisionAvoidanceController::setHasCollisionAvoidanceStream (bool newValue) {
+void CollisionAvoidanceController::setHasCollisionAvoidanceStream(bool newValue)
+{
 	if(_hasCollisionAvoidanceStream!=newValue) {
 		_hasCollisionAvoidanceStream = newValue;
 		emit hasCollisionAvoidanceStreamChanged(newValue);
 	}
 }
 
+void CollisionAvoidanceController::onStartStopClicked(bool started)
+{
+    qDebug() << started;
+}
 
 void CollisionAvoidanceController::_activeVehicleChanged(Vehicle* activeVehicle)
 {

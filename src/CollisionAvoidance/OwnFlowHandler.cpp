@@ -48,12 +48,13 @@ void OwnFlowHandler::start()
     converter->convertImage(frame_grabber->next());
 
     int i = 0;
-    while(i<3) { // frame_grabber.has_next()) {
+    while(i<3 && frame_grabber->has_next()) {
         auto currentFrame = frame_grabber->next();
         converter->convertImage(currentFrame);
         //ownFlow.processImage(currentFrame);
 
         // a.processEvents();
+        ++i;
     }
 }
 
@@ -72,7 +73,12 @@ void OwnFlowHandler::setToolbox(QGCToolbox* toolbox)
     _collisionAvoidanceDataProvider = toolbox->collisionAvoidanceDataProvider();
 
     QObject::connect(ownFlow, &hw::OwnFlow::foeChanged,
-                     _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::foeReady);
+                     _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::foeReady
+                     );//Qt::BlockingQueuedConnection);
+
+    QObject::connect(ownFlow, &hw::OwnFlow::foeChanged,
+                     this, &OwnFlowHandler::foeReady
+                     );//Qt::BlockingQueuedConnection);
 
     QObject::connect(ownFlow, &hw::OwnFlow::opticalFlowChanged,
                      _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::opticalFlowReady);
@@ -113,3 +119,12 @@ void OwnFlowHandler::storeSettings()
     settings.setValue("DIVERGENCE_THRESHOLD", DIVERGENCE_THRESHOLD);
     settings.endGroup();
 }
+
+void OwnFlowHandler::foeReady(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence) {
+  std::cout << "Foe: " << foeFiltered->getFoE() << std::endl;
+//  std::cout << "divergence: " << divergence->getDivergence() << std::endl;
+//  std::cout << "measuredFoe: " << foeMeasured->getFoE() << std::endl;
+//  std::cout << "inlierProportion: " << foeFiltered->getInlierProportion() << std::endl;
+//  std::cout << "numberOfInliers: " << foeFiltered->getNumberOfInliers() << std::endl;
+//  std::cout << "numberOfParticles: " << foeFiltered->getNumberOfParticles() <<std::endl;
+}  

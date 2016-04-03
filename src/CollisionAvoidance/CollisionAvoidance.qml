@@ -43,12 +43,12 @@ QGCView {
                 anchors.bottom:     parent.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
                 QGCButton {
-                    text:       "Start TBD..."
+                    text:       "Start"
                     width:      ScreenTools.defaultFontPixelWidth * 22
                     onClicked:  controller.selectQmlFile()
                 }
                 QGCButton {
-                    text:       "Stop TBD..."
+                    text:       "Stop"
                     width:      ScreenTools.defaultFontPixelWidth * 22
                     onClicked: {
                         controller.clearQmlFile()

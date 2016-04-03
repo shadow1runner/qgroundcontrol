@@ -57,6 +57,7 @@ QGCToolbox::QGCToolbox(QGCApplication* app)
     , _followMe(NULL)
     , _ownFlowHandler(NULL)
     , _collisionAvoidanceDataProvider(NULL)
+    , _ownFlowHandlerThread(NULL)
 {
     _audioOutput =              new GAudioOutput(app);
     _autopilotPluginManager =   new AutoPilotPluginManager(app);
@@ -76,6 +77,8 @@ QGCToolbox::QGCToolbox(QGCApplication* app)
     _collisionAvoidanceDataProvider =        new CollisionAvoidanceDataProvider(app);
     _ownFlowHandler =           new OwnFlowHandler(app);
 
+    _ownFlowHandlerThread = new QThread();
+
     _audioOutput->setToolbox(this);
     _autopilotPluginManager->setToolbox(this);
     _factSystem->setToolbox(this);
@@ -93,6 +96,8 @@ QGCToolbox::QGCToolbox(QGCApplication* app)
     _followMe->setToolbox(this);
     _collisionAvoidanceDataProvider->setToolbox(this);
     _ownFlowHandler->setToolbox(this);
+
+    _ownFlowHandler->moveToThread(_ownFlowHandlerThread);
 }
 
 QGCToolbox::~QGCToolbox()
@@ -113,6 +118,8 @@ QGCToolbox::~QGCToolbox()
     delete _followMe;
     delete _ownFlowHandler;
     delete _collisionAvoidanceDataProvider;
+
+    delete _ownFlowHandlerThread;
 }
 
 QGCTool::QGCTool(QGCApplication* app)
