@@ -38,6 +38,7 @@ public:
 
 signals:
 	void startTriggered();
+	void stopTriggered();
 
 private:
 	void loadSettings();
@@ -69,37 +70,5 @@ private:
 
     CollisionAvoidanceDataProvider * _collisionAvoidanceDataProvider = nullptr;
 };
-
-class OwnFlowWorker : public QObject {
-	Q_OBJECT
-
-public:
-	OwnFlowWorker(const std::string& fileName, OwnFlowHandler* const ownFlowHandler)
-		: QObject(ownFlowHandler)
-		, _fileName(fileName)
-	{ 
-        connect(ownFlowHandler, &OwnFlowHandler::startTriggered, this, &OwnFlowWorker::start);
-	}
-
-private slots:
-	void start() {
-        hw::BufferedFrameGrabber frame_grabber(_fileName, 1, [](cv::Mat input) {return input;});
-
-        OwnFlowHandler * const ownFlowHandler = (OwnFlowHandler* const)parent();
-
-		// initialize baseFrame
-        ownFlowHandler->Converter()->convertImage(frame_grabber.next());
-
-
-        while(frame_grabber.has_next()) {
-            auto currentFrame = frame_grabber.next();
-            ownFlowHandler->Converter()->convertImage(currentFrame);
-		}
-	} 
-
-private:
-	const std::string& _fileName;
-};
-
 
 #endif // COLLISIONAVOIDANCE_OWNFLOWHANDLER_H

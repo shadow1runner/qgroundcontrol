@@ -28,6 +28,7 @@
 #include <QSettings>
 #include <QUrl>
 #include <QDebug>
+#include <QThread>
 
 CollisionAvoidanceController::CollisionAvoidanceController(QObject* parent)
     : QObject(parent)
@@ -48,10 +49,10 @@ void CollisionAvoidanceController::setHasCollisionAvoidanceStream(bool newValue)
 void CollisionAvoidanceController::onStartStopClicked(bool start)
 {
     if(start) {
-        qDebug() << "Starting/Resuming OwnFlow";
+        qDebug() << "Starting/Resuming OwnFlow on Thread" << QThread::currentThreadId();
         _ownFlowHandler->start();
     } else {
-        qDebug() << "Stopping/Pausing OwnFlow";
+        qDebug() << "Stopping/Pausing OwnFlow on Thread" << QThread::currentThreadId();
         _ownFlowHandler->stop();
     }
 }

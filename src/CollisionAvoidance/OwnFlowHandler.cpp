@@ -1,6 +1,8 @@
 #include "OwnFlowHandler.h"
+#include "OwnFlowWorker.h"
 
 #include <QSettings>
+#include <QThread>
 
 #include "QGCToolbox.h"
 #include "QtHelper.h"
@@ -12,18 +14,20 @@ OwnFlowHandler::OwnFlowHandler(QGCApplication* app)
     QtHelper::registerMetaTypes();
 
     _ownFlowWorker = new OwnFlowWorker(FILENAME, this);
-
+    _ownFlowWorker->moveToThread(&_ownFlowWorkerThread);
 
     _converter = new hw::Converter(SUBSAMPLE_AMOUNT);
     _converter->moveToThread(&_converterThread);
 
     _ownFlow = new hw::OwnFlow(PARTICLES, WINDOW_SIZE);
+    _ownFlow->moveToThread(&_ownFlowThread);
 }
 
 OwnFlowHandler::~OwnFlowHandler()
 {
 	stop();
     storeSettings();
+    
     delete _converter;
     delete _ownFlow;
     delete _ownFlowWorker;
@@ -34,7 +38,6 @@ void OwnFlowHandler::setToolbox(QGCToolbox* toolbox)
 	QGCTool::setToolbox(toolbox);
     _collisionAvoidanceDataProvider = toolbox->collisionAvoidanceDataProvider();
 
-    _ownFlow->moveToThread(&_ownFlowThread);
     QObject::connect(_converter, &hw::Converter::imageConverted,
                      _ownFlow, &hw::OwnFlow::processImage,
                      // Qt::DirectConnection); // can't be use - IPC
@@ -59,10 +62,9 @@ void OwnFlowHandler::setToolbox(QGCToolbox* toolbox)
 
 void OwnFlowHandler::start()
 {
+    qDebug() << "Starting OwnFlowHandler on Thread" << QThread::currentThreadId();
     _converterThread.start();
     _ownFlowThread.start();
-
-    _ownFlowWorker->moveToThread(&_ownFlowWorkerThread);
     _ownFlowWorkerThread.start();
 
     emit startTriggered();
@@ -70,6 +72,8 @@ void OwnFlowHandler::start()
 
 void OwnFlowHandler::stop()
 {
+    qDebug() << "Stopping OwnFlowHandler on Thread" << QThread::currentThreadId();
+
     _ownFlowWorkerThread.quit();
     _ownFlowWorkerThread.wait();
 
@@ -78,6 +82,8 @@ void OwnFlowHandler::stop()
 
     _ownFlowThread.quit();
     _ownFlowThread.wait();
+
+    emit stopTriggered();
 }
 
 
