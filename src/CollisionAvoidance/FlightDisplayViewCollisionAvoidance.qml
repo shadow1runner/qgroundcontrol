@@ -78,15 +78,14 @@ Item {
                     }
                 }
             }
-        }
-
-        // Image {
-        //     source:     _activeVehicle ? "image://OwnFlow/" + _activeVehicle.id + "/" + _activeVehicle.flowImageIndex : ""
-        //     width:      parent.width * 0.5
-        //     height:     width * 0.75
-        //     cache:      false
-        //     anchors.centerIn: parent
-        //     fillMode: Image.PreserveAspectFit
-        // }
+            Image {
+                source:     _activeVehicle ? "image://OwnFlow/" + _activeVehicle.id + "/" + _activeVehicle.collisionAvoidanceImageIndex  : ""
+                width:      parent.width * 0.5
+                height:     width * 0.75
+                cache:      false
+                anchors.centerIn: parent
+                fillMode: Image.PreserveAspectFit
+            }
+        }        
     }
 }

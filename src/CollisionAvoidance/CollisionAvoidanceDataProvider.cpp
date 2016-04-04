@@ -33,6 +33,9 @@ along with QGROUNDCONTROL. If not, see <http://www.gnu.org/licenses/>.
 #include "CollisionAvoidanceDataProvider.h"
 #include "MultiVehicleManager.h"
 #include "Vehicle.h"
+#include "QGCApplication.h"
+
+#include <opencv2/highgui.hpp>
 
 #include <QPainter>
 #include <QFont>
@@ -40,6 +43,7 @@ along with QGROUNDCONTROL. If not, see <http://www.gnu.org/licenses/>.
 CollisionAvoidanceDataProvider::CollisionAvoidanceDataProvider(QGCApplication *app)
     : QGCTool(app)
     , QQuickImageProvider(QQmlImageProviderBase::Image)
+    , _activeVehicle(NULL)
 {
 }
 
@@ -50,6 +54,8 @@ CollisionAvoidanceDataProvider::~CollisionAvoidanceDataProvider()
 void CollisionAvoidanceDataProvider::setToolbox(QGCToolbox *toolbox)
 {
    QGCTool::setToolbox(toolbox);
+   connect(toolbox->multiVehicleManager(), &MultiVehicleManager::activeVehicleChanged, this, &CollisionAvoidanceDataProvider::_activeVehicleChanged);
+
    //-- Dummy temporary image until something comes along
    _pImage = QImage(320, 240, QImage::Format_RGBA8888);
    _pImage.fill(Qt::black);
@@ -91,8 +97,18 @@ QImage CollisionAvoidanceDataProvider::requestImage(const QString & /* image url
     return _pImage;
 }
 
+void CollisionAvoidanceDataProvider::_activeVehicleChanged(Vehicle* activeVehicle)
+{
+  _activeVehicle = activeVehicle; // might be NULL
+}
+
 void CollisionAvoidanceDataProvider::foeReady(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence) {
-  _pImage = cvMatToQImage(frame);
+    auto guiImage = renderGuiImage(frame, foeFiltered, foeMeasured, divergence);
+
+    _pImage = cvMatToQImage(guiImage);
+
+  cv::imshow("guiImage", guiImage);
+  cv::waitKey(25);
 
   std::cout << "Foe: " << foeFiltered->getFoE() << std::endl;
   std::cout << "divergence: " << divergence->getDivergence() << std::endl;
@@ -100,10 +116,9 @@ void CollisionAvoidanceDataProvider::foeReady(const cv::Mat& frame, std::shared_
   std::cout << "inlierProportion: " << foeFiltered->getInlierProportion() << std::endl;
   std::cout << "numberOfInliers: " << foeFiltered->getNumberOfInliers() << std::endl;
   std::cout << "numberOfParticles: " << foeFiltered->getNumberOfParticles() <<std::endl;
-
-  auto * const activeVehicle = _toolbox->multiVehicleManager()->activeVehicle();
-  if(activeVehicle!=NULL)
-     activeVehicle->increaseCollisionAvoidanceImageIndex();
+  
+  if(_activeVehicle!=NULL)
+     _activeVehicle->increaseCollisionAvoidanceImageIndex();
 }    
 
 void CollisionAvoidanceDataProvider::opticalFlowReady(const cv::Mat& opticalFlow)
@@ -116,48 +131,44 @@ void CollisionAvoidanceDataProvider::histogramReady(const cv::Mat& histogram)
   heatMap = HeatMap::createHeatMap(histogram);
 }
 
-QImage CollisionAvoidanceDataProvider::cvMatToQImage(cv::Mat mat) {
+QImage CollisionAvoidanceDataProvider::cvMatToQImage(const cv::Mat& mat) {
     // http://stackoverflow.com/a/12312326/2559632
     return QImage((uchar*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888);
 }
 
-void CollisionAvoidanceDataProvider::setImage(QImage* pImage, int /* vehicle id*/)
-{
-    _pImage = pImage->mirrored();
-}
-
-cv::Mat CollisionAvoidanceDataProvider::draw()
+cv::Mat CollisionAvoidanceDataProvider::renderGuiImage(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence)
 {
   // ========================== DRAW =====================
-  // std::vector<cv::Mat> canvas;
+   std::vector<cv::Mat> canvas;
 
-  // cv::Scalar color = foeFiltered->getInlierProportion() > inlierProportion ? GOOD_CONFIDENCE : BAD_CONFIDENCE;
+   cv::Scalar color = foeFiltered->getInlierProportion() > inlierProportion ? GOOD_CONFIDENCE : BAD_CONFIDENCE;
 
-  // DrawHelper::drawRings(heatMap, foeMeasured->getFoE(), color);
-  // DrawHelper::drawRings(heatMap, foeFiltered->getFoE(), cv::Scalar(255, 156, 0));
-  // canvas.push_back(heatMap);
+   DrawHelper::drawRings(heatMap, foeMeasured->getFoE(), color);
+   DrawHelper::drawRings(heatMap, foeFiltered->getFoE(), cv::Scalar(255, 156, 0));
+   canvas.push_back(heatMap);
 
-  // cv::Mat bgr;
-  // cv::cvtColor(frame, bgr, cv::COLOR_GRAY2BGR);
-  // DrawHelper::drawRings(bgr, foeMeasured->getFoE(), color);
-  // DrawHelper::drawRings(bgr, foeFiltered->getFoE(), cv::Scalar(255, 156, 0));
-  // canvas.push_back(bgr);
+   cv::Mat bgr;
+   cv::cvtColor(frame, bgr, cv::COLOR_GRAY2BGR);
+   DrawHelper::drawRings(bgr, foeMeasured->getFoE(), color);
+   DrawHelper::drawRings(bgr, foeFiltered->getFoE(), cv::Scalar(255, 156, 0));
+   canvas.push_back(bgr);
 
-  // cv::Mat flowOverlay;
-  // cv::cvtColor(frame, flowOverlay, cv::COLOR_GRAY2BGR);
-  // DrawHelper::drawOpticalFlowMap(opticalFlow, flowOverlay, GREEN);
-  // DrawHelper::drawRings(flowOverlay, foeMeasured->getFoE(), color);
-  // DrawHelper::drawRings(flowOverlay, foeFiltered->getFoE(), cv::Scalar(255, 156, 0));
-  // canvas.push_back(flowOverlay);
+   cv::Mat flowOverlay;
+   cv::cvtColor(frame, flowOverlay, cv::COLOR_GRAY2BGR);
+   DrawHelper::drawOpticalFlowMap(opticalFlow, flowOverlay, GREEN);
+   DrawHelper::drawRings(flowOverlay, foeMeasured->getFoE(), color);
+   DrawHelper::drawRings(flowOverlay, foeFiltered->getFoE(), cv::Scalar(255, 156, 0));
+   canvas.push_back(flowOverlay);
 
-  // auto hsv = DrawHelper::visualiceFlowAsHsv(opticalFlow);
-  // DrawHelper::drawRings(hsv, foeMeasured->getFoE(), color);
-  // DrawHelper::drawRings(hsv, foeFiltered->getFoE(), cv::Scalar(255, 156, 0));
-  // canvas.push_back(hsv);
+//   auto hsv = DrawHelper::visualiceFlowAsHsv(opticalFlow);
+//   DrawHelper::drawRings(hsv, foeMeasured->getFoE(), color);
+//   DrawHelper::drawRings(hsv, foeFiltered->getFoE(), cv::Scalar(255, 156, 0));
+//   canvas.push_back(hsv);
 
-  // auto combined = DrawHelper::makeColumnCanvas(canvas, cv::Scalar(84, 72, 2));
-  // //    cv::imwrite(OUTPUT_DIR + std::to_string(frame_number) + ".jpg", combined);
-  // imshow("combined", combined);
-  // cv::waitKey(30);
+   auto combined = DrawHelper::makeColumnCanvas(canvas, cv::Scalar(84, 72, 2));
+//   //    cv::imwrite(OUTPUT_DIR + std::to_string(frame_number) + ".jpg", combined);
+//   imshow("combined", combined);
+//   cv::waitKey(30);
   // ========================== DRAW - END =====================
+   return combined;
 }    

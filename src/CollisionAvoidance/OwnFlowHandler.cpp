@@ -7,64 +7,26 @@
 
 OwnFlowHandler::OwnFlowHandler(QGCApplication* app)
     : QGCTool(app)
-    , _collisionAvoidanceDataProvider(nullptr)
 {
 	loadSettings();
     QtHelper::registerMetaTypes();
-    frame_grabber = new hw::BufferedFrameGrabber(FILENAME, 1, [](cv::Mat input) {return input;});
 
-    converter = new hw::Converter(SUBSAMPLE_AMOUNT);
-    converter->moveToThread(&converterThread);
+    _ownFlowWorker = new OwnFlowWorker(FILENAME, this);
 
-    ownFlow = new hw::OwnFlow(PARTICLES, WINDOW_SIZE);
 
-    ownFlow->moveToThread(&ownFlowThread);
-    QObject::connect(converter, &hw::Converter::imageConverted,
-                     ownFlow, &hw::OwnFlow::processImage,
-                     // Qt::DirectConnection); // can't be use - IPC
-                     // Qt::QueuedConnection);
-//                      Qt::AutoConnection); // does NOT work, most likely because OwnFlow gets overwhelmed
-                     Qt::BlockingQueuedConnection); // works
-                     // Qt::UniqueConnection);
-                     // https://doc.qt.io/qt-5/qt.html#ConnectionType-enum
-                     // https://wiki.qt.io/Threads_Events_QObjects
+    _converter = new hw::Converter(SUBSAMPLE_AMOUNT);
+    _converter->moveToThread(&_converterThread);
+
+    _ownFlow = new hw::OwnFlow(PARTICLES, WINDOW_SIZE);
 }
 
 OwnFlowHandler::~OwnFlowHandler()
 {
 	stop();
     storeSettings();
-    delete frame_grabber;
-    delete converter;
-    delete ownFlow;
-}
-
-void OwnFlowHandler::start()
-{
-    converterThread.start();
-    ownFlowThread.start();
-
-    // initialize baseFrame
-    converter->convertImage(frame_grabber->next());
-
-    int i = 0;
-    while(i<3 && frame_grabber->has_next()) {
-        auto currentFrame = frame_grabber->next();
-        converter->convertImage(currentFrame);
-        //ownFlow.processImage(currentFrame);
-
-        // a.processEvents();
-        ++i;
-    }
-}
-
-void OwnFlowHandler::stop()
-{
-    converterThread.quit();
-    converterThread.wait();
-
-    ownFlowThread.quit();
-    ownFlowThread.wait();
+    delete _converter;
+    delete _ownFlow;
+    delete _ownFlowWorker;
 }
 
 void OwnFlowHandler::setToolbox(QGCToolbox* toolbox)
@@ -72,22 +34,52 @@ void OwnFlowHandler::setToolbox(QGCToolbox* toolbox)
 	QGCTool::setToolbox(toolbox);
     _collisionAvoidanceDataProvider = toolbox->collisionAvoidanceDataProvider();
 
-    QObject::connect(ownFlow, &hw::OwnFlow::foeChanged,
+    _ownFlow->moveToThread(&_ownFlowThread);
+    QObject::connect(_converter, &hw::Converter::imageConverted,
+                     _ownFlow, &hw::OwnFlow::processImage,
+                     // Qt::DirectConnection); // can't be use - IPC
+                     // Qt::QueuedConnection);
+//                      Qt::AutoConnection); // does NOT work, most likely because OwnFlow gets overwhelmed
+                     Qt::BlockingQueuedConnection); // works
+                     // Qt::UniqueConnection);
+                     // https://doc.qt.io/qt-5/qt.html#ConnectionType-enum
+                     // https://wiki.qt.io/Threads_Events_QObjects
+
+
+    QObject::connect(_ownFlow, &hw::OwnFlow::foeChanged,
                      _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::foeReady
                      );//Qt::BlockingQueuedConnection);
 
-    QObject::connect(ownFlow, &hw::OwnFlow::foeChanged,
-                     this, &OwnFlowHandler::foeReady
-                     );//Qt::BlockingQueuedConnection);
-
-    QObject::connect(ownFlow, &hw::OwnFlow::opticalFlowChanged,
+    QObject::connect(_ownFlow, &hw::OwnFlow::opticalFlowChanged,
                      _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::opticalFlowReady);
     
-    QObject::connect(ownFlow, &hw::OwnFlow::histogramChanged,
+    QObject::connect(_ownFlow, &hw::OwnFlow::histogramChanged,
                      _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::histogramReady);
-
-    start();
 }
+
+void OwnFlowHandler::start()
+{
+    _converterThread.start();
+    _ownFlowThread.start();
+
+    _ownFlowWorker->moveToThread(&_ownFlowWorkerThread);
+    _ownFlowWorkerThread.start();
+
+    emit startTriggered();
+}
+
+void OwnFlowHandler::stop()
+{
+    _ownFlowWorkerThread.quit();
+    _ownFlowWorkerThread.wait();
+
+    _converterThread.quit();
+    _converterThread.wait();
+
+    _ownFlowThread.quit();
+    _ownFlowThread.wait();
+}
+
 
 void OwnFlowHandler::loadSettings()
 {
@@ -119,12 +111,3 @@ void OwnFlowHandler::storeSettings()
     settings.setValue("DIVERGENCE_THRESHOLD", DIVERGENCE_THRESHOLD);
     settings.endGroup();
 }
-
-void OwnFlowHandler::foeReady(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence) {
-  std::cout << "Foe: " << foeFiltered->getFoE() << std::endl;
-//  std::cout << "divergence: " << divergence->getDivergence() << std::endl;
-//  std::cout << "measuredFoe: " << foeMeasured->getFoE() << std::endl;
-//  std::cout << "inlierProportion: " << foeFiltered->getInlierProportion() << std::endl;
-//  std::cout << "numberOfInliers: " << foeFiltered->getNumberOfInliers() << std::endl;
-//  std::cout << "numberOfParticles: " << foeFiltered->getNumberOfParticles() <<std::endl;
-}  

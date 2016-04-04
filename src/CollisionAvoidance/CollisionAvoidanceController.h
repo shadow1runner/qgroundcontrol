@@ -16,7 +16,7 @@ public:
 
     Q_PROPERTY(bool hasCollisionAvoidanceStream       READ hasCollisionAvoidanceStream NOTIFY hasCollisionAvoidanceStreamChanged);
     Q_INVOKABLE void setHasCollisionAvoidanceStream  (bool);
-    Q_INVOKABLE void onStartStopClicked              (bool started);
+    Q_INVOKABLE void onStartStopClicked              (bool start);
     
     bool hasCollisionAvoidanceStream() { return _hasCollisionAvoidanceStream; }
 
@@ -25,12 +25,9 @@ public:
 signals:
    void hasCollisionAvoidanceStreamChanged (const bool newValue);
 
-private slots:
-    void _activeVehicleChanged  (Vehicle* activeVehicle);
-
 private:
-    UASInterface*       _uas;
     bool 				_hasCollisionAvoidanceStream;
+    OwnFlowHandler*     _ownFlowHandler;
 //    static const char*  _settingsKey;
 };
 

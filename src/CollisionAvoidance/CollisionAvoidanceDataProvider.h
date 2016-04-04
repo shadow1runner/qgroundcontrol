@@ -20,13 +20,14 @@
 #include "OwnFlow.h"
 #include "FocusOfExpansionDto.h"
 
+class Vehicle;
+
 class CollisionAvoidanceDataProvider : public QGCTool, public QQuickImageProvider
 {
 public:
     CollisionAvoidanceDataProvider    (QGCApplication* app);
     ~CollisionAvoidanceDataProvider   ();
     QImage  requestImage              (const QString & id, QSize * size, const QSize & requestedSize);
-    void    setImage                  (QImage* pImage, int id = 0);
     void    setToolbox                (QGCToolbox *toolbox);
 
 public slots:
@@ -36,9 +37,14 @@ public slots:
 
     void histogramReady(const cv::Mat& histogram);
 
+private slots:
+    void _activeVehicleChanged  (Vehicle* activeVehicle);
+
 private:
-    QImage  cvMatToQImage(cv::Mat mat);
-    cv::Mat draw();
+    Vehicle* _activeVehicle;
+
+    QImage  cvMatToQImage(const cv::Mat& mat);
+    cv::Mat renderGuiImage(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence);
 
     QImage _pImage;
     std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered;

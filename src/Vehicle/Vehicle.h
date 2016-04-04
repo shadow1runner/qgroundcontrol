@@ -517,10 +517,7 @@ public:
     bool containsLink(LinkInterface* link) { return _links.contains(link); }
     void doCommandLong(int component, MAV_CMD command, float param1 = 0.0f, float param2 = 0.0f, float param3 = 0.0f, float param4 = 0.0f, float param5 = 0.0f, float param6 = 0.0f, float param7 = 0.0f);
 
-    void increaseCollisionAvoidanceImageIndex (void) {
-        auto tmp = _collisionAvoidanceImageIndex;
-        ++_collisionAvoidanceImageIndex;
-    }
+    void increaseCollisionAvoidanceImageIndex (void) { ++_collisionAvoidanceImageIndex; emit collisionAvoidanceImageIndexChanged(); }
 
 public slots:
     void setLatitude(double latitude);

@@ -10,6 +10,7 @@
 #include <thread>
 
 #include "CollisionAvoidanceController.h"
+#include "OwnFlowHandler.h"
 #include "UAS.h"
 #include "QGCApplication.h"
 #include "BufferedFrameGrabber.h"
@@ -30,15 +31,10 @@
 
 CollisionAvoidanceController::CollisionAvoidanceController(QObject* parent)
     : QObject(parent)
-    , _uas(NULL)
     , _hasCollisionAvoidanceStream(true)
+    , _ownFlowHandler(NULL)
 {
-    if(qgcApp()->toolbox()->multiVehicleManager()->activeVehicle()) {
-        _uas = qgcApp()->toolbox()->multiVehicleManager()->activeVehicle()->uas();
-    }
-//    QSettings settings;
-//    _customQmlFile = settings.value(_settingsKey).toString();
-    connect(qgcApp()->toolbox()->multiVehicleManager(), &MultiVehicleManager::activeVehicleChanged, this, &CollisionAvoidanceController::_activeVehicleChanged);
+    _ownFlowHandler = qgcApp()->toolbox()->ownFlowHandler();
 }
 
 void CollisionAvoidanceController::setHasCollisionAvoidanceStream(bool newValue)
@@ -49,13 +45,13 @@ void CollisionAvoidanceController::setHasCollisionAvoidanceStream(bool newValue)
 	}
 }
 
-void CollisionAvoidanceController::onStartStopClicked(bool started)
+void CollisionAvoidanceController::onStartStopClicked(bool start)
 {
-    qDebug() << started;
-}
-
-void CollisionAvoidanceController::_activeVehicleChanged(Vehicle* activeVehicle)
-{
-    if(activeVehicle)
-        _uas = activeVehicle->uas();
+    if(start) {
+        qDebug() << "Starting/Resuming OwnFlow";
+        _ownFlowHandler->start();
+    } else {
+        qDebug() << "Stopping/Pausing OwnFlow";
+        _ownFlowHandler->stop();
+    }
 }

@@ -18,17 +18,26 @@
 #include "FocusOfExpansionDto.h"
 #include "CollisionAvoidanceDataProvider.h"
 
+class OwnFlowWorker;
+
 class OwnFlowHandler : public QGCTool
 {
+	Q_OBJECT
+
 public:
-    OwnFlowHandler    				  (QGCApplication* app);
-    ~OwnFlowHandler   				  ();
+    OwnFlowHandler(QGCApplication* app);
+    ~OwnFlowHandler();
 
     void start();
     void stop();
     
     // Overrides from QGCTool
     virtual void setToolbox(QGCToolbox* toolbox);
+
+    hw::Converter * const Converter() { return _converter; }
+
+signals:
+	void startTriggered();
 
 private:
 	void loadSettings();
@@ -50,19 +59,46 @@ private:
 	int DIVERGENCE_PATCHSIZE;
 	double DIVERGENCE_THRESHOLD;
 
-    hw::BufferedFrameGrabber * frame_grabber;
+    QThread _ownFlowThread;
+    QThread _converterThread;
+    QThread _ownFlowWorkerThread;
     
-    QThread ownFlowThread;
-    hw::OwnFlow * ownFlow;
-    
-    QThread converterThread;
-    hw::Converter * converter;
+    hw::OwnFlow* _ownFlow = nullptr;
+	hw::Converter* _converter = nullptr;
+	OwnFlowWorker* _ownFlowWorker = nullptr;
 
-    CollisionAvoidanceDataProvider * _collisionAvoidanceDataProvider;
+    CollisionAvoidanceDataProvider * _collisionAvoidanceDataProvider = nullptr;
+};
 
-public slots:
-    void foeReady(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence);
+class OwnFlowWorker : public QObject {
+	Q_OBJECT
 
+public:
+	OwnFlowWorker(const std::string& fileName, OwnFlowHandler* const ownFlowHandler)
+		: QObject(ownFlowHandler)
+		, _fileName(fileName)
+	{ 
+        connect(ownFlowHandler, &OwnFlowHandler::startTriggered, this, &OwnFlowWorker::start);
+	}
+
+private slots:
+	void start() {
+        hw::BufferedFrameGrabber frame_grabber(_fileName, 1, [](cv::Mat input) {return input;});
+
+        OwnFlowHandler * const ownFlowHandler = (OwnFlowHandler* const)parent();
+
+		// initialize baseFrame
+        ownFlowHandler->Converter()->convertImage(frame_grabber.next());
+
+
+        while(frame_grabber.has_next()) {
+            auto currentFrame = frame_grabber.next();
+            ownFlowHandler->Converter()->convertImage(currentFrame);
+		}
+	} 
+
+private:
+	const std::string& _fileName;
 };
 
 
