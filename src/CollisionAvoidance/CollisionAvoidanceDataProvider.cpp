@@ -165,7 +165,7 @@ cv::Mat CollisionAvoidanceDataProvider::renderGuiImage(const cv::Mat& frame, std
 //   DrawHelper::drawRings(hsv, foeFiltered->getFoE(), cv::Scalar(255, 156, 0));
 //   canvas.push_back(hsv);
 
-   auto combined = DrawHelper::makeColumnCanvas(canvas, cv::Scalar(84, 72, 2));
+   auto combined = DrawHelper::makeRowCanvas(canvas, cv::Scalar(84, 72, 2));
 //   //    cv::imwrite(OUTPUT_DIR + std::to_string(frame_number) + ".jpg", combined);
 //   imshow("combined", combined);
 //   cv::waitKey(30);
