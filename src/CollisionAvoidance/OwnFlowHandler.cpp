@@ -14,6 +14,8 @@ OwnFlowHandler::OwnFlowHandler(QGCApplication* app)
     QtHelper::registerMetaTypes();
 
     _ownFlowWorker = new OwnFlowWorker(FILENAME, this);
+    connect(&_ownFlowWorkerThread, &QThread::started,
+             _ownFlowWorker, &OwnFlowWorker::start);
     _ownFlowWorker->moveToThread(&_ownFlowWorkerThread);
 
     _converter = new hw::Converter(SUBSAMPLE_AMOUNT);
@@ -38,41 +40,39 @@ void OwnFlowHandler::setToolbox(QGCToolbox* toolbox)
 	QGCTool::setToolbox(toolbox);
     _collisionAvoidanceDataProvider = toolbox->collisionAvoidanceDataProvider();
 
-    QObject::connect(_converter, &hw::Converter::imageConverted,
-                     _ownFlow, &hw::OwnFlow::processImage,
+    connect(_converter, &hw::Converter::imageConverted,
+            _ownFlow, &hw::OwnFlow::processImage,
                      // Qt::DirectConnection); // can't be use - IPC
                      // Qt::QueuedConnection);
 //                      Qt::AutoConnection); // does NOT work, most likely because OwnFlow gets overwhelmed
-                     Qt::BlockingQueuedConnection); // works
+            Qt::BlockingQueuedConnection); // works
                      // Qt::UniqueConnection);
                      // https://doc.qt.io/qt-5/qt.html#ConnectionType-enum
+
                      // https://wiki.qt.io/Threads_Events_QObjects
 
+    connect(_ownFlow, &hw::OwnFlow::foeChanged,
+            _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::foeReady
+           );//Qt::BlockingQueuedConnection);
 
-    QObject::connect(_ownFlow, &hw::OwnFlow::foeChanged,
-                     _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::foeReady
-                     );//Qt::BlockingQueuedConnection);
-
-    QObject::connect(_ownFlow, &hw::OwnFlow::opticalFlowChanged,
-                     _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::opticalFlowReady);
+    connect(_ownFlow, &hw::OwnFlow::opticalFlowChanged,
+            _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::opticalFlowReady);
     
-    QObject::connect(_ownFlow, &hw::OwnFlow::histogramChanged,
-                     _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::histogramReady);
+    connect(_ownFlow, &hw::OwnFlow::histogramChanged,
+            _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::histogramReady);
 }
 
 void OwnFlowHandler::start()
 {
-    qDebug() << "Starting OwnFlowHandler on Thread" << QThread::currentThreadId();
+    qDebug() << "Starting OwnFlowHandler on Thread " << QThread::currentThreadId();
     _converterThread.start();
     _ownFlowThread.start();
     _ownFlowWorkerThread.start();
-
-    emit startTriggered();
 }
 
 void OwnFlowHandler::stop()
 {
-    qDebug() << "Stopping OwnFlowHandler on Thread" << QThread::currentThreadId();
+    qDebug() << "Stopping OwnFlowHandler on Thread " << QThread::currentThreadId();
 
     _ownFlowWorkerThread.quit();
     _ownFlowWorkerThread.wait();
@@ -82,8 +82,6 @@ void OwnFlowHandler::stop()
 
     _ownFlowThread.quit();
     _ownFlowThread.wait();
-
-    emit stopTriggered();
 }
 
 

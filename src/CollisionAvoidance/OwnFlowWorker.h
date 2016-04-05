@@ -11,14 +11,15 @@ class OwnFlowWorker : public QObject {
 	Q_OBJECT
 
 public:
-	OwnFlowWorker(const std::string& fileName, OwnFlowHandler* const ownFlowHandler);
+    OwnFlowWorker(const std::string& fileName, const OwnFlowHandler* const ownFlowHandler);
 
-private slots:
+public slots:
 	void start();
 	void stop();
 
 private:
 	const std::string& _fileName;
+	const OwnFlowHandler* const _ownFlowHandler;
 };
 
 #endif // OWNFLOWWORKER_H

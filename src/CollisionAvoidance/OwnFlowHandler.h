@@ -34,11 +34,7 @@ public:
     // Overrides from QGCTool
     virtual void setToolbox(QGCToolbox* toolbox);
 
-    hw::Converter * const Converter() { return _converter; }
-
-signals:
-	void startTriggered();
-	void stopTriggered();
+    hw::Converter * const Converter() const { return _converter; }
 
 private:
 	void loadSettings();
