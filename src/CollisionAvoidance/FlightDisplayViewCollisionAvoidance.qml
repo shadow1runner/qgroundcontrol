@@ -38,11 +38,11 @@ Item {
             color: Qt.rgba(0,0,0,0.75)
             anchors.fill:   parent
 
-            QGCLabel {
-                id:             titleLabel
-                text:           "Collision Avoidance Camera"
-                font.weight:    Font.DemiBold
-            }
+            // QGCLabel {
+            //     id:             titleLabel
+            //     text:           "Collision Avoidance Camera"
+            //     font.weight:    Font.DemiBold
+            // }
 
             Row {
                 id:                       buttonRow

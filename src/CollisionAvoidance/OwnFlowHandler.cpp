@@ -31,6 +31,12 @@ void OwnFlowHandler::setToolbox(QGCToolbox* toolbox)
              _ownFlowWorker, &OwnFlowWorker::start);
 }
 
+OwnFlowWorker* OwnFlowHandler::ownFlowWorker() 
+{
+    return _ownFlowWorker;
+}
+
+
 void OwnFlowHandler::start()
 {
     qDebug() << "Starting OwnFlowHandler on Thread " << QThread::currentThreadId();

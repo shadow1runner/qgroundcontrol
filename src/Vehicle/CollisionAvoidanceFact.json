@@ -1,0 +1,48 @@
+{
+    "version": 1,
+
+    "properties": [
+        {
+            "name":             "foeEkfx",
+            "shortDescription": "FoE (EKF) x",
+            "type":             "double",
+            "decimalPlaces":    1,
+            "units":            ""
+        },
+        {
+            "name":             "foeEkfy",
+            "shortDescription": "FoE (EKF) y",
+            "type":             "double",
+            "decimalPlaces":    1,
+            "units":            ""
+        },
+        {
+            "name":             "foeRawx",
+            "shortDescription": "FoE x",
+            "type":             "double",
+            "decimalPlaces":    1,
+            "units":            ""
+        },
+        {
+            "name":             "foeRawy",
+            "shortDescription": "FoE y",
+            "type":             "double",
+            "decimalPlaces":    1,
+            "units":            ""
+        },
+        {
+            "name":             "divergence",
+            "shortDescription": "Divergence",
+            "type":             "double",
+            "decimalPlaces":    3,
+            "units":            ""
+        },
+        {
+            "name":             "inlierRatio",
+            "shortDescription": "Inlier Ratio",
+            "type":             "double",
+            "decimalPlaces":    4,
+            "units":            ""
+        },
+    ]
+}

@@ -36,6 +36,10 @@
 #include "QGCImageProvider.h"
 #include "GAudioOutput.h"
 #include "FollowMe.h"
+#include "OwnFlowHandler.h"
+#include "OwnFlowWorker.h"
+#include "OwnFlow.h"
+#include "FocusOfExpansionDto.h"
 
 QGC_LOGGING_CATEGORY(VehicleLog, "VehicleLog")
 
@@ -56,10 +60,11 @@ const char* Vehicle::_climbRateFactName =           "climbRate";
 const char* Vehicle::_altitudeRelativeFactName =    "altitudeRelative";
 const char* Vehicle::_altitudeAMSLFactName =        "altitudeAMSL";
 
-const char* Vehicle::_gpsFactGroupName =        "gps";
-const char* Vehicle::_batteryFactGroupName =    "battery";
-const char* Vehicle::_windFactGroupName =       "wind";
-const char* Vehicle::_vibrationFactGroupName =  "vibration";
+const char* Vehicle::_gpsFactGroupName =                "gps";
+const char* Vehicle::_batteryFactGroupName =            "battery";
+const char* Vehicle::_windFactGroupName =               "wind";
+const char* Vehicle::_vibrationFactGroupName =          "vibration";
+const char* Vehicle::_collisionAvoidanceFactGroupName = "collisionavoidance";
 
 const int Vehicle::_lowBatteryAnnounceRepeatMSecs = 30 * 1000;
 
@@ -134,6 +139,7 @@ Vehicle::Vehicle(LinkInterface*             link,
     , _batteryFactGroup(this)
     , _windFactGroup(this)
     , _vibrationFactGroup(this)
+    , _collisionAvoidanceFactGroup(this)
 {
     _addLink(link);
 
@@ -215,6 +221,12 @@ Vehicle::Vehicle(LinkInterface*             link,
     // Invalidate the timer to signal first announce
     _lowBatteryAnnounceTimer.invalidate();
 
+
+    const auto* const ownFlow = qgcApp()->toolbox()->ownFlowHandler()->ownFlowWorker()->ownFlow();
+    connect(ownFlow, &hw::OwnFlow::foeChanged,
+            this, &Vehicle::_handleCollisionAvoidance
+           );
+
     // Build FactGroup object model
 
     _addFact(&_rollFact,                _rollFactName);
@@ -230,11 +242,13 @@ Vehicle::Vehicle(LinkInterface*             link,
     _addFactGroup(&_batteryFactGroup,   _batteryFactGroupName);
     _addFactGroup(&_windFactGroup,      _windFactGroupName);
     _addFactGroup(&_vibrationFactGroup, _vibrationFactGroupName);
+    _addFactGroup(&_collisionAvoidanceFactGroup, _collisionAvoidanceFactGroupName);
 
     _gpsFactGroup.setVehicle(this);
     _batteryFactGroup.setVehicle(this);
     _windFactGroup.setVehicle(this);
     _vibrationFactGroup.setVehicle(this);
+    _collisionAvoidanceFactGroup.setVehicle(this);
 }
 
 // Disconnected Vehicle
@@ -302,6 +316,7 @@ Vehicle::Vehicle(QObject* parent)
     , _batteryFactGroup(this)
     , _windFactGroup(this)
     , _vibrationFactGroup(this)
+    , _collisionAvoidanceFactGroup(this)
 {
     // Build FactGroup object model
 
@@ -318,11 +333,13 @@ Vehicle::Vehicle(QObject* parent)
     _addFactGroup(&_batteryFactGroup,   _batteryFactGroupName);
     _addFactGroup(&_windFactGroup,      _windFactGroupName);
     _addFactGroup(&_vibrationFactGroup, _vibrationFactGroupName);
+    _addFactGroup(&_collisionAvoidanceFactGroup, _collisionAvoidanceFactGroupName);
 
     _gpsFactGroup.setVehicle(NULL);
     _batteryFactGroup.setVehicle(NULL);
     _windFactGroup.setVehicle(NULL);
     _vibrationFactGroup.setVehicle(NULL);
+    _collisionAvoidanceFactGroup.setVehicle(NULL);
 }
 
 Vehicle::~Vehicle()
@@ -456,6 +473,22 @@ void Vehicle::_handleExtendedSysState(mavlink_message_t& message)
         setFlying(true);
         return;
     }
+}
+
+void Vehicle::_handleCollisionAvoidance(
+    const cv::Mat& frame,
+    std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered,
+    std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured,
+    std::shared_ptr<hw::Divergence> divergence)
+{
+    Q_UNUSED(frame);
+    
+    _collisionAvoidanceFactGroup.foeEkfx()->setRawValue(foeFiltered->getFoE().x);
+    _collisionAvoidanceFactGroup.foeEkfy()->setRawValue(foeFiltered->getFoE().y);
+    _collisionAvoidanceFactGroup.foeRawx()->setRawValue(foeMeasured->getFoE().x);
+    _collisionAvoidanceFactGroup.foeRawy()->setRawValue(foeMeasured->getFoE().y);
+    _collisionAvoidanceFactGroup.divergence()->setRawValue(divergence->getDivergence());
+    _collisionAvoidanceFactGroup.inlierRatio()->setRawValue(foeFiltered->getInlierProportion());
 }
 
 void Vehicle::_handleVibration(mavlink_message_t& message)
@@ -1747,6 +1780,40 @@ VehicleVibrationFactGroup::VehicleVibrationFactGroup(QObject* parent)
 }
 
 void VehicleVibrationFactGroup::setVehicle(Vehicle* vehicle)
+{
+    _vehicle = vehicle;
+}
+
+const char* VehicleCollisionAvoidanceFactGroup::_foeEkfxFactName = "foeEkfx";
+const char* VehicleCollisionAvoidanceFactGroup::_foeEkfyFactName = "foeEkfy";
+const char* VehicleCollisionAvoidanceFactGroup::_foeRawxFactName = "foeRawx";
+const char* VehicleCollisionAvoidanceFactGroup::_foeRawyFactName = "foeRawy";
+const char* VehicleCollisionAvoidanceFactGroup::_inlierRatioFactName = "inlierRatio";
+
+VehicleCollisionAvoidanceFactGroup::VehicleCollisionAvoidanceFactGroup(QObject* parent)
+    : FactGroup(0, ":/json/Vehicle/CollisionAvoidanceFact.json", parent)
+    , _vehicle(NULL)
+    , _foeEkfxFact (0, _foeEkfxFactName, FactMetaData::valueTypeDouble)
+    , _foeEkfyFact (0, _foeEkfyFactName, FactMetaData::valueTypeDouble)
+    , _foeRawxFact (0, _foeRawxFactName, FactMetaData::valueTypeDouble)
+    , _foeRawyFact (0, _foeRawyFactName, FactMetaData::valueTypeDouble)
+    , _inlierRatioFact (0, _inlierRatioFactName, FactMetaData::valueTypeDouble)
+{
+    _addFact(&_foeEkfxFact,  _foeEkfxFactName);
+    _addFact(&_foeEkfyFact,  _foeEkfyFactName);
+    _addFact(&_foeRawxFact,  _foeRawxFactName);
+    _addFact(&_foeRawyFact,  _foeRawyFactName);
+    _addFact(&_inlierRatioFact,  _inlierRatioFactName);
+
+    // Start out as not available "--.--"
+    _foeEkfxFact.setRawValue(std::numeric_limits<float>::quiet_NaN());
+    _foeEkfyFact.setRawValue(std::numeric_limits<float>::quiet_NaN());
+    _foeRawxFact.setRawValue(std::numeric_limits<float>::quiet_NaN());
+    _foeRawyFact.setRawValue(std::numeric_limits<float>::quiet_NaN());
+    _inlierRatioFact.setRawValue(std::numeric_limits<float>::quiet_NaN());
+}
+
+void VehicleCollisionAvoidanceFactGroup::setVehicle(Vehicle* vehicle)
 {
     _vehicle = vehicle;
 }

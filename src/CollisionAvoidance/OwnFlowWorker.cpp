@@ -31,6 +31,10 @@ OwnFlowWorker::OwnFlowWorker(const CollisionAvoidanceSettings& settings, const C
 OwnFlowWorker::~OwnFlowWorker() {
 }
 
+hw::OwnFlow* OwnFlowWorker::ownFlow() {
+    return &_ownFlow;
+}
+
 void OwnFlowWorker::start() 
 {
     qDebug() << "Starting OwnFlowWorker on Thread" << QThread::currentThreadId();

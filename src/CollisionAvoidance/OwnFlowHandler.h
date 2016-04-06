@@ -35,6 +35,8 @@ public:
     // Overrides from QGCTool
     virtual void setToolbox(QGCToolbox* toolbox);
 
+    OwnFlowWorker* ownFlowWorker();
+
 private:
 	CollisionAvoidanceSettings _settings;
 

@@ -28,7 +28,7 @@ public:
 	    _fileName                  = settings.value("FILENAME", "CollisionAvoidance/res/rl/go5.mp4").toString().toStdString(),
 	    _outputDir                 = settings.value("OUTPUT_DIR", "CollisionAvoidance/res/out/RandomCollider/cpp/frame_").toString().toStdString(),
 	    _subsampleAmount           = settings.value("SUBSAMPLE_AMOUNT", 2).toInt();
-	    _particles                 = settings.value("PARTICLES", 20000).toInt();
+	    _particles                 = settings.value("PARTICLES", 200000).toInt();
 	    _windowSize                = settings.value("WINDOW_SIZE", 5).toInt();
 	    _inlierProportionThreshold = settings.value("INLIER_PROPORTION_THRESHOLD", 0.01).toDouble();
 	    _divergencePatchSize       = settings.value("DIVERGENCE_PATCHSIZE", 20).toInt();
@@ -56,12 +56,12 @@ public:
 public:
 	const std::string getFileName() const                   { return _fileName;                  }
 	const std::string getOutputDir() const                  { return _outputDir;                 }
-	const int         getSubsampleAmount() const            { return _subsampleAmount;           }
-	const int         getParticles() const                  { return _particles;                 }
-	const int         getWindowSize() const                 { return _windowSize;                }
-	const int         getInlierProportionThreshold() const  { return _inlierProportionThreshold; }
-	const int         getDivergencePatchSize() const        { return _divergencePatchSize;       }
-	const double      getDivergenceThreshold() const        { return _divergenceThreshold;       }
+	int               getSubsampleAmount() const            { return _subsampleAmount;           }
+	int               getParticles() const                  { return _particles;                 }
+	int               getWindowSize() const                 { return _windowSize;                }
+	int               getInlierProportionThreshold() const  { return _inlierProportionThreshold; }
+	int               getDivergencePatchSize() const        { return _divergencePatchSize;       }
+	double            getDivergenceThreshold() const        { return _divergenceThreshold;       }
 
 private:
 	std::string _fileName;

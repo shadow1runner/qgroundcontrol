@@ -31,6 +31,12 @@
 #include <QGeoCoordinate>
 #include <QElapsedTimer>
 
+#include <memory>
+#include <opencv2/core.hpp>
+#include <opencv2/tracking.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/highgui.hpp>
+
 #include "FactGroup.h"
 #include "LinkInterface.h"
 #include "QGCMAVLink.h"
@@ -38,6 +44,8 @@
 #include "MAVLinkProtocol.h"
 #include "UASMessageHandler.h"
 #include "SettingsFact.h"
+#include "FocusOfExpansionDto.h"
+#include "Divergence.h"
 
 class UAS;
 class UASInterface;
@@ -223,6 +231,47 @@ private:
     /// This fact is global to all Vehicles. We must allocated the first time we need it so we don't
     /// run into QSettings application setup ordering issues.
     static SettingsFact* _percentRemainingAnnounceFact;
+};
+
+
+class VehicleCollisionAvoidanceFactGroup : public FactGroup
+{
+    Q_OBJECT
+
+public:
+    VehicleCollisionAvoidanceFactGroup(QObject* parent = NULL);
+
+    Q_PROPERTY(Fact* foeEkfx     READ foeEkfx      CONSTANT)
+    Q_PROPERTY(Fact* foeEkfy     READ foeEkfy      CONSTANT)
+    Q_PROPERTY(Fact* foeRawx     READ foeRawx      CONSTANT)
+    Q_PROPERTY(Fact* foeRawy     READ foeRawy      CONSTANT)
+    Q_PROPERTY(Fact* divergence  READ divergence   CONSTANT)
+    Q_PROPERTY(Fact* inlierRatio READ inlierRatio  CONSTANT)
+
+    Fact* foeEkfx (void) { return &_foeEkfxFact; }
+    Fact* foeEkfy (void) { return &_foeEkfyFact; }
+    Fact* foeRawx (void) { return &_foeRawxFact; }
+    Fact* foeRawy (void) { return &_foeRawyFact; }
+    Fact* divergence (void) { return &_divergenceFact; }
+    Fact* inlierRatio (void) { return &_inlierRatioFact; }
+
+    void setVehicle(Vehicle* vehicle);
+
+    static const char* _foeEkfxFactName;
+    static const char* _foeEkfyFactName;
+    static const char* _foeRawxFactName;
+    static const char* _foeRawyFactName;
+    static const char* _divergenceFactName;
+    static const char* _inlierRatioFactName;
+
+private:
+    Vehicle*    _vehicle;
+    Fact        _foeEkfxFact;
+    Fact        _foeEkfyFact;
+    Fact        _foeRawxFact;
+    Fact        _foeRawyFact;
+    Fact        _divergenceFact;
+    Fact        _inlierRatioFact;
 };
 
 class Vehicle : public FactGroup
@@ -507,6 +556,7 @@ public:
     FactGroup* batteryFactGroup     (void) { return &_batteryFactGroup; }
     FactGroup* windFactGroup        (void) { return &_windFactGroup; }
     FactGroup* vibrationFactGroup   (void) { return &_vibrationFactGroup; }
+    FactGroup* collisionAvoidanceFactGroup   (void) { return &_collisionAvoidanceFactGroup; }
 
     void setConnectionLostEnabled(bool connectionLostEnabled);
 
@@ -622,6 +672,7 @@ private:
     void _handleWind(mavlink_message_t& message);
     void _handleVibration(mavlink_message_t& message);
     void _handleExtendedSysState(mavlink_message_t& message);
+    void _handleCollisionAvoidance(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence);
     void _missionManagerError(int errorCode, const QString& errorMsg);
     void _mapTrajectoryStart(void);
     void _mapTrajectoryStop(void);
@@ -745,10 +796,11 @@ private:
     Fact _altitudeRelativeFact;
     Fact _altitudeAMSLFact;
 
-    VehicleGPSFactGroup         _gpsFactGroup;
-    VehicleBatteryFactGroup     _batteryFactGroup;
-    VehicleWindFactGroup        _windFactGroup;
-    VehicleVibrationFactGroup   _vibrationFactGroup;
+    VehicleGPSFactGroup                _gpsFactGroup;
+    VehicleBatteryFactGroup            _batteryFactGroup;
+    VehicleWindFactGroup               _windFactGroup;
+    VehicleVibrationFactGroup          _vibrationFactGroup;
+    VehicleCollisionAvoidanceFactGroup _collisionAvoidanceFactGroup;
 
     static const char* _rollFactName;
     static const char* _pitchFactName;
@@ -763,6 +815,7 @@ private:
     static const char* _batteryFactGroupName;
     static const char* _windFactGroupName;
     static const char* _vibrationFactGroupName;
+    static const char* _collisionAvoidanceFactGroupName;
 
     static const int _vehicleUIUpdateRateMSecs = 100;
 

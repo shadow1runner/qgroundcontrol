@@ -131,6 +131,8 @@ void CollisionAvoidanceDataProvider::histogramReady(const cv::Mat& histogram)
 QImage CollisionAvoidanceDataProvider::cvMatToQImage(const cv::Mat& mat) {
     // http://stackoverflow.com/a/12312326/2559632
     cvtColor(mat, mat, CV_BGR2RGB);
+    // cv::Mat tmpMat;
+    // resize(mat, tmpMat, cv::Size(0,0), 2, 2, cv::INTER_LINEAR);
     return QImage((uchar*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888);
 }
 

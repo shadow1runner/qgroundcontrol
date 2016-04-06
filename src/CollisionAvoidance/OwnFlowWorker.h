@@ -24,6 +24,8 @@ public:
     OwnFlowWorker(const CollisionAvoidanceSettings& settings, const CollisionAvoidanceDataProvider* const collisionAvoidanceDataProvider);
     ~OwnFlowWorker();
 
+    hw::OwnFlow* ownFlow();
+
 public slots:
 	void start();
 	void stop();
