@@ -103,12 +103,9 @@ void CollisionAvoidanceDataProvider::_activeVehicleChanged(Vehicle* activeVehicl
 }
 
 void CollisionAvoidanceDataProvider::foeReady(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence) {
-    auto guiImage = renderGuiImage(frame, foeFiltered, foeMeasured, divergence);
+  auto guiImage = renderGuiImage(frame, foeFiltered, foeMeasured, divergence);
 
-    _pImage = cvMatToQImage(guiImage);
-
-  cv::imshow("guiImage", guiImage);
-  cv::waitKey(25);
+  _pImage = cvMatToQImage(guiImage);
 
   std::cout << "Foe: " << foeFiltered->getFoE() << std::endl;
   std::cout << "divergence: " << divergence->getDivergence() << std::endl;
@@ -133,6 +130,7 @@ void CollisionAvoidanceDataProvider::histogramReady(const cv::Mat& histogram)
 
 QImage CollisionAvoidanceDataProvider::cvMatToQImage(const cv::Mat& mat) {
     // http://stackoverflow.com/a/12312326/2559632
+    cvtColor(mat, mat, CV_BGR2RGB);
     return QImage((uchar*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888);
 }
 
