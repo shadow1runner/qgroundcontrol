@@ -66,6 +66,7 @@ This file is part of the QGROUNDCONTROL project
 #include "UASInfoWidget.h"
 #include "HILDockWidget.h"
 #include "LogDownload.h"
+#include "AppMessages.h"
 #include "CollisionAvoidanceWidget.h"
 #include "CollisionAvoidanceDataProvider.h"
 #endif
@@ -168,6 +169,7 @@ MainWindow::MainWindow()
 
     QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
     _mainQmlWidgetHolder->setContextPropertyObject("controller", this);
+    _mainQmlWidgetHolder->setContextPropertyObject("debugMessageModel", AppMessages::getModel());
     _mainQmlWidgetHolder->setSource(QUrl::fromUserInput("qrc:qml/MainWindowHybrid.qml"));
 
     // Image provider
@@ -314,7 +316,7 @@ void MainWindow::_buildCommonWidgets(void)
         const char* pDockWidgetName = rgDockWidgetNames[i];
 
         // Add to menu
-        QAction* action = new QAction(tr(pDockWidgetName), NULL);
+        QAction* action = new QAction(tr(pDockWidgetName), this);
         action->setCheckable(true);
         action->setData(i);
         connect(action, &QAction::triggered, this, &MainWindow::_showDockWidgetAction);
@@ -429,10 +431,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
     _storeCurrentViewState();
     storeSettings();
-
-    //-- TODO: This effectively causes the QGCApplication destructor to not being able
-    //   to access the pointer it is trying to delete.
-    _instance = NULL;
 
     emit mainWindowClosed();
 }
