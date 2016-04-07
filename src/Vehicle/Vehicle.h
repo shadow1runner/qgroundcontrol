@@ -410,6 +410,9 @@ public:
     /// Alter the current mission item on the vehicle
     Q_INVOKABLE void setCurrentMissionSequence(int seq);
 
+    /// Sets the state of the collision avoidance detection algorithm
+    Q_INVOKABLE void setCollisionAvoidanceState(bool start);
+
     bool guidedModeSupported(void) const;
     bool pauseVehicleSupported(void) const;
 

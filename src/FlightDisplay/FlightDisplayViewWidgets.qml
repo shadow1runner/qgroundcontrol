@@ -345,6 +345,7 @@ Item {
         readonly property int confirmChangeAlt:     7
         readonly property int confirmGoTo:          8
         readonly property int confirmRetask:        9
+        readonly property int confirmCollisionAvoidanceToggle:       42
 
         property int    confirmActionCode
         property real   _showMargin:    _margins
@@ -385,6 +386,9 @@ Item {
                 break;
             case confirmRetask:
                 _activeVehicle.setCurrentMissionSequence(_flightMap._retaskSequence)
+                break;
+            case confirmCollisionAvoidanceToggle:
+                _activeVehicle.setCollisionAvoidanceState(caButton.isStarted())
                 break;
             default:
                 console.warn("Internal error: unknown confirmActionCode", confirmActionCode)
@@ -434,6 +438,9 @@ Item {
             case confirmRetask:
                 _guidedModeBar.confirmText = "active waypoint change"
                 break;
+            case confirmCollisionAvoidanceToggle:
+                guidedModeConfirm.confirmText = caButton.getConfirmationText()
+                break;
             }
             guidedModeBar.visible = false
             guidedModeConfirm.visible = true
@@ -479,6 +486,34 @@ Item {
                     text:       "Change Altitude"
                     visible:    _activeVehicle && _activeVehicle.guidedModeSupported && _activeVehicle.armed
                     onClicked:  _guidedModeBar.confirmAction(_guidedModeBar.confirmChangeAlt)
+                }
+
+                QGCButton {
+                    id:         caButton
+                    visible:    _activeVehicle && _activeVehicle.guidedModeSupported && _activeVehicle.armed
+                    onClicked:  {
+                        _guidedModeBar.confirmAction(_guidedModeBar.confirmCollisionAvoidanceToggle)
+                        toggle()
+                    }
+                    state: "Start CA"
+                    states: [
+                        State {
+                            name: "Start CA";
+                        },
+                        State {
+                            name: "Stop CA";
+                        }
+                    ]
+                    text:       state
+                    function toggle() {
+                        state = state==="Start CA" ? "Stop CA" : "Start CA"
+                    }
+                    function getConfirmationText() {
+                        return state==="Start CA" ? "start collision avoidance" : "stop collision avoidance"
+                    }
+                    function isStarted() {
+                        return state==="Stop CA"
+                    }
                 }
             } // Row
 

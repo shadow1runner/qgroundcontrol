@@ -1550,6 +1550,16 @@ void Vehicle::setCurrentMissionSequence(int seq)
     sendMessage(msg);
 }
 
+void Vehicle::setCollisionAvoidanceState(bool start) 
+{
+    auto ownFlowHandler = qgcApp()->toolbox()->ownFlowHandler();
+    if(start) {
+        ownFlowHandler->start();
+    } else {
+        ownFlowHandler->stop();
+    }
+}
+
 void Vehicle::doCommandLong(int component, MAV_CMD command, float param1, float param2, float param3, float param4, float param5, float param6, float param7)
 {
     mavlink_message_t       msg;
