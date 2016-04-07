@@ -5,28 +5,28 @@
         {
             "name":             "foeEkfx",
             "shortDescription": "FoE (EKF) x",
-            "type":             "double",
+            "type":             "uint32",
             "decimalPlaces":    1,
             "units":            ""
         },
         {
             "name":             "foeEkfy",
             "shortDescription": "FoE (EKF) y",
-            "type":             "double",
+            "type":             "uint32",
             "decimalPlaces":    1,
             "units":            ""
         },
         {
             "name":             "foeRawx",
             "shortDescription": "FoE x",
-            "type":             "double",
+            "type":             "uint32",
             "decimalPlaces":    1,
             "units":            ""
         },
         {
             "name":             "foeRawy",
             "shortDescription": "FoE y",
-            "type":             "double",
+            "type":             "uint32",
             "decimalPlaces":    1,
             "units":            ""
         },
@@ -41,8 +41,8 @@
             "name":             "inlierRatio",
             "shortDescription": "Inlier Ratio",
             "type":             "double",
-            "decimalPlaces":    4,
-            "units":            ""
-        },
+            "decimalPlaces":    2,
+            "units":            "‰"
+        }
     ]
 }

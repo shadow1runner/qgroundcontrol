@@ -24,7 +24,6 @@ void OwnFlowHandler::setToolbox(QGCToolbox* toolbox)
 	QGCTool::setToolbox(toolbox);
     auto collisionAvoidanceDataProvider = toolbox->collisionAvoidanceDataProvider();
 
-    qDebug() << QString::fromStdString(_settings.getFileName());
     _ownFlowWorker = new OwnFlowWorker(_settings, collisionAvoidanceDataProvider);
     _ownFlowWorker->moveToThread(&_ownFlowWorkerThread);
     connect(&_ownFlowWorkerThread, &QThread::started,

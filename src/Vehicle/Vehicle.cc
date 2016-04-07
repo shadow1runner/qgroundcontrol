@@ -488,7 +488,7 @@ void Vehicle::_handleCollisionAvoidance(
     _collisionAvoidanceFactGroup.foeRawx()->setRawValue(foeMeasured->getFoE().x);
     _collisionAvoidanceFactGroup.foeRawy()->setRawValue(foeMeasured->getFoE().y);
     _collisionAvoidanceFactGroup.divergence()->setRawValue(divergence->getDivergence());
-    _collisionAvoidanceFactGroup.inlierRatio()->setRawValue(foeFiltered->getInlierProportion());
+    _collisionAvoidanceFactGroup.inlierRatio()->setRawValue(foeFiltered->getInlierProportion()*1000);
 }
 
 void Vehicle::_handleVibration(mavlink_message_t& message)
@@ -1788,28 +1788,28 @@ const char* VehicleCollisionAvoidanceFactGroup::_foeEkfxFactName = "foeEkfx";
 const char* VehicleCollisionAvoidanceFactGroup::_foeEkfyFactName = "foeEkfy";
 const char* VehicleCollisionAvoidanceFactGroup::_foeRawxFactName = "foeRawx";
 const char* VehicleCollisionAvoidanceFactGroup::_foeRawyFactName = "foeRawy";
+const char* VehicleCollisionAvoidanceFactGroup::_divergenceFactName = "divergence";
 const char* VehicleCollisionAvoidanceFactGroup::_inlierRatioFactName = "inlierRatio";
 
 VehicleCollisionAvoidanceFactGroup::VehicleCollisionAvoidanceFactGroup(QObject* parent)
     : FactGroup(0, ":/json/Vehicle/CollisionAvoidanceFact.json", parent)
     , _vehicle(NULL)
-    , _foeEkfxFact (0, _foeEkfxFactName, FactMetaData::valueTypeDouble)
-    , _foeEkfyFact (0, _foeEkfyFactName, FactMetaData::valueTypeDouble)
-    , _foeRawxFact (0, _foeRawxFactName, FactMetaData::valueTypeDouble)
-    , _foeRawyFact (0, _foeRawyFactName, FactMetaData::valueTypeDouble)
+    , _foeEkfxFact     (0, _foeEkfxFactName, FactMetaData::valueTypeUint32)
+    , _foeEkfyFact     (0, _foeEkfyFactName, FactMetaData::valueTypeUint32)
+    , _foeRawxFact     (0, _foeRawxFactName, FactMetaData::valueTypeUint32)
+    , _foeRawyFact     (0, _foeRawyFactName, FactMetaData::valueTypeUint32)
+    , _divergenceFact  (0, _divergenceFactName, FactMetaData::valueTypeDouble)
     , _inlierRatioFact (0, _inlierRatioFactName, FactMetaData::valueTypeDouble)
 {
-    _addFact(&_foeEkfxFact,  _foeEkfxFactName);
-    _addFact(&_foeEkfyFact,  _foeEkfyFactName);
-    _addFact(&_foeRawxFact,  _foeRawxFactName);
-    _addFact(&_foeRawyFact,  _foeRawyFactName);
-    _addFact(&_inlierRatioFact,  _inlierRatioFactName);
+    _addFact(&_foeEkfxFact,     _foeEkfxFactName);
+    _addFact(&_foeEkfyFact,     _foeEkfyFactName);
+    _addFact(&_foeRawxFact,     _foeRawxFactName);
+    _addFact(&_foeRawyFact,     _foeRawyFactName);
+    _addFact(&_divergenceFact,  _divergenceFactName);
+    _addFact(&_inlierRatioFact, _inlierRatioFactName);
 
     // Start out as not available "--.--"
-    _foeEkfxFact.setRawValue(std::numeric_limits<float>::quiet_NaN());
-    _foeEkfyFact.setRawValue(std::numeric_limits<float>::quiet_NaN());
-    _foeRawxFact.setRawValue(std::numeric_limits<float>::quiet_NaN());
-    _foeRawyFact.setRawValue(std::numeric_limits<float>::quiet_NaN());
+    _divergenceFact.setRawValue(std::numeric_limits<float>::quiet_NaN());
     _inlierRatioFact.setRawValue(std::numeric_limits<float>::quiet_NaN());
 }
 

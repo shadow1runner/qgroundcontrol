@@ -35,8 +35,6 @@ public:
 	    _divergenceThreshold       = settings.value("DIVERGENCE_THRESHOLD", 0.08).toDouble();
 
 	    settings.endGroup();
-
-        qDebug() << QString::fromStdString(_fileName);
 	}	
 
 	void storeSettings() {

@@ -8,7 +8,6 @@ OwnFlowWorker::OwnFlowWorker(const CollisionAvoidanceSettings& settings, const C
     , _converter(settings.getSubsampleAmount())
     , _ownFlow(settings.getParticles(), settings.getWindowSize())
 { 
-    qDebug() << QString::fromStdString(_settings.getFileName());
     _converter.moveToThread(&_converterThread);
 
     _ownFlow.moveToThread(&_ownFlowThread);
