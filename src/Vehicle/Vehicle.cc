@@ -106,6 +106,8 @@ Vehicle::Vehicle(LinkInterface*             link,
     , _rcRSSIstore(100.0)
     , _autoDisconnect(false)
     , _flying(false)
+    , _collisionAvoidanceImageIndex(0)
+    , _collisionAvoidanceActive(false)
     , _connectionLost(false)
     , _connectionLostEnabled(true)
     , _missionManager(NULL)
@@ -119,7 +121,6 @@ Vehicle::Vehicle(LinkInterface*             link,
     , _autopilotPluginManager(autopilotPluginManager)
     , _joystickManager(joystickManager)
     , _flowImageIndex(0)
-    , _collisionAvoidanceImageIndex(0)
     , _allLinksInactiveSent(false)
     , _messagesReceived(0)
     , _messagesSent(0)
@@ -221,8 +222,8 @@ Vehicle::Vehicle(LinkInterface*             link,
     // Invalidate the timer to signal first announce
     _lowBatteryAnnounceTimer.invalidate();
 
-
-    const auto* const ownFlow = qgcApp()->toolbox()->ownFlowHandler()->ownFlowWorker()->ownFlow();
+    _ownFlowHandler = qgcApp()->toolbox()->ownFlowHandler();
+    const auto* const ownFlow = _ownFlowHandler->ownFlowWorker()->ownFlow();
     connect(ownFlow, &hw::OwnFlow::foeChanged,
             this, &Vehicle::_handleCollisionAvoidance
            );
@@ -1550,14 +1551,24 @@ void Vehicle::setCurrentMissionSequence(int seq)
     sendMessage(msg);
 }
 
-void Vehicle::setCollisionAvoidanceState(bool start) 
+void Vehicle::startCollisionAvoidance() 
 {
-    auto ownFlowHandler = qgcApp()->toolbox()->ownFlowHandler();
-    if(start) {
-        ownFlowHandler->start();
-    } else {
-        ownFlowHandler->stop();
-    }
+    if(_collisionAvoidanceActive)
+        return;
+
+    _ownFlowHandler->start();
+    _collisionAvoidanceActive = true;
+    emit collisionAvoidanceActiveChanged(_collisionAvoidanceActive);
+}
+
+void Vehicle::stopCollisionAvoidance() 
+{
+    if(!_collisionAvoidanceActive)
+        return;
+
+    _ownFlowHandler->stop();
+    _collisionAvoidanceActive = false;
+    emit collisionAvoidanceActiveChanged(_collisionAvoidanceActive);
 }
 
 void Vehicle::doCommandLong(int component, MAV_CMD command, float param1, float param2, float param3, float param4, float param5, float param6, float param7)

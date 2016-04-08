@@ -323,7 +323,6 @@ public:
     Q_PROPERTY(bool                 joystickEnabled         READ joystickEnabled    WRITE setJoystickEnabled NOTIFY joystickEnabledChanged)
     Q_PROPERTY(bool                 active                  READ active             WRITE setActive     NOTIFY activeChanged)
     Q_PROPERTY(int                  flowImageIndex          READ flowImageIndex                         NOTIFY flowImageIndexChanged)
-    Q_PROPERTY(int                  collisionAvoidanceImageIndex READ collisionAvoidanceImageIndex NOTIFY collisionAvoidanceImageIndexChanged)
     Q_PROPERTY(int                  rcRSSI                  READ rcRSSI                                 NOTIFY rcRSSIChanged)
     Q_PROPERTY(bool                 px4Firmware             READ px4Firmware                            CONSTANT)
     Q_PROPERTY(bool                 apmFirmware             READ apmFirmware                            CONSTANT)
@@ -337,6 +336,8 @@ public:
     Q_PROPERTY(bool                 multiRotor              READ multiRotor                             CONSTANT)
     Q_PROPERTY(bool                 autoDisconnect          MEMBER _autoDisconnect                      NOTIFY autoDisconnectChanged)
     Q_PROPERTY(QString              prearmError             READ prearmError        WRITE setPrearmError NOTIFY prearmErrorChanged)
+    Q_PROPERTY(int                  collisionAvoidanceImageIndex READ collisionAvoidanceImageIndex      NOTIFY collisionAvoidanceImageIndexChanged)
+    Q_PROPERTY(bool                 collisionAvoidanceActive     READ collisionAvoidanceActive          NOTIFY collisionAvoidanceActiveChanged)
 
     /// true: Vehicle is flying, false: Vehicle is on ground
     Q_PROPERTY(bool flying      READ flying     WRITE setFlying     NOTIFY flyingChanged)
@@ -410,8 +411,11 @@ public:
     /// Alter the current mission item on the vehicle
     Q_INVOKABLE void setCurrentMissionSequence(int seq);
 
-    /// Sets the state of the collision avoidance detection algorithm
-    Q_INVOKABLE void setCollisionAvoidanceState(bool start);
+    /// Starts collision avoidance detection algorithm
+    Q_INVOKABLE void startCollisionAvoidance();
+
+    /// Stops collision avoidance detection algorithm
+    Q_INVOKABLE void stopCollisionAvoidance();
 
     bool guidedModeSupported(void) const;
     bool pauseVehicleSupported(void) const;
@@ -504,7 +508,9 @@ public:
 
     int  flowImageIndex() { return _flowImageIndex; }
 
-    int  collisionAvoidanceImageIndex() { return _collisionAvoidanceImageIndex; }
+    int  collisionAvoidanceImageIndex()              { return _collisionAvoidanceImageIndex; }
+    void increaseCollisionAvoidanceImageIndex (void) { ++_collisionAvoidanceImageIndex; emit collisionAvoidanceImageIndexChanged(); }
+    bool collisionAvoidanceActive()                  { return _collisionAvoidanceActive;     }
 
     /// Requests the specified data stream from the vehicle
     ///     @param stream Stream which is being requested
@@ -570,7 +576,6 @@ public:
     bool containsLink(LinkInterface* link) { return _links.contains(link); }
     void doCommandLong(int component, MAV_CMD command, float param1 = 0.0f, float param2 = 0.0f, float param3 = 0.0f, float param4 = 0.0f, float param5 = 0.0f, float param6 = 0.0f, float param7 = 0.0f);
 
-    void increaseCollisionAvoidanceImageIndex (void) { ++_collisionAvoidanceImageIndex; emit collisionAvoidanceImageIndexChanged(); }
 
 public slots:
     void setLatitude(double latitude);
@@ -596,6 +601,8 @@ signals:
     void flyingChanged(bool flying);
     void guidedModeChanged(bool guidedMode);
     void prearmErrorChanged(const QString& prearmError);
+    void collisionAvoidanceImageIndexChanged();
+    void collisionAvoidanceActiveChanged(bool collisionAvoidanceActive);
 
     void messagesReceivedChanged    ();
     void messagesSentChanged        ();
@@ -615,7 +622,6 @@ signals:
     void currentConfigChanged   ();
     void currentStateChanged    ();
     void flowImageIndexChanged  ();
-    void collisionAvoidanceImageIndexChanged();
     void rcRSSIChanged          (int rcRSSI);
 
     /// New RC channel values
@@ -693,6 +699,7 @@ private:
     FirmwarePlugin*     _firmwarePlugin;
     AutoPilotPlugin*    _autopilotPlugin;
     MAVLinkProtocol*    _mavlink;
+    OwnFlowHandler*     _ownFlowHandler;
 
     QList<LinkInterface*> _links;
 
@@ -727,10 +734,13 @@ private:
     double          _rcRSSIstore;
     bool            _autoDisconnect;    ///< true: Automatically disconnect vehicle when last connection goes away or lost heartbeat
     bool            _flying;
+    int             _collisionAvoidanceImageIndex;
+    bool            _collisionAvoidanceActive;
 
     QString             _prearmError;
     QTimer              _prearmErrorTimer;
     static const int    _prearmErrorTimeoutMSecs = 35 * 1000;   ///< Take away prearm error after 35 seconds
+
 
     // Lost connection handling
     bool                _connectionLost;
@@ -773,8 +783,6 @@ private:
     JoystickManager*            _joystickManager;
 
     int                         _flowImageIndex;
-
-    int                         _collisionAvoidanceImageIndex;
 
     bool _allLinksInactiveSent; ///< true: allLinkInactive signal already sent one time
 
@@ -826,6 +834,7 @@ private:
     static const char* _settingsGroup;
     static const char* _joystickModeSettingsKey;
     static const char* _joystickEnabledSettingsKey;
+
 
 };
 #endif
