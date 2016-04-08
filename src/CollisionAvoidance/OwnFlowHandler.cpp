@@ -38,13 +38,11 @@ OwnFlowWorker* OwnFlowHandler::ownFlowWorker()
 
 void OwnFlowHandler::start()
 {
-    qDebug() << "Starting OwnFlowHandler on Thread " << QThread::currentThreadId();
     _ownFlowWorkerThread.start();
 }
 
 void OwnFlowHandler::stop()
 {
-    qDebug() << "Stopping OwnFlowHandler on Thread " << QThread::currentThreadId();
     _ownFlowWorkerThread.quit();
     _ownFlowWorkerThread.wait();
 }
