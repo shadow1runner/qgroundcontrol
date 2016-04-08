@@ -138,7 +138,10 @@ QImage CollisionAvoidanceDataProvider::cvMatToQImage(const cv::Mat& mat) {
 
 cv::Mat CollisionAvoidanceDataProvider::renderGuiImage(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence)
 {
-  // ========================== DRAW =====================
+    Q_UNUSED(frame);
+    Q_UNUSED(divergence);
+
+   // ========================== DRAW =====================
    std::vector<cv::Mat> canvas;
 
    cv::Scalar color = foeFiltered->getInlierProportion() > inlierProportion ? GOOD_CONFIDENCE : BAD_CONFIDENCE;
