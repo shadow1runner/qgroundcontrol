@@ -414,8 +414,8 @@ public:
     /// Starts collision avoidance detection algorithm
     Q_INVOKABLE void startCollisionAvoidance();
 
-    /// Stops collision avoidance detection algorithm
-    Q_INVOKABLE void stopCollisionAvoidance();
+    /// Pauses collision avoidance detection algorithm
+    Q_INVOKABLE void pauseCollisionAvoidance();
 
     bool guidedModeSupported(void) const;
     bool pauseVehicleSupported(void) const;
@@ -682,6 +682,7 @@ private:
     void _handleVibration(mavlink_message_t& message);
     void _handleExtendedSysState(mavlink_message_t& message);
     void _handleCollisionAvoidance(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence);
+    void _handleCollisionAvoidancePausedChange(bool isPaused);
     void _missionManagerError(int errorCode, const QString& errorMsg);
     void _mapTrajectoryStart(void);
     void _mapTrajectoryStop(void);

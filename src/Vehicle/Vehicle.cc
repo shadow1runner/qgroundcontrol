@@ -223,7 +223,12 @@ Vehicle::Vehicle(LinkInterface*             link,
     _lowBatteryAnnounceTimer.invalidate();
 
     _ownFlowHandler = qgcApp()->toolbox()->ownFlowHandler();
-    const auto* const ownFlow = _ownFlowHandler->ownFlowWorker()->ownFlow();
+    auto* const ownFlowWorker = _ownFlowHandler->ownFlowWorker();
+    connect(ownFlowWorker, &OwnFlowWorker::isPausedChanged,
+            this, &Vehicle::_handleCollisionAvoidancePausedChange
+           );
+
+    const auto* const ownFlow = ownFlowWorker->ownFlow();
     connect(ownFlow, &hw::OwnFlow::foeChanged,
             this, &Vehicle::_handleCollisionAvoidance
            );
@@ -474,6 +479,12 @@ void Vehicle::_handleExtendedSysState(mavlink_message_t& message)
         setFlying(true);
         return;
     }
+}
+
+void Vehicle::_handleCollisionAvoidancePausedChange(bool isPaused) 
+{
+    _collisionAvoidanceActive = !isPaused;
+    emit collisionAvoidanceActiveChanged(_collisionAvoidanceActive);
 }
 
 void Vehicle::_handleCollisionAvoidance(
@@ -1557,18 +1568,14 @@ void Vehicle::startCollisionAvoidance()
         return;
 
     _ownFlowHandler->start();
-    _collisionAvoidanceActive = true;
-    emit collisionAvoidanceActiveChanged(_collisionAvoidanceActive);
 }
 
-void Vehicle::stopCollisionAvoidance() 
+void Vehicle::pauseCollisionAvoidance() 
 {
     if(!_collisionAvoidanceActive)
         return;
 
-    _ownFlowHandler->stop();
-    _collisionAvoidanceActive = false;
-    emit collisionAvoidanceActiveChanged(_collisionAvoidanceActive);
+    _ownFlowHandler->pause();
 }
 
 void Vehicle::doCommandLong(int component, MAV_CMD command, float param1, float param2, float param3, float param4, float param5, float param6, float param7)

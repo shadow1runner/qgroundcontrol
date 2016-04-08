@@ -4,6 +4,8 @@
 OwnFlowWorker::OwnFlowWorker(const CollisionAvoidanceSettings& settings, const CollisionAvoidanceDataProvider* const collisionAvoidanceDataProvider)
     : QObject(NULL)
 	, _settings(settings)
+    , _isPaused(false)
+    , _frameGrabber(settings.getFileName(), 1, [](cv::Mat input) {return input;})
     , _collisionAvoidanceDataProvider(collisionAvoidanceDataProvider)
     , _converter(settings.getSubsampleAmount())
     , _ownFlow(settings.getParticles(), settings.getWindowSize())
@@ -25,6 +27,9 @@ OwnFlowWorker::OwnFlowWorker(const CollisionAvoidanceSettings& settings, const C
     
     connect(&_ownFlow, &hw::OwnFlow::histogramChanged,
              _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::histogramReady);
+
+	// initialize baseFrame
+    _converter.convertImage(_frameGrabber.next());
 }
 
 OwnFlowWorker::~OwnFlowWorker() {
@@ -41,20 +46,29 @@ void OwnFlowWorker::start()
     _converterThread.start();
     _ownFlowThread.start();
 
-    qDebug() << QString::fromStdString(_settings.getFileName());
-    hw::BufferedFrameGrabber frame_grabber(_settings.getFileName(), 1, [](cv::Mat input) {return input;});
+    _isPaused = false;
+    emit isPausedChanged(_isPaused);
 
-	// initialize baseFrame
-    _converter.convertImage(frame_grabber.next());
-
-    while(frame_grabber.has_next()) {
-        auto currentFrame = frame_grabber.next();
+    while(!_isPaused && _frameGrabber.has_next()) {
+        auto currentFrame = _frameGrabber.next();
         _converter.convertImage(currentFrame);
 	}
+
+//    _isPaused = true;
+//    emit isPausedChanged(_isPaused);
+}
+
+void OwnFlowWorker::pause() 
+{	
+    // there might be multiple writers, still aquiring a lock in front of each frame is not really necessary as long as the value gets set in the end (and thus the worker stops/pauses)
+    _isPaused = true;
+    emit isPausedChanged(_isPaused);
 }
 
 void OwnFlowWorker::stop() 
-{	
+{
+    pause();
+
     _converterThread.quit();
     _converterThread.wait();
 

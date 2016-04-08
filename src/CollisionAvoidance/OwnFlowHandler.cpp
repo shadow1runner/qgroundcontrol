@@ -26,8 +26,7 @@ void OwnFlowHandler::setToolbox(QGCToolbox* toolbox)
 
     _ownFlowWorker = new OwnFlowWorker(_settings, collisionAvoidanceDataProvider);
     _ownFlowWorker->moveToThread(&_ownFlowWorkerThread);
-    connect(&_ownFlowWorkerThread, &QThread::started,
-             _ownFlowWorker, &OwnFlowWorker::start);
+    _ownFlowWorkerThread.start();
 }
 
 OwnFlowWorker* OwnFlowHandler::ownFlowWorker() 
@@ -38,11 +37,18 @@ OwnFlowWorker* OwnFlowHandler::ownFlowWorker()
 
 void OwnFlowHandler::start()
 {
-    _ownFlowWorkerThread.start();
+    // invoke the method in the thread OwnFlowWorker resides in, cf. http://stackoverflow.com/a/13948634/2559632
+    QMetaObject::invokeMethod(_ownFlowWorker, "start");
+}
+
+void OwnFlowHandler::pause()
+{
+    _ownFlowWorker->pause();
 }
 
 void OwnFlowHandler::stop()
 {
+    _ownFlowWorker->pause();
     _ownFlowWorkerThread.quit();
     _ownFlowWorkerThread.wait();
 }

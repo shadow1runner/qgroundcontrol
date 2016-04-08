@@ -30,6 +30,7 @@ public:
     ~OwnFlowHandler();
 
     void start();
+    void pause();
     void stop();
     
     // Overrides from QGCTool

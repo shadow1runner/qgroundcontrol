@@ -28,11 +28,19 @@ public:
 
 public slots:
 	void start();
+    void pause();
 	void stop();
+
+signals:
+    void isPausedChanged(bool isPaused);
 
 private:
     const CollisionAvoidanceSettings& _settings;
     const CollisionAvoidanceDataProvider * const _collisionAvoidanceDataProvider = nullptr;
+
+    bool _isPaused;
+
+    hw::BufferedFrameGrabber _frameGrabber;
 
 	hw::Converter _converter;
     hw::OwnFlow _ownFlow;
