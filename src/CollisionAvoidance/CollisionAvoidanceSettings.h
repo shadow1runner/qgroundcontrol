@@ -23,16 +23,16 @@ public:
 	void loadSettings() {
 	    // Load defaults from settings
         QSettings settings;
-        settings.beginGroup("QGC_COLLISION_AVOIDANCE");
+        settings.beginGroup("CollisionAvoidance");
 
-	    _fileName                  = settings.value("FILENAME", "CollisionAvoidance/res/rl/go5.mp4").toString().toStdString(),
-	    _outputDir                 = settings.value("OUTPUT_DIR", "CollisionAvoidance/res/out/RandomCollider/cpp/frame_").toString().toStdString(),
-	    _subsampleAmount           = settings.value("SUBSAMPLE_AMOUNT", 2).toInt();
-	    _particles                 = settings.value("PARTICLES", 200000).toInt();
-	    _windowSize                = settings.value("WINDOW_SIZE", 5).toInt();
-	    _inlierProportionThreshold = settings.value("INLIER_PROPORTION_THRESHOLD", 0.01).toDouble();
-	    _divergencePatchSize       = settings.value("DIVERGENCE_PATCHSIZE", 20).toInt();
-	    _divergenceThreshold       = settings.value("DIVERGENCE_THRESHOLD", 0.08).toDouble();
+	    _fileName                  = settings.value("FileName", "CollisionAvoidance/res/rl/go5.mp4").toString().toStdString(),
+	    _outputDir                 = settings.value("OutputDir", "CollisionAvoidance/res/out/RandomCollider/cpp/frame_").toString().toStdString(),
+	    _subsampleAmount           = settings.value("SubsampleAmount", 2).toInt();
+	    _particles                 = settings.value("Particles", 200000).toInt();
+	    _windowSize                = settings.value("WindowSize", 5).toInt();
+	    _inlierProportionThreshold = settings.value("InlierProportionThreshold", 0.01).toDouble();
+	    _divergencePatchSize       = settings.value("DivergencePatchSize", 20).toInt();
+	    _divergenceThreshold       = settings.value("DivergenceThreshold", 0.08).toDouble();
 
 	    settings.endGroup();
 	}	
@@ -40,17 +40,17 @@ public:
 	void storeSettings() {
 		// Store settings
 		QSettings settings;
-        settings.beginGroup("QGC_COLLISION_AVOIDANCE");
+        settings.beginGroup("CollisionAvoidance");
 
-		settings.setValue("FILENAME", QString::fromStdString(_fileName));
-		settings.setValue("OUTPUT_DIR", QString::fromStdString(_outputDir));
-		settings.setValue("SUBSAMPLE_AMOUNT", _subsampleAmount);
-		settings.setValue("PARTICLES", _particles);
-		settings.setValue("WINDOW_SIZE", _windowSize);
-		settings.setValue("INLIER_PROPORTION_THRESHOLD", _inlierProportionThreshold);
-		settings.setValue("DIVERGENCE_PATCHSIZE", _divergencePatchSize);
-		settings.setValue("DIVERGENCE_THRESHOLD", _divergenceThreshold);
-		
+		settings.setValue("FileName", QString::fromStdString(_fileName));
+		settings.setValue("OutputDir", QString::fromStdString(_outputDir));
+		settings.setValue("SubsampleAmount", _subsampleAmount);
+		settings.setValue("Particles", _particles);
+		settings.setValue("WindowSize", _windowSize);
+		settings.setValue("InlierProportionThreshold", _inlierProportionThreshold);
+		settings.setValue("DivergencePatchSize", _divergencePatchSize);
+		settings.setValue("DivergenceThreshold", _divergenceThreshold);
+
 		settings.endGroup();
 	}
 
