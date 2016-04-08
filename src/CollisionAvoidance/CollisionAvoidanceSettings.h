@@ -40,6 +40,8 @@ public:
 	void storeSettings() {
 		// Store settings
 		QSettings settings;
+        settings.beginGroup("QGC_COLLISION_AVOIDANCE");
+
 		settings.setValue("FILENAME", QString::fromStdString(_fileName));
 		settings.setValue("OUTPUT_DIR", QString::fromStdString(_outputDir));
 		settings.setValue("SUBSAMPLE_AMOUNT", _subsampleAmount);
@@ -48,6 +50,7 @@ public:
 		settings.setValue("INLIER_PROPORTION_THRESHOLD", _inlierProportionThreshold);
 		settings.setValue("DIVERGENCE_PATCHSIZE", _divergencePatchSize);
 		settings.setValue("DIVERGENCE_THRESHOLD", _divergenceThreshold);
+		
 		settings.endGroup();
 	}
 
