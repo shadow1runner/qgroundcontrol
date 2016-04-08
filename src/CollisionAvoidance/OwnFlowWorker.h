@@ -34,8 +34,8 @@ private:
     const CollisionAvoidanceSettings& _settings;
     const CollisionAvoidanceDataProvider * const _collisionAvoidanceDataProvider = nullptr;
 
-    hw::OwnFlow _ownFlow;
 	hw::Converter _converter;
+    hw::OwnFlow _ownFlow;
 
     QThread _ownFlowThread;
     QThread _converterThread;
