@@ -26,6 +26,7 @@ public:
         settings.beginGroup("CollisionAvoidance");
 
 	    _fileName                  = settings.value("FileName", "CollisionAvoidance/res/rl/go5.mp4").toString().toStdString(),
+	    _device                    = settings.value("Device", 0).toInt(),
 	    _outputDir                 = settings.value("OutputDir", "CollisionAvoidance/res/out/RandomCollider/cpp/frame_").toString().toStdString(),
 	    _subsampleAmount           = settings.value("SubsampleAmount", 2).toInt();
 	    _particles                 = settings.value("Particles", 200000).toInt();
@@ -43,6 +44,7 @@ public:
         settings.beginGroup("CollisionAvoidance");
 
 		settings.setValue("FileName", QString::fromStdString(_fileName));
+		settings.setValue("Device", _device);
 		settings.setValue("OutputDir", QString::fromStdString(_outputDir));
 		settings.setValue("SubsampleAmount", _subsampleAmount);
 		settings.setValue("Particles", _particles);
@@ -56,6 +58,7 @@ public:
 
 public:
 	const std::string getFileName() const                   { return _fileName;                  }
+	int  			  getDevice() const                     { return _device;                    }
 	const std::string getOutputDir() const                  { return _outputDir;                 }
 	int               getSubsampleAmount() const            { return _subsampleAmount;           }
 	int               getParticles() const                  { return _particles;                 }
@@ -66,6 +69,7 @@ public:
 
 private:
 	std::string _fileName;
+	int  		_device;
 	std::string _outputDir;
 	int         _subsampleAmount;
 	int         _particles;
