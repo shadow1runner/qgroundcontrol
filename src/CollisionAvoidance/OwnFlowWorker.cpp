@@ -4,9 +4,10 @@
 OwnFlowWorker::OwnFlowWorker(const CollisionAvoidanceSettings& settings, const CollisionAvoidanceDataProvider* const collisionAvoidanceDataProvider)
     : QObject(NULL)
 	, _settings(settings)
-    , _isPaused(false)
-    , _frameGrabber(settings.getFileName(), 1, [](cv::Mat input) {return input;})
     , _collisionAvoidanceDataProvider(collisionAvoidanceDataProvider)
+    , _isPaused(false)
+    // , _frameGrabber(settings.getFileName(), 1, [](cv::Mat input) {return input;})
+    , _frameGrabber(settings.getDevice(), 1, [](cv::Mat input) {return input;})
     , _converter(settings.getSubsampleAmount())
     , _ownFlow(settings.getParticles(), settings.getWindowSize())
 { 
