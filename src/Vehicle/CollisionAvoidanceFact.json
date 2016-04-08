@@ -43,6 +43,13 @@
             "type":             "double",
             "decimalPlaces":    2,
             "units":            "‰"
+        },
+        {
+            "name":             "fps",
+            "shortDescription": "FPS",
+            "type":             "double",
+            "decimalPlaces":    2,
+            "units":            "fps"
         }
     ]
 }

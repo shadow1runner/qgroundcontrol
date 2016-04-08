@@ -46,6 +46,7 @@
 #include "SettingsFact.h"
 #include "FocusOfExpansionDto.h"
 #include "Divergence.h"
+#include "AvgWatch.h"
 
 class UAS;
 class UASInterface;
@@ -247,13 +248,15 @@ public:
     Q_PROPERTY(Fact* foeRawy     READ foeRawy      CONSTANT)
     Q_PROPERTY(Fact* divergence  READ divergence   CONSTANT)
     Q_PROPERTY(Fact* inlierRatio READ inlierRatio  CONSTANT)
+    Q_PROPERTY(Fact* fps         READ fps          CONSTANT)
 
-    Fact* foeEkfx (void) { return &_foeEkfxFact; }
-    Fact* foeEkfy (void) { return &_foeEkfyFact; }
-    Fact* foeRawx (void) { return &_foeRawxFact; }
-    Fact* foeRawy (void) { return &_foeRawyFact; }
-    Fact* divergence (void) { return &_divergenceFact; }
-    Fact* inlierRatio (void) { return &_inlierRatioFact; }
+    Fact* foeEkfx(void)     { return &_foeEkfxFact; }
+    Fact* foeEkfy(void)     { return &_foeEkfyFact; }
+    Fact* foeRawx(void)     { return &_foeRawxFact; }
+    Fact* foeRawy(void)     { return &_foeRawyFact; }
+    Fact* divergence(void)  { return &_divergenceFact; }
+    Fact* inlierRatio(void) { return &_inlierRatioFact; }
+    Fact* fps(void)         { return &_fpsFact; }
 
     void setVehicle(Vehicle* vehicle);
 
@@ -263,6 +266,7 @@ public:
     static const char* _foeRawyFactName;
     static const char* _divergenceFactName;
     static const char* _inlierRatioFactName;
+    static const char* _fpsFactName;
 
 private:
     Vehicle*    _vehicle;
@@ -272,6 +276,7 @@ private:
     Fact        _foeRawyFact;
     Fact        _divergenceFact;
     Fact        _inlierRatioFact;
+    Fact        _fpsFact;
 };
 
 class Vehicle : public FactGroup
@@ -666,6 +671,9 @@ private slots:
     void _connectionLostTimeout(void);
     void _prearmErrorTimeout(void);
 
+    void _handleCollisionAvoidance(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence);
+    void _handleCollisionAvoidancePausedChange(bool isPaused);
+    void _handleCollisionAvoidanceFrameTimings(std::shared_ptr<AvgWatch> allWatch, std::shared_ptr<AvgWatch> colliderWatch, std::shared_ptr<AvgWatch> divWatch, std::shared_ptr<AvgWatch> foeWatch, std::shared_ptr<AvgWatch> kalmanWatch, std::shared_ptr<AvgWatch> opticalFlowWatch);
 private:
     bool _containsLink(LinkInterface* link);
     void _addLink(LinkInterface* link);
@@ -681,8 +689,6 @@ private:
     void _handleWind(mavlink_message_t& message);
     void _handleVibration(mavlink_message_t& message);
     void _handleExtendedSysState(mavlink_message_t& message);
-    void _handleCollisionAvoidance(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence);
-    void _handleCollisionAvoidancePausedChange(bool isPaused);
     void _missionManagerError(int errorCode, const QString& errorMsg);
     void _mapTrajectoryStart(void);
     void _mapTrajectoryStop(void);

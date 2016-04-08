@@ -226,12 +226,16 @@ Vehicle::Vehicle(LinkInterface*             link,
     auto* const ownFlowWorker = _ownFlowHandler->ownFlowWorker();
     connect(ownFlowWorker, &OwnFlowWorker::isPausedChanged,
             this, &Vehicle::_handleCollisionAvoidancePausedChange
-           );
+            );
 
     const auto* const ownFlow = ownFlowWorker->ownFlow();
     connect(ownFlow, &hw::OwnFlow::foeChanged,
             this, &Vehicle::_handleCollisionAvoidance
-           );
+            );
+
+    connect(ownFlow, &hw::OwnFlow::collisionAvoidanceFrameTimingsReady,
+            this, &Vehicle::_handleCollisionAvoidanceFrameTimings
+            );
 
     // Build FactGroup object model
 
@@ -302,7 +306,6 @@ Vehicle::Vehicle(QObject* parent)
     , _autopilotPluginManager(NULL)
     , _joystickManager(NULL)
     , _flowImageIndex(0)
-    , _collisionAvoidanceImageIndex(0)
     , _allLinksInactiveSent(false)
     , _messagesReceived(0)
     , _messagesSent(0)
@@ -501,6 +504,25 @@ void Vehicle::_handleCollisionAvoidance(
     _collisionAvoidanceFactGroup.foeRawy()->setRawValue(foeMeasured->getFoE().y);
     _collisionAvoidanceFactGroup.divergence()->setRawValue(divergence->getDivergence());
     _collisionAvoidanceFactGroup.inlierRatio()->setRawValue(foeFiltered->getInlierProportion()*1000);
+}
+
+void Vehicle::_handleCollisionAvoidanceFrameTimings(
+    std::shared_ptr<AvgWatch> allWatch,
+    std::shared_ptr<AvgWatch> colliderWatch,
+    std::shared_ptr<AvgWatch> divWatch,
+    std::shared_ptr<AvgWatch> foeWatch,
+    std::shared_ptr<AvgWatch> kalmanWatch,
+    std::shared_ptr<AvgWatch> opticalFlowWatch)
+{
+    Q_UNUSED(colliderWatch);
+    Q_UNUSED(divWatch);
+    Q_UNUSED(foeWatch);
+    Q_UNUSED(kalmanWatch);
+    Q_UNUSED(opticalFlowWatch);
+
+    // calculate (avg) fps
+    auto sec = allWatch->elapsedAvg()/1e9;
+    _collisionAvoidanceFactGroup.fps()->setRawValue(1.0/sec);
 }
 
 void Vehicle::_handleVibration(mavlink_message_t& message)
@@ -1818,16 +1840,18 @@ const char* VehicleCollisionAvoidanceFactGroup::_foeRawxFactName = "foeRawx";
 const char* VehicleCollisionAvoidanceFactGroup::_foeRawyFactName = "foeRawy";
 const char* VehicleCollisionAvoidanceFactGroup::_divergenceFactName = "divergence";
 const char* VehicleCollisionAvoidanceFactGroup::_inlierRatioFactName = "inlierRatio";
+const char* VehicleCollisionAvoidanceFactGroup::_fpsFactName = "fps";
 
 VehicleCollisionAvoidanceFactGroup::VehicleCollisionAvoidanceFactGroup(QObject* parent)
     : FactGroup(0, ":/json/Vehicle/CollisionAvoidanceFact.json", parent)
     , _vehicle(NULL)
-    , _foeEkfxFact     (0, _foeEkfxFactName, FactMetaData::valueTypeUint32)
-    , _foeEkfyFact     (0, _foeEkfyFactName, FactMetaData::valueTypeUint32)
-    , _foeRawxFact     (0, _foeRawxFactName, FactMetaData::valueTypeUint32)
-    , _foeRawyFact     (0, _foeRawyFactName, FactMetaData::valueTypeUint32)
-    , _divergenceFact  (0, _divergenceFactName, FactMetaData::valueTypeDouble)
+    , _foeEkfxFact     (0, _foeEkfxFactName,     FactMetaData::valueTypeUint32)
+    , _foeEkfyFact     (0, _foeEkfyFactName,     FactMetaData::valueTypeUint32)
+    , _foeRawxFact     (0, _foeRawxFactName,     FactMetaData::valueTypeUint32)
+    , _foeRawyFact     (0, _foeRawyFactName,     FactMetaData::valueTypeUint32)
+    , _divergenceFact  (0, _divergenceFactName,  FactMetaData::valueTypeDouble)
     , _inlierRatioFact (0, _inlierRatioFactName, FactMetaData::valueTypeDouble)
+    , _fpsFact         (0, _fpsFactName,         FactMetaData::valueTypeDouble)
 {
     _addFact(&_foeEkfxFact,     _foeEkfxFactName);
     _addFact(&_foeEkfyFact,     _foeEkfyFactName);
@@ -1835,10 +1859,12 @@ VehicleCollisionAvoidanceFactGroup::VehicleCollisionAvoidanceFactGroup(QObject* 
     _addFact(&_foeRawyFact,     _foeRawyFactName);
     _addFact(&_divergenceFact,  _divergenceFactName);
     _addFact(&_inlierRatioFact, _inlierRatioFactName);
+    _addFact(&_fpsFact, _fpsFactName);
 
     // Start out as not available "--.--"
     _divergenceFact.setRawValue(std::numeric_limits<float>::quiet_NaN());
     _inlierRatioFact.setRawValue(std::numeric_limits<float>::quiet_NaN());
+    _fpsFact.setRawValue(0.0);
 }
 
 void VehicleCollisionAvoidanceFactGroup::setVehicle(Vehicle* vehicle)
