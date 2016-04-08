@@ -67,7 +67,6 @@ This file is part of the QGROUNDCONTROL project
 #include "HILDockWidget.h"
 #include "LogDownload.h"
 #include "AppMessages.h"
-#include "CollisionAvoidanceWidget.h"
 #include "CollisionAvoidanceDataProvider.h"
 #endif
 
@@ -91,8 +90,7 @@ enum DockWidgetTypes {
     INFO_VIEW,
     HIL_CONFIG,
     ANALYZE,
-    LOG_DOWNLOAD,
-    COLLISION_AVOIDANCE = 99
+    LOG_DOWNLOAD
 };
 
 static const char *rgDockWidgetNames[] = {
@@ -103,8 +101,7 @@ static const char *rgDockWidgetNames[] = {
     "Info View",
     "HIL Config",
     "Analyze",
-    "Log Download",
-    "COLLISION AVOIDANCE"
+    "Log Download"
 };
 
 #define ARRAY_SIZE(ARRAY) (sizeof(ARRAY) / sizeof(ARRAY[0]))
@@ -374,9 +371,6 @@ bool MainWindow::_createInnerDockWidget(const QString& widgetName)
             case INFO_VIEW:
                 widget= new QGCTabbedInfoView(widgetName, action, this);
                 break;
-            case COLLISION_AVOIDANCE:
-                widget = new CollisionAvoidanceWidget(widgetName, action, this);
-                break;
         }
         if(action->data().toInt() == INFO_VIEW) {
             qobject_cast<QGCTabbedInfoView*>(widget)->addSource(mavlinkDecoder);
@@ -431,6 +425,10 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
     _storeCurrentViewState();
     storeSettings();
+
+    //-- TODO: This effectively causes the QGCApplication destructor to not being able
+    //   to access the pointer it is trying to delete.
+    _instance = NULL;
 
     emit mainWindowClosed();
 }
