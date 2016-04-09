@@ -430,10 +430,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
     _storeCurrentViewState();
     storeSettings();
 
-    //-- TODO: This effectively causes the QGCApplication destructor to not being able
-    //   to access the pointer it is trying to delete.
-    _instance = NULL;
-
     emit mainWindowClosed();
 }
 
