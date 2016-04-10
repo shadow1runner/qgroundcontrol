@@ -74,10 +74,11 @@ QGCToolbox::QGCToolbox(QGCApplication* app)
     _mapEngineManager =       new QGCMapEngineManager(app);
     _uasMessageHandler =        new UASMessageHandler(app);
     _followMe =                 new FollowMe(app);
-    _collisionAvoidanceDataProvider =        new CollisionAvoidanceDataProvider(app);
+    _collisionAvoidanceDataProvider = new CollisionAvoidanceDataProvider(app);
     _ownFlowHandler =           new OwnFlowHandler(app);
 
     _ownFlowHandlerThread = new QThread();
+    _ownFlowHandlerThread->setObjectName("OwnFlowHandler");
 
     _audioOutput->setToolbox(this);
     _autopilotPluginManager->setToolbox(this);
@@ -117,7 +118,7 @@ QGCToolbox::~QGCToolbox()
     delete _uasMessageHandler;
     delete _followMe;
     delete _ownFlowHandler;
-    delete _collisionAvoidanceDataProvider;
+    // delete _collisionAvoidanceDataProvider; <- is deleted by the QML engine, same as _imageProvider
 
     delete _ownFlowHandlerThread;
 }
