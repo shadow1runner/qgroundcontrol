@@ -10,6 +10,7 @@ OwnFlowHandler::OwnFlowHandler(QGCApplication* app)
     : QGCTool(app)
 {
     QtHelper::registerMetaTypes();
+    _ownFlowWorkerThread.setObjectName("OwnFlowHandler");
 }
 
 OwnFlowHandler::~OwnFlowHandler()

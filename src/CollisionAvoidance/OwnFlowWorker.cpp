@@ -9,6 +9,9 @@ OwnFlowWorker::OwnFlowWorker(const CollisionAvoidanceSettings& settings, const C
     , _converter(settings.getSubsampleAmount())
     , _ownFlow(settings.getParticles(), settings.getWindowSize())
 { 
+    _converterThread.setObjectName("OwnFlowConverter");
+    _ownFlowThread.setObjectName("OwnFlow");
+
     _converter.moveToThread(&_converterThread);
 
     _ownFlow.moveToThread(&_ownFlowThread);
@@ -20,7 +23,7 @@ OwnFlowWorker::OwnFlowWorker(const CollisionAvoidanceSettings& settings, const C
 
     connect(&_converter, &hw::Converter::imageConverted,
             &_ownFlow, &hw::OwnFlow::processImage
-            //,Qt::BlockingQueuedConnection);
+            ,Qt::BlockingQueuedConnection
            );
 
     connect(&_ownFlow, &hw::OwnFlow::foeChanged,
@@ -34,7 +37,7 @@ OwnFlowWorker::OwnFlowWorker(const CollisionAvoidanceSettings& settings, const C
              _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::histogramReady);
 
 	// initialize baseFrame
-    _converter.convertImage(_frameGrabber->next());
+    //_converter.convertImage(_frameGrabber->next());
 }
 
 OwnFlowWorker::~OwnFlowWorker() {
