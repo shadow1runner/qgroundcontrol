@@ -12,12 +12,7 @@ public:
     CollisionAvoidanceSettings() 
     {
 		loadSettings();
-	}
-
-	~CollisionAvoidanceSettings() 
-	{
-		storeSettings();
-	}
+    }
 
 public:
 	void loadSettings() {
@@ -42,7 +37,7 @@ public:
 		QSettings settings;
         settings.beginGroup("CollisionAvoidance");
 
-		settings.setValue("UseRecordedVideoInsteadOfDevice", _useRecordedVideoInsteadOfDevice);
+        settings.setValue("UseRecordedVideoInsteadOfDevice", _useRecordedVideoInsteadOfDevice);
 		settings.setValue("FileName", _fileName);
 		settings.setValue("Device", _device);
 		settings.setValue("OutputDir", _outputDir);
@@ -68,7 +63,7 @@ public:
 	int               getDivergencePatchSize() const        	  { return _divergencePatchSize;       }
 	double            getDivergenceThreshold() const        	  { return _divergenceThreshold;       }
 
-	void setUseRecordedVideoInsteadOfDevice(bool useRecordedVideoInsteadOfDevice)                    { _useRecordedVideoInsteadOfDevice = useRecordedVideoInsteadOfDevice;                  }
+    void setUseRecordedVideoInsteadOfDevice(bool useRecordedVideoInsteadOfDevice)   { _useRecordedVideoInsteadOfDevice = useRecordedVideoInsteadOfDevice;                  }
 	void setFileName(QString fileName)                           { _fileName = fileName;                                   }
 	void setDevice(int device)                                       { _device = device;                                       }
 	void setOutputDir(QString  outputdir)                        { _outputDir  = outputdir;                                }
