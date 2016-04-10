@@ -47,7 +47,6 @@ Item {
             Row {
                 id:                       buttonRow
                 spacing:                  ScreenTools.defaultFontPixelWidth
-                anchors.margins:          _margins
                 anchors.top:              parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
 

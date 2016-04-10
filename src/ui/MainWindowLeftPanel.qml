@@ -253,6 +253,20 @@ Item {
                         checked = true
                     }
                 }
+
+                QGCButton {
+                    anchors.left:   parent.left
+                    anchors.right:  parent.right
+                    text:           "Collision Avoidance"
+                    visible:        ScreenTools.isDebug
+                    exclusiveGroup: panelActionGroup
+                    onClicked: {
+                        if(__rightPanel.source != "CollisionAvoidanceSettings.qml") {
+                            __rightPanel.source = "CollisionAvoidanceSettings.qml"
+                        }
+                        checked = true
+                    }
+                }
             }
         }
     }

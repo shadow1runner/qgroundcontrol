@@ -25,7 +25,8 @@ HEADERS += \
     $$PWD/OwnFlowHandler.h \
     $$PWD/CollisionAvoidanceDataProvider.h \
     $$PWD/OwnFlowWorker.h \
-    $$PWD/CollisionAvoidanceSettings.h
+    $$PWD/CollisionAvoidanceSettings.h \
+    $$PWD/CollisionAvoidanceSettingsController.h
 
 SOURCES += \
     $$PWD/opticalflow/BufferedFrameGrabber.cpp \
@@ -100,7 +101,8 @@ LIBS += \
 #-------------------------------------------------------------------------------------
 
 DISTFILES += \
-    $$PWD/FlightDisplayViewCollisionAvoidance.qml
+    $$PWD/FlightDisplayViewCollisionAvoidance.qml \
+    $$PWD/CollisionAvoidanceSettings.qml \
 
 #-------------------------------------------------------------------------------------
 

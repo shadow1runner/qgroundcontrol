@@ -105,6 +105,7 @@
 #include "ValuesWidgetController.h"
 #include "AppMessages.h"
 #include "CollisionAvoidanceController.h"
+#include "CollisionAvoidanceSettingsController.h"
 
 #ifndef __ios__
     #include "SerialLink.h"
@@ -474,7 +475,8 @@ void QGCApplication::_initCommon(void)
     qmlRegisterSingletonType<ScreenToolsController>     ("QGroundControl.ScreenToolsController",    1, 0, "ScreenToolsController",  screenToolsControllerSingletonFactory);
     qmlRegisterSingletonType<MavlinkQmlSingleton>       ("QGroundControl.Mavlink",                  1, 0, "Mavlink",                mavlinkQmlSingletonFactory);
 
-    qmlRegisterType<CollisionAvoidanceController>       ("HW.Controllers",         1, 0, "CollisionAvoidanceController");
+    qmlRegisterType<CollisionAvoidanceController>        ("HW.Controllers",         1, 0, "CollisionAvoidanceController");
+    qmlRegisterType<CollisionAvoidanceSettingsController>("HW.Controllers",         1, 0, "CollisionAvoidanceSettingsController");
 }
 
 bool QGCApplication::_initForNormalAppBoot(void)

@@ -106,6 +106,7 @@
         <file alias="QGroundControl/FlightDisplay/FlightDisplayViewWidgets.qml">src/FlightDisplay/FlightDisplayViewWidgets.qml</file>
         <file alias="VirtualJoystick.qml">src/FlightDisplay/VirtualJoystick.qml</file>
         <file alias="QGroundControl/FlightDisplay/FlightDisplayViewCollisionAvoidance.qml">src/CollisionAvoidance/FlightDisplayViewCollisionAvoidance.qml</file>
+        <file alias="CollisionAvoidanceSettings.qml">src/CollisionAvoidance/CollisionAvoidanceSettings.qml</file>
 
         <file alias="QGroundControl/FlightMap/qmldir">src/FlightMap/qmldir</file>
         <file alias="QGroundControl/FlightMap/FlightMap.qml">src/FlightMap/FlightMap.qml</file>

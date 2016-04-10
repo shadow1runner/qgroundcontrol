@@ -40,7 +40,7 @@ private:
 
     bool _isPaused;
 
-    hw::BufferedFrameGrabber _frameGrabber;
+    hw::BufferedFrameGrabber* _frameGrabber = nullptr;
 
 	hw::Converter _converter;
     hw::OwnFlow _ownFlow;

@@ -6,8 +6,6 @@ OwnFlowWorker::OwnFlowWorker(const CollisionAvoidanceSettings& settings, const C
 	, _settings(settings)
     , _collisionAvoidanceDataProvider(collisionAvoidanceDataProvider)
     , _isPaused(false)
-    // , _frameGrabber(settings.getFileName(), 1, [](cv::Mat input) {return input;})
-    , _frameGrabber(settings.getDevice(), 1, [](cv::Mat input) {return input;})
     , _converter(settings.getSubsampleAmount())
     , _ownFlow(settings.getParticles(), settings.getWindowSize())
 { 
@@ -15,9 +13,15 @@ OwnFlowWorker::OwnFlowWorker(const CollisionAvoidanceSettings& settings, const C
 
     _ownFlow.moveToThread(&_ownFlowThread);
 
+    if(settings.getUseRecordedVideoInsteadOfDevice()) 
+        _frameGrabber = new hw::BufferedFrameGrabber(settings.getFileName().toStdString(), 1, [](cv::Mat input) {return input;});
+    else
+        _frameGrabber = new hw::BufferedFrameGrabber(settings.getDevice(), 1, [](cv::Mat input) {return input;});
+
     connect(&_converter, &hw::Converter::imageConverted,
             &_ownFlow, &hw::OwnFlow::processImage
-           );//Qt::BlockingQueuedConnection);
+            //,Qt::BlockingQueuedConnection);
+           );
 
     connect(&_ownFlow, &hw::OwnFlow::foeChanged,
              _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::foeReady
@@ -30,10 +34,11 @@ OwnFlowWorker::OwnFlowWorker(const CollisionAvoidanceSettings& settings, const C
              _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::histogramReady);
 
 	// initialize baseFrame
-    _converter.convertImage(_frameGrabber.next());
+    _converter.convertImage(_frameGrabber->next());
 }
 
 OwnFlowWorker::~OwnFlowWorker() {
+    delete _frameGrabber;
 }
 
 hw::OwnFlow* OwnFlowWorker::ownFlow() {
@@ -50,8 +55,8 @@ void OwnFlowWorker::start()
     _isPaused = false;
     emit isPausedChanged(_isPaused);
 
-    while(!_isPaused && _frameGrabber.has_next()) {
-        auto currentFrame = _frameGrabber.next();
+    while(!_isPaused && _frameGrabber->has_next()) {
+        auto currentFrame = _frameGrabber->next();
         _converter.convertImage(currentFrame);
 	}
 
