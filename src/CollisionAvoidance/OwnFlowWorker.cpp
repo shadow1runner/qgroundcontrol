@@ -1,10 +1,15 @@
 #include "OwnFlowWorker.h"
 #include "OwnFlowHandler.h"
 
-OwnFlowWorker::OwnFlowWorker(const CollisionAvoidanceSettings& settings, const CollisionAvoidanceDataProvider* const collisionAvoidanceDataProvider)
+#include "QGCToolbox.h"
+#include "UAS.h"
+#include "MultiVehicleManager.h"
+#include "QGC.h"
+
+OwnFlowWorker::OwnFlowWorker(const CollisionAvoidanceSettings& settings, QGCToolbox* toolbox)
     : QObject(NULL)
 	, _settings(settings)
-    , _collisionAvoidanceDataProvider(collisionAvoidanceDataProvider)
+    , _collisionAvoidanceDataProvider(toolbox->collisionAvoidanceDataProvider())
     , _isPaused(false)
     , _converter(settings.getSubsampleAmount())
     , _ownFlow(settings.getParticles(), settings.getWindowSize())
@@ -36,8 +41,18 @@ OwnFlowWorker::OwnFlowWorker(const CollisionAvoidanceSettings& settings, const C
     connect(&_ownFlow, &hw::OwnFlow::histogramChanged,
              _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::histogramReady);
 
-	// initialize baseFrame
-    //_converter.convertImage(_frameGrabber->next());
+    // connect to signals emitted by `OwnFlow` - used for emitting valueChanged signals (and thus for graphing)
+    connect(&_ownFlow, &hw::OwnFlow::foeChanged,
+            this, &OwnFlowWorker::_handleCollisionAvoidance
+            );
+
+    connect(&_ownFlow, &hw::OwnFlow::collisionAvoidanceFrameTimingsReady,
+            this, &OwnFlowWorker::_handleCollisionAvoidanceFrameTimings
+            );
+
+    connect(toolbox->multiVehicleManager(), &MultiVehicleManager::activeVehicleChanged,
+            this, &OwnFlowWorker::_activeVehicleChanged
+            );
 }
 
 OwnFlowWorker::~OwnFlowWorker() {
@@ -63,8 +78,8 @@ void OwnFlowWorker::start()
         _converter.convertImage(currentFrame);
 	}
 
-//    _isPaused = true;
-//    emit isPausedChanged(_isPaused);
+   _isPaused = true;
+   emit isPausedChanged(_isPaused);
 }
 
 void OwnFlowWorker::pause() 
@@ -84,3 +99,49 @@ void OwnFlowWorker::stop()
     _ownFlowThread.quit();
     _ownFlowThread.wait();
 } 
+
+void OwnFlowWorker::_handleCollisionAvoidance(
+    const cv::Mat& frame,
+    std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered,
+    std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured,
+    std::shared_ptr<hw::Divergence> divergence)
+{
+    Q_UNUSED(frame);
+    
+    emit valueChanged(_activeUas->getUASID(),"foeEkfx","px",QVariant(foeFiltered->getFoE().x), getUnixTime());
+    emit valueChanged(_activeUas->getUASID(),"foeEkfy","px",QVariant(foeFiltered->getFoE().y), getUnixTime());
+    emit valueChanged(_activeUas->getUASID(),"foeRawx","px",QVariant(foeMeasured->getFoE().x), getUnixTime());
+    emit valueChanged(_activeUas->getUASID(),"foeRawy","px",QVariant(foeMeasured->getFoE().y), getUnixTime());
+    emit valueChanged(_activeUas->getUASID(),"divergence","-",QVariant(divergence->getDivergence()), getUnixTime());
+    emit valueChanged(_activeUas->getUASID(),"inlierRatio","‰",QVariant(foeFiltered->getInlierProportion()*1000), getUnixTime());
+}
+
+void OwnFlowWorker::_handleCollisionAvoidanceFrameTimings(
+    std::shared_ptr<AvgWatch> allWatch,
+    std::shared_ptr<AvgWatch> colliderWatch,
+    std::shared_ptr<AvgWatch> divWatch,
+    std::shared_ptr<AvgWatch> foeWatch,
+    std::shared_ptr<AvgWatch> kalmanWatch,
+    std::shared_ptr<AvgWatch> opticalFlowWatch)
+{
+    emit valueChanged(_activeUas->getUASID(), "collidingTime", "s", QVariant(colliderWatch->elapsedLast()/1e9), getUnixTime());
+    emit valueChanged(_activeUas->getUASID(), "divergenceTime", "s", QVariant(divWatch->elapsedLast()/1e9), getUnixTime());
+    emit valueChanged(_activeUas->getUASID(), "foeTime", "s", QVariant(foeWatch->elapsedLast()/1e9), getUnixTime());
+    emit valueChanged(_activeUas->getUASID(), "kalmanTime", "s", QVariant(kalmanWatch->elapsedLast()/1e9), getUnixTime());
+    emit valueChanged(_activeUas->getUASID(), "opticalFlowTime", "s", QVariant(opticalFlowWatch->elapsedLast()/1e9), getUnixTime());
+
+    auto sec = allWatch->elapsedLast()/1e9;
+    auto fps = 1.0/sec;
+    emit valueChanged(_activeUas->getUASID(),"fps","-",QVariant(fps), getUnixTime());
+}
+
+void OwnFlowWorker::_activeVehicleChanged(Vehicle* activeVehicle)
+{
+  _activeUas = activeVehicle->uas(); // might be NULL
+}
+
+// note: the actual (=correct) implementation isfound in UAS::getUnixTime
+quint64 OwnFlowWorker::getUnixTime()
+{
+    return QGC::groundTimeMilliseconds();
+}

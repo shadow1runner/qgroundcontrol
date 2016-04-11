@@ -10,11 +10,13 @@
 #include "MultiVehicleDockWidget.h"
 #include "MAVLinkDecoder.h"
 
+class OwnFlowWorker;
+
 class Linecharts : public MultiVehicleDockWidget
 {
     Q_OBJECT
 public:
-    explicit Linecharts(const QString& title, QAction* action, MAVLinkDecoder* decoder, QWidget *parent = 0);
+    explicit Linecharts(const QString& title, QAction* action, MAVLinkDecoder* decoder, OwnFlowWorker* ownFlowWorker, QWidget *parent);
 
 signals:
     /** @brief This signal is emitted once a logfile has been finished writing */
@@ -27,6 +29,7 @@ protected:
 
 private:
     MAVLinkDecoder* _mavlinkDecoder;
+    OwnFlowWorker*  _ownFlowWorker;
 };
 
 #endif // LINECHARTS_H

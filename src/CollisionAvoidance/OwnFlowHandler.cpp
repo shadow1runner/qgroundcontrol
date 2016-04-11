@@ -23,9 +23,8 @@ OwnFlowHandler::~OwnFlowHandler()
 void OwnFlowHandler::setToolbox(QGCToolbox* toolbox)
 {
 	QGCTool::setToolbox(toolbox);
-    auto collisionAvoidanceDataProvider = toolbox->collisionAvoidanceDataProvider();
 
-    _ownFlowWorker = new OwnFlowWorker(_settings, collisionAvoidanceDataProvider);
+    _ownFlowWorker = new OwnFlowWorker(_settings, toolbox);
     _ownFlowWorker->moveToThread(&_ownFlowWorkerThread);
     _ownFlowWorkerThread.start();
 }

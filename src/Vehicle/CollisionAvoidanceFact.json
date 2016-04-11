@@ -7,35 +7,35 @@
             "shortDescription": "FoE (EKF) x",
             "type":             "uint32",
             "decimalPlaces":    1,
-            "units":            ""
+            "units":            "px"
         },
         {
             "name":             "foeEkfy",
             "shortDescription": "FoE (EKF) y",
             "type":             "uint32",
             "decimalPlaces":    1,
-            "units":            ""
+            "units":            "px"
         },
         {
             "name":             "foeRawx",
             "shortDescription": "FoE x",
             "type":             "uint32",
             "decimalPlaces":    1,
-            "units":            ""
+            "units":            "px"
         },
         {
             "name":             "foeRawy",
             "shortDescription": "FoE y",
             "type":             "uint32",
             "decimalPlaces":    1,
-            "units":            ""
+            "units":            "px"
         },
         {
             "name":             "divergence",
             "shortDescription": "Divergence",
             "type":             "double",
             "decimalPlaces":    3,
-            "units":            ""
+            "units":            "-"
         },
         {
             "name":             "inlierRatio",

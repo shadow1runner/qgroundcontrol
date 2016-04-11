@@ -4,10 +4,12 @@
 #include "MultiVehicleManager.h"
 #include "MainWindow.h"
 #include "UAS.h"
+#include "OwnFlowWorker.h"
 
-Linecharts::Linecharts(const QString& title, QAction* action, MAVLinkDecoder* decoder, QWidget *parent)
+Linecharts::Linecharts(const QString& title, QAction* action, MAVLinkDecoder* decoder, OwnFlowWorker* ownFlowWorker, QWidget *parent)
     : MultiVehicleDockWidget(title, action, parent)
     , _mavlinkDecoder(decoder)
+    , _ownFlowWorker(ownFlowWorker)
 {
     init();
 
@@ -23,6 +25,9 @@ QWidget* Linecharts::_newVehicleWidget(Vehicle* vehicle, QWidget* parent)
 
     // Connect decoder
     connect(_mavlinkDecoder, &MAVLinkDecoder::valueChanged, widget, &LinechartWidget::appendData);
+
+    // Connect ownFlowWorker
+    connect(_ownFlowWorker, &OwnFlowWorker::valueChanged, widget, &LinechartWidget::appendData);
 
     // Select system
     widget->setActive(true);
