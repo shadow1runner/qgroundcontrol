@@ -59,7 +59,7 @@ public:
 	int               getSubsampleAmount() const            	  { return _subsampleAmount;           }
 	int               getParticles() const                  	  { return _particles;                 }
 	int               getWindowSize() const                 	  { return _windowSize;                }
-	int               getInlierProportionThreshold() const  	  { return _inlierProportionThreshold; }
+	double               getInlierProportionThreshold() const  	  { return _inlierProportionThreshold; }
 	int               getDivergencePatchSize() const        	  { return _divergencePatchSize;       }
 	double            getDivergenceThreshold() const        	  { return _divergenceThreshold;       }
 
@@ -70,7 +70,7 @@ public:
 	void setSubsampleAmount(int subsampleamount)                     { _subsampleAmount = subsampleamount;                     }
     void setParticles(int particles)                                 { _particles = particles;                                  }
 	void setWindowSize(int windowsize)                               { _windowSize = windowsize;              				   }
-	void setInlierProportionThreshold(int inlierProportionThreshold) { _inlierProportionThreshold = inlierProportionThreshold; }
+	void setInlierProportionThreshold(double inlierProportionThreshold) { _inlierProportionThreshold = inlierProportionThreshold; }
 	void setDivergencePatchSize(int divergencePatchSize)             { _divergencePatchSize = divergencePatchSize;             }
     void setDivergenceThreshold(double divergenceThreshold)          { _divergenceThreshold = divergenceThreshold;        }
 
@@ -82,7 +82,7 @@ private:
 	int         _subsampleAmount;
 	int         _particles;
 	int         _windowSize;
-	int         _inlierProportionThreshold;
+	double     _inlierProportionThreshold;
 	int         _divergencePatchSize;
 	double      _divergenceThreshold;
 

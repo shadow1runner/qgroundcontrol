@@ -245,7 +245,7 @@ Rectangle {
                     inputMethodHints:       Qt.ImhFormattedNumbersOnly
                     anchors.verticalCenter: parent.verticalCenter
                     onEditingFinished: {
-                        _controller.inlierProportionThreshold = parseInt(inlierProportionThresholdField.text)
+                        _controller.inlierProportionThreshold = parseFloat(inlierProportionThresholdField.text)
                     }
                 }
             }
@@ -293,7 +293,7 @@ Rectangle {
                     inputMethodHints:       Qt.ImhFormattedNumbersOnly
                     anchors.verticalCenter: parent.verticalCenter
                     onEditingFinished: {
-                        _controller.divergenceThreshold = parseInt(divergenceThresholdField.text)
+                        _controller.divergenceThreshold = parseFloat(divergenceThresholdField.text)
                     }
                 }
             }
