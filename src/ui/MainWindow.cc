@@ -70,6 +70,7 @@ This file is part of the QGROUNDCONTROL project
 #include "CollisionAvoidanceDataProvider.h"
 #include "OwnFlowHandler.h"
 #include "OwnFlowWorker.h"
+#include "OwnFlowGrapher.h"
 #endif
 
 #ifndef __ios__
@@ -372,7 +373,7 @@ bool MainWindow::_createInnerDockWidget(const QString& widgetName)
                 widget = new HILDockWidget(widgetName, action, this);
                 break;
             case ANALYZE:
-                widget = new Linecharts(widgetName, action, mavlinkDecoder, qgcApp()->toolbox()->ownFlowHandler()->ownFlowWorker(), this);
+                widget = new Linecharts(widgetName, action, mavlinkDecoder, qgcApp()->toolbox()->ownFlowHandler()->ownFlowWorker()->ownFlowGrapher(), this);
                 break;
             case INFO_VIEW:
                 widget= new QGCTabbedInfoView(widgetName, action, this);

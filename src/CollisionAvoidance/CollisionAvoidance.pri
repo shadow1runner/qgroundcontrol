@@ -26,7 +26,8 @@ HEADERS += \
     $$PWD/CollisionAvoidanceDataProvider.h \
     $$PWD/OwnFlowWorker.h \
     $$PWD/CollisionAvoidanceSettings.h \
-    $$PWD/CollisionAvoidanceSettingsController.h
+    $$PWD/CollisionAvoidanceSettingsController.h \
+    $$PWD/OwnFlowGrapher.h
 
 SOURCES += \
     $$PWD/opticalflow/BufferedFrameGrabber.cpp \
@@ -44,7 +45,8 @@ SOURCES += \
     $$PWD/CollisionAvoidanceController.cpp \
     $$PWD/OwnFlowHandler.cpp \
     $$PWD/CollisionAvoidanceDataProvider.cpp \
-    $$PWD/OwnFlowWorker.cpp
+    $$PWD/OwnFlowWorker.cpp \
+    $$PWD/OwnFlowGrapher.cpp
 
 INCLUDEPATH += \
     $$PWD/opticalflow \
