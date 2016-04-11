@@ -59,7 +59,7 @@ public:
 	int               getSubsampleAmount() const            	  { return _subsampleAmount;           }
 	int               getParticles() const                  	  { return _particles;                 }
 	int               getWindowSize() const                 	  { return _windowSize;                }
-	double               getInlierProportionThreshold() const  	  { return _inlierProportionThreshold; }
+	double            getInlierProportionThreshold() const  	  { return _inlierProportionThreshold; }
 	int               getDivergencePatchSize() const        	  { return _divergencePatchSize;       }
 	double            getDivergenceThreshold() const        	  { return _divergenceThreshold;       }
 

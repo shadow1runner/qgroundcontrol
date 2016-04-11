@@ -31,7 +31,11 @@ OwnFlowGrapher::OwnFlowGrapher(hw::OwnFlow* const ownFlow, QGCToolbox* toolbox, 
 {
 	// connect to signals emitted by `OwnFlow` - used for emitting valueChanged signals (and thus for graphing)
     connect(_ownFlow, &hw::OwnFlow::foeChanged,
-	        this, &OwnFlowGrapher::_handleCollisionAvoidance
+            this, &OwnFlowGrapher::_handleCollisionAvoidance
+            );
+
+    connect(_ownFlow, &hw::OwnFlow::frameSkipped,
+	        this, &OwnFlowGrapher::_handleCollisionAvoidanceBadFrame
 	        );
 
     connect(_ownFlow, &hw::OwnFlow::collisionAvoidanceFrameTimingsReady,
@@ -57,6 +61,19 @@ void OwnFlowGrapher::_handleCollisionAvoidance(
     emit valueChanged(getUASID(),"foeRawy","px",QVariant(foeMeasured->getFoE().y), getUnixTime());
     emit valueChanged(getUASID(),"divergence","-",QVariant(divergence->getDivergence()), getUnixTime());
     emit valueChanged(getUASID(),"inlierRatio","‰",QVariant(foeFiltered->getInlierProportion()*1000), getUnixTime());
+}
+
+void OwnFlowGrapher::_handleCollisionAvoidanceBadFrame(
+    const cv::Mat& badFrame, 
+    unsigned long long skipFrameCount, 
+    unsigned long long totalFrameCount,
+    std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured)
+{
+    Q_UNUSED(badFrame);
+    Q_UNUSED(foeMeasured);
+
+    emit valueChanged(getUASID(), "skipFrameRatio", "-", QVariant(skipFrameCount/(double)totalFrameCount), getUnixTime());
+    emit valueChanged(getUASID(), "skipFrames", "-", QVariant(skipFrameCount), getUnixTime());
 }
 
 void OwnFlowGrapher::_handleCollisionAvoidanceFrameTimings(

@@ -229,6 +229,10 @@ Vehicle::Vehicle(LinkInterface*             link,
             );
 
     const auto* const ownFlow = ownFlowWorker->ownFlow();
+    connect(ownFlow, &hw::OwnFlow::frameSkipped,
+            this, &Vehicle::_handleCollisionAvoidanceBadFrame
+            );
+
     connect(ownFlow, &hw::OwnFlow::foeChanged,
             this, &Vehicle::_handleCollisionAvoidance
             );
@@ -504,6 +508,18 @@ void Vehicle::_handleCollisionAvoidance(
     _collisionAvoidanceFactGroup.foeRawy()->setRawValue(foeMeasured->getFoE().y);
     _collisionAvoidanceFactGroup.divergence()->setRawValue(divergence->getDivergence());
     _collisionAvoidanceFactGroup.inlierRatio()->setRawValue(foeFiltered->getInlierProportion()*1000);
+}
+
+void Vehicle::_handleCollisionAvoidanceBadFrame(
+    const cv::Mat& badFrame, 
+    unsigned long long skipFrameCount, 
+    unsigned long long totalFrameCount,
+    std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured)
+{
+    Q_UNUSED(badFrame);
+    Q_UNUSED(foeMeasured);
+
+    _collisionAvoidanceFactGroup.skipRatio()->setRawValue(skipFrameCount/(double)totalFrameCount*100);
 }
 
 void Vehicle::_handleCollisionAvoidanceFrameTimings(
@@ -1841,6 +1857,7 @@ const char* VehicleCollisionAvoidanceFactGroup::_foeRawyFactName = "foeRawy";
 const char* VehicleCollisionAvoidanceFactGroup::_divergenceFactName = "divergence";
 const char* VehicleCollisionAvoidanceFactGroup::_inlierRatioFactName = "inlierRatio";
 const char* VehicleCollisionAvoidanceFactGroup::_fpsFactName = "fps";
+const char* VehicleCollisionAvoidanceFactGroup::_skipRatioFactName = "skipRatio";
 
 VehicleCollisionAvoidanceFactGroup::VehicleCollisionAvoidanceFactGroup(QObject* parent)
     : FactGroup(0, ":/json/Vehicle/CollisionAvoidanceFact.json", parent)
@@ -1852,6 +1869,7 @@ VehicleCollisionAvoidanceFactGroup::VehicleCollisionAvoidanceFactGroup(QObject* 
     , _divergenceFact  (0, _divergenceFactName,  FactMetaData::valueTypeDouble)
     , _inlierRatioFact (0, _inlierRatioFactName, FactMetaData::valueTypeDouble)
     , _fpsFact         (0, _fpsFactName,         FactMetaData::valueTypeDouble)
+    , _skipRatioFact   (0, _skipRatioFactName,   FactMetaData::valueTypeDouble)
 {
     _addFact(&_foeEkfxFact,     _foeEkfxFactName);
     _addFact(&_foeEkfyFact,     _foeEkfyFactName);
@@ -1860,11 +1878,13 @@ VehicleCollisionAvoidanceFactGroup::VehicleCollisionAvoidanceFactGroup(QObject* 
     _addFact(&_divergenceFact,  _divergenceFactName);
     _addFact(&_inlierRatioFact, _inlierRatioFactName);
     _addFact(&_fpsFact, _fpsFactName);
+    _addFact(&_skipRatioFact, _skipRatioFactName);
 
     // Start out as not available "--.--"
     _divergenceFact.setRawValue(std::numeric_limits<float>::quiet_NaN());
     _inlierRatioFact.setRawValue(std::numeric_limits<float>::quiet_NaN());
     _fpsFact.setRawValue(0.0);
+    _skipRatioFact.setRawValue(0.0);
 }
 
 void VehicleCollisionAvoidanceFactGroup::setVehicle(Vehicle* vehicle)

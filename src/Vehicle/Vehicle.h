@@ -249,6 +249,7 @@ public:
     Q_PROPERTY(Fact* divergence  READ divergence   CONSTANT)
     Q_PROPERTY(Fact* inlierRatio READ inlierRatio  CONSTANT)
     Q_PROPERTY(Fact* fps         READ fps          CONSTANT)
+    Q_PROPERTY(Fact* skipRatio   READ skipRatio    CONSTANT)
 
     Fact* foeEkfx(void)     { return &_foeEkfxFact; }
     Fact* foeEkfy(void)     { return &_foeEkfyFact; }
@@ -257,6 +258,7 @@ public:
     Fact* divergence(void)  { return &_divergenceFact; }
     Fact* inlierRatio(void) { return &_inlierRatioFact; }
     Fact* fps(void)         { return &_fpsFact; }
+    Fact* skipRatio(void)   { return &_skipRatioFact; }
 
     void setVehicle(Vehicle* vehicle);
 
@@ -267,6 +269,7 @@ public:
     static const char* _divergenceFactName;
     static const char* _inlierRatioFactName;
     static const char* _fpsFactName;
+    static const char* _skipRatioFactName;
 
 private:
     Vehicle*    _vehicle;
@@ -277,6 +280,7 @@ private:
     Fact        _divergenceFact;
     Fact        _inlierRatioFact;
     Fact        _fpsFact;
+    Fact        _skipRatioFact;
 };
 
 class Vehicle : public FactGroup
@@ -676,6 +680,7 @@ private slots:
     void _prearmErrorTimeout(void);
 
     void _handleCollisionAvoidance(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence);
+    void _handleCollisionAvoidanceBadFrame(const cv::Mat& badFrame, unsigned long long skipFrameCount, unsigned long long totalFrameCount, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured);
     void _handleCollisionAvoidancePausedChange(bool isPaused);
     void _handleCollisionAvoidanceFrameTimings(std::shared_ptr<AvgWatch> allWatch, std::shared_ptr<AvgWatch> colliderWatch, std::shared_ptr<AvgWatch> divWatch, std::shared_ptr<AvgWatch> foeWatch, std::shared_ptr<AvgWatch> kalmanWatch, std::shared_ptr<AvgWatch> opticalFlowWatch);
 private:

@@ -35,6 +35,10 @@ OwnFlowWorker::OwnFlowWorker(const CollisionAvoidanceSettings& settings, QGCTool
              _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::foeReady
            );//Qt::BlockingQueuedConnection);
 
+    connect(&_ownFlow, &hw::OwnFlow::frameSkipped,
+             _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::badFrame
+           );
+
     connect(&_ownFlow, &hw::OwnFlow::opticalFlowChanged,
              _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::opticalFlowReady);
     

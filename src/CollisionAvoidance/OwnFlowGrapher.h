@@ -32,6 +32,7 @@ signals:
 
 private slots:
     void _handleCollisionAvoidance(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence);
+    void _handleCollisionAvoidanceBadFrame(const cv::Mat& badFrame, unsigned long long skipFrameCount, unsigned long long totalFrameCount, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured);
     void _handleCollisionAvoidanceFrameTimings(std::shared_ptr<AvgWatch> allWatch, std::shared_ptr<AvgWatch> colliderWatch, std::shared_ptr<AvgWatch> divWatch, std::shared_ptr<AvgWatch> foeWatch, std::shared_ptr<AvgWatch> kalmanWatch, std::shared_ptr<AvgWatch> opticalFlowWatch);
     void _activeVehicleChanged(Vehicle* activeVehicle);
 

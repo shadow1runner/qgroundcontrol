@@ -44,6 +44,7 @@ CollisionAvoidanceDataProvider::CollisionAvoidanceDataProvider(QGCApplication *a
     : QGCTool(app)
     , QQuickImageProvider(QQmlImageProviderBase::Image)
     , _activeVehicle(NULL)
+    , _settings()
 {
 }
 
@@ -57,9 +58,9 @@ void CollisionAvoidanceDataProvider::setToolbox(QGCToolbox *toolbox)
    connect(toolbox->multiVehicleManager(), &MultiVehicleManager::activeVehicleChanged, this, &CollisionAvoidanceDataProvider::_activeVehicleChanged);
 
    //-- Dummy temporary image until something comes along
-   _pImage = QImage(320, 240, QImage::Format_RGBA8888);
-   _pImage.fill(Qt::black);
-   QPainter painter(&_pImage);
+   _qImage = QImage(320, 240, QImage::Format_RGBA8888);
+   _qImage.fill(Qt::black);
+   QPainter painter(&_qImage);
    QFont f = painter.font();
    f.setPixelSize(20);
    painter.setFont(f);
@@ -94,7 +95,7 @@ QImage CollisionAvoidanceDataProvider::requestImage(const QString & /* image url
     For now, we don't even look at the URL. This will have to be fixed if we're to support multiple
     vehicles transmitting flow images.
 */
-    return _pImage;
+    return _qImage;
 }
 
 void CollisionAvoidanceDataProvider::_activeVehicleChanged(Vehicle* activeVehicle)
@@ -103,20 +104,29 @@ void CollisionAvoidanceDataProvider::_activeVehicleChanged(Vehicle* activeVehicl
 }
 
 void CollisionAvoidanceDataProvider::foeReady(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence) {
-  auto guiImage = renderGuiImage(frame, foeFiltered, foeMeasured, divergence);
-
-  _pImage = cvMatToQImage(guiImage);
-
-  std::cout << "Foe: " << foeFiltered->getFoE() << std::endl;
-  std::cout << "divergence: " << divergence->getDivergence() << std::endl;
-  std::cout << "measuredFoe: " << foeMeasured->getFoE() << std::endl;
-  std::cout << "inlierProportion: " << foeFiltered->getInlierProportion() << std::endl;
-  std::cout << "numberOfInliers: " << foeFiltered->getNumberOfInliers() << std::endl;
-  std::cout << "numberOfParticles: " << foeFiltered->getNumberOfParticles() <<std::endl;
+  Q_UNUSED(divergence);
+  _uiMat = renderGoodFrame(frame, foeFiltered, foeMeasured);
+  _qImage = cvMatToQImage(_uiMat);
   
   if(_activeVehicle!=NULL)
      _activeVehicle->increaseCollisionAvoidanceImageIndex();
+
+  saveCurrentImageToFile();
 }    
+
+void CollisionAvoidanceDataProvider::badFrame(const cv::Mat& badFrame, unsigned long long skipFrameCount, unsigned long long totalFrameCount, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured)
+{
+  Q_UNUSED(skipFrameCount);
+  Q_UNUSED(totalFrameCount);
+
+  _uiMat = renderBadFrame(badFrame, foeMeasured);
+  _qImage = cvMatToQImage(_uiMat);
+  
+  if(_activeVehicle!=NULL)
+     _activeVehicle->increaseCollisionAvoidanceImageIndex();
+
+  saveCurrentImageToFile(true);
+}
 
 void CollisionAvoidanceDataProvider::opticalFlowReady(const cv::Mat& opticalFlow)
 {
@@ -129,6 +139,8 @@ void CollisionAvoidanceDataProvider::histogramReady(const cv::Mat& histogram)
 }
 
 QImage CollisionAvoidanceDataProvider::cvMatToQImage(const cv::Mat& mat) {
+    ++_frameCount;
+
     // http://stackoverflow.com/a/12312326/2559632
     cvtColor(mat, mat, CV_BGR2RGB);
     // cv::Mat tmpMat;
@@ -136,15 +148,14 @@ QImage CollisionAvoidanceDataProvider::cvMatToQImage(const cv::Mat& mat) {
     return QImage((uchar*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888);
 }
 
-cv::Mat CollisionAvoidanceDataProvider::renderGuiImage(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence)
+cv::Mat CollisionAvoidanceDataProvider::renderGoodFrame(
+  const cv::Mat& frame,
+  std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered,
+  std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured)
 {
-    Q_UNUSED(frame);
-    Q_UNUSED(divergence);
-
-   // ========================== DRAW =====================
    std::vector<cv::Mat> canvas;
 
-   cv::Scalar color = foeFiltered->getInlierProportion() > inlierProportion ? GOOD_CONFIDENCE : BAD_CONFIDENCE;
+   cv::Scalar color = GOOD_FRAME_COLOR;
 
    DrawHelper::drawRings(heatMap, foeMeasured->getFoE(), color);
    DrawHelper::drawRings(heatMap, foeFiltered->getFoE(), cv::Scalar(255, 156, 0));
@@ -169,9 +180,39 @@ cv::Mat CollisionAvoidanceDataProvider::renderGuiImage(const cv::Mat& frame, std
 //   canvas.push_back(hsv);
 
    auto combined = DrawHelper::makeRowCanvas(canvas, cv::Scalar(64, 64, 64));
-//   //    cv::imwrite(OUTPUT_DIR + std::to_string(frame_number) + ".jpg", combined);
-//   imshow("combined", combined);
-//   cv::waitKey(30);
-  // ========================== DRAW - END =====================
+   return combined;
+}  
+
+cv::Mat CollisionAvoidanceDataProvider::renderBadFrame(
+  const cv::Mat& frame,
+  std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured)
+{
+   std::vector<cv::Mat> canvas;
+   cv::Scalar color = BAD_FRAME_COLOR;
+
+   DrawHelper::drawRings(heatMap, foeMeasured->getFoE(), color);
+   canvas.push_back(heatMap);
+
+   cv::Mat bgr;
+   cv::cvtColor(frame, bgr, cv::COLOR_GRAY2BGR);
+   DrawHelper::drawRings(bgr, foeMeasured->getFoE(), color);
+   canvas.push_back(bgr);
+
+   cv::Mat flowOverlay;
+   cv::cvtColor(frame, flowOverlay, cv::COLOR_GRAY2BGR);
+   DrawHelper::drawOpticalFlowMap(opticalFlow, flowOverlay, GREEN);
+   DrawHelper::drawRings(flowOverlay, foeMeasured->getFoE(), color);
+   canvas.push_back(flowOverlay);
+
+   auto combined = DrawHelper::makeRowCanvas(canvas, cv::Scalar(64, 64, 64));
    return combined;
 }    
+
+void CollisionAvoidanceDataProvider::saveCurrentImageToFile(bool isBadFrame)
+{
+  auto fileName = QString::number(_frameCount);
+  if(isBadFrame)
+    fileName += "_bad";
+
+  cv::imwrite((_settings.getOutputDir() + fileName + ".jpg").toStdString(), _uiMat);
+}

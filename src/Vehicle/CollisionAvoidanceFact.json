@@ -50,6 +50,13 @@
             "type":             "double",
             "decimalPlaces":    2,
             "units":            "fps"
+        },
+        {
+            "name":             "skipRatio",
+            "shortDescription": "Skip Ratio",
+            "type":             "double",
+            "decimalPlaces":    0,
+            "units":            "%"
         }
     ]
 }
