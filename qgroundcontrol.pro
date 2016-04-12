@@ -18,7 +18,7 @@
 # -------------------------------------------------
 
 exists($${OUT_PWD}/qgroundcontrol.pro) {
-    error("You must use shadow build.")
+    error("You must use shadow build (e.g. mkdir build; cd build; qmake ../qgroundcontrol.pro).")
 }
 
 message(Qt version $$[QT_VERSION])
@@ -65,7 +65,15 @@ LinuxBuild {
 CONFIG += qt \
     thread \
     c++11 \
+
+contains(DEFINES, ENABLE_VERBOSE_OUTPUT) {
+    message("Enable verbose compiler output (manual override from command line)")
+} else:exists(user_config.pri):infile(user_config.pri, DEFINES, ENABLE_VERBOSE_OUTPUT) {
+    message("Enable verbose compiler output (manual override from user_config.pri)")
+} else {
+CONFIG += \
     silent
+}
 
 QT += \
     concurrent \
