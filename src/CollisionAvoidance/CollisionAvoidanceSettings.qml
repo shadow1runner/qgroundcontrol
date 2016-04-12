@@ -138,15 +138,24 @@ Rectangle {
             //-- Output Dir
             Row {
                 spacing:    ScreenTools.defaultFontPixelWidth
-                QGCLabel {
-                    text:   "Output Directory:"
+                QGCCheckBox {
+                    text:       "Write to output directory (dir has to exist):"
                     anchors.verticalCenter: parent.verticalCenter
+                    checked:    _controller.writeToOutputDirEnabled
+                    onClicked: {
+                        _controller.writeToOutputDirEnabled = checked
+                    }
+                }
+                Item {
+                    height: ScreenTools.defaultFontPixelHeight / 2
+                    width: ScreenTools.defaultFontPixelHeight / 2
                 }
                 QGCTextField {
                     id:     outputDirField
                     text:   _controller.outputDir
                     width:  ScreenTools.defaultFontPixelWidth * 60
                     anchors.verticalCenter: parent.verticalCenter
+                    enabled: _controller.writeToOutputDirEnabled
                     onEditingFinished: {
                         _controller.outputDir = outputDirField.text
                     }
@@ -234,9 +243,17 @@ Rectangle {
             //-- inlierProportionThreshold
             Row {
                 spacing:    ScreenTools.defaultFontPixelWidth
-                QGCLabel {
-                    text:   "Inlier Proportion Threshold:"
+                QGCCheckBox {
+                    text:       "Sampling based on Inlier Proportion:"
                     anchors.verticalCenter: parent.verticalCenter
+                    checked:    _controller.inlierProportionThresholdEnabled
+                    onClicked: {
+                        _controller.inlierProportionThresholdEnabled = checked
+                    }
+                }
+                Item {
+                    height: ScreenTools.defaultFontPixelHeight / 2
+                    width: ScreenTools.defaultFontPixelHeight / 2
                 }
                 QGCTextField {
                     id:     inlierProportionThresholdField
@@ -244,6 +261,7 @@ Rectangle {
                     width:  ScreenTools.defaultFontPixelWidth * 6
                     inputMethodHints:       Qt.ImhFormattedNumbersOnly
                     anchors.verticalCenter: parent.verticalCenter
+                    enabled: _controller.inlierProportionThresholdEnabled
                     onEditingFinished: {
                         _controller.inlierProportionThreshold = parseFloat(inlierProportionThresholdField.text)
                     }

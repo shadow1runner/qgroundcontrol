@@ -10,7 +10,7 @@ OwnFlowWorker::OwnFlowWorker(const CollisionAvoidanceSettings& settings, QGCTool
     , _collisionAvoidanceDataProvider(toolbox->collisionAvoidanceDataProvider())
     , _isPaused(false)
     , _converter(settings.getSubsampleAmount())
-    , _ownFlow(settings.getParticles(), settings.getWindowSize())
+    , _ownFlow(settings.getParticles(), settings.getWindowSize(), settings.getInlierProportionThreshold(), settings.getInlierProportionThresholdEnabled())
     , _grapher(&_ownFlow, toolbox)
 { 
     _converterThread.setObjectName("OwnFlowConverter");

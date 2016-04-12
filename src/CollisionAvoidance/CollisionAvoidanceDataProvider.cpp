@@ -140,12 +140,12 @@ void CollisionAvoidanceDataProvider::histogramReady(const cv::Mat& histogram)
 
 QImage CollisionAvoidanceDataProvider::cvMatToQImage(const cv::Mat& mat) {
     ++_frameCount;
-
+    cv::Mat tmp;
     // http://stackoverflow.com/a/12312326/2559632
-    cvtColor(mat, mat, CV_BGR2RGB);
+    cvtColor(mat, tmp, CV_BGR2RGB);
     // cv::Mat tmpMat;
     // resize(mat, tmpMat, cv::Size(0,0), 2, 2, cv::INTER_LINEAR);
-    return QImage((uchar*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888);
+    return QImage((uchar*)tmp.data, tmp.cols, tmp.rows, tmp.step, QImage::Format_RGB888);
 }
 
 cv::Mat CollisionAvoidanceDataProvider::renderGoodFrame(
@@ -210,6 +210,9 @@ cv::Mat CollisionAvoidanceDataProvider::renderBadFrame(
 
 void CollisionAvoidanceDataProvider::saveCurrentImageToFile(bool isBadFrame)
 {
+  if(!_settings.getWriteToOutputEnabled())
+    return;
+  
   auto fileName = QString::number(_frameCount);
   if(isBadFrame)
     fileName += "_bad";
