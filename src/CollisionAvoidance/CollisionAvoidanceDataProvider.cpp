@@ -44,7 +44,7 @@ CollisionAvoidanceDataProvider::CollisionAvoidanceDataProvider(QGCApplication *a
     : QGCTool(app)
     , QQuickImageProvider(QQmlImageProviderBase::Image)
     , _activeVehicle(NULL)
-    , _settings()
+    , _settings(CollisionAvoidanceSettings::getInstance())
 {
 }
 
@@ -105,6 +105,9 @@ void CollisionAvoidanceDataProvider::_activeVehicleChanged(Vehicle* activeVehicl
 
 void CollisionAvoidanceDataProvider::foeReady(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence) {
   Q_UNUSED(divergence);
+
+  saveRawFrameToFile(frame);
+
   _uiMat = renderGoodFrame(frame, foeFiltered, foeMeasured);
   _qImage = cvMatToQImage(_uiMat);
   
@@ -118,6 +121,8 @@ void CollisionAvoidanceDataProvider::badFrame(const cv::Mat& badFrame, unsigned 
 {
   Q_UNUSED(skipFrameCount);
   Q_UNUSED(totalFrameCount);
+
+  saveRawFrameToFile(badFrame);
 
   _uiMat = renderBadFrame(badFrame, foeMeasured);
   _qImage = cvMatToQImage(_uiMat);
@@ -218,4 +223,14 @@ void CollisionAvoidanceDataProvider::saveCurrentImageToFile(bool isBadFrame)
     fileName += "_bad";
 
   cv::imwrite((_settings.getOutputDir() + fileName + ".jpg").toStdString(), _uiMat);
+}
+
+void CollisionAvoidanceDataProvider::saveRawFrameToFile(const cv::Mat& frame)
+{
+  if(!_settings.getWriteRawFrames())
+    return;
+  
+  auto fileName = QString::number(_frameCount);
+
+  cv::imwrite((_settings.getRawFramesDir() + fileName + ".jpg").toStdString(), frame);
 }

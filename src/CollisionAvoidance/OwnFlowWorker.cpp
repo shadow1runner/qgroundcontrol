@@ -4,13 +4,13 @@
 
 #include "QGCToolbox.h"
 
-OwnFlowWorker::OwnFlowWorker(const CollisionAvoidanceSettings& settings, QGCToolbox* toolbox)
+OwnFlowWorker::OwnFlowWorker(CollisionAvoidanceSettings& settings, QGCToolbox* toolbox)
     : QObject(NULL)
 	, _settings(settings)
     , _collisionAvoidanceDataProvider(toolbox->collisionAvoidanceDataProvider())
     , _isPaused(false)
-    , _converter(settings.getSubsampleAmount())
-    , _ownFlow(settings.getParticles(), settings.getWindowSize(), settings.getInlierProportionThreshold(), settings.getInlierProportionThresholdEnabled())
+    , _converter(settings)
+    , _ownFlow(settings)
     , _grapher(&_ownFlow, toolbox)
 { 
     _converterThread.setObjectName("OwnFlowConverter");

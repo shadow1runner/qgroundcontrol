@@ -21,11 +21,11 @@ HEADERS += \
     $$PWD/opticalflow/Kalman.h \
     $$PWD/opticalflow/OwnFlow.h \
     $$PWD/opticalflow/RandomCollider.h \
+    $$PWD/opticalflow/CollisionAvoidanceSettings.h \
     $$PWD/CollisionAvoidanceController.h \
     $$PWD/OwnFlowHandler.h \
     $$PWD/CollisionAvoidanceDataProvider.h \
     $$PWD/OwnFlowWorker.h \
-    $$PWD/CollisionAvoidanceSettings.h \
     $$PWD/CollisionAvoidanceSettingsController.h \
     $$PWD/OwnFlowGrapher.h
 

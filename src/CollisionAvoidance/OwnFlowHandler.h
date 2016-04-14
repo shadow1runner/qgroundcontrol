@@ -39,7 +39,7 @@ public:
     OwnFlowWorker* ownFlowWorker();
 
 private:
-	CollisionAvoidanceSettings _settings;
+	CollisionAvoidanceSettings& _settings;
 
     QThread _ownFlowWorkerThread;
 	OwnFlowWorker* _ownFlowWorker = nullptr;

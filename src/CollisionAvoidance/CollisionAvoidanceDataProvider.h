@@ -48,12 +48,14 @@ private:
     unsigned long long _frameCount=0;
 
     Vehicle* _activeVehicle;
-    CollisionAvoidanceSettings _settings;
+    CollisionAvoidanceSettings& _settings;
 
     QImage  cvMatToQImage(const cv::Mat& mat);
     cv::Mat renderGoodFrame(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured);
     cv::Mat renderBadFrame(const cv::Mat& badFrame, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured);
     void saveCurrentImageToFile(bool isBadFrame=false);
+    void saveRawFrameToFile(const cv::Mat& frame);
+
 
     cv::Mat _uiMat; // the current displayed image on the ui as cv::Mat
     QImage _qImage; // .. and as qImage

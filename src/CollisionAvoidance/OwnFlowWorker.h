@@ -30,7 +30,7 @@ class OwnFlowWorker : public QObject {
 	Q_OBJECT
 
 public:
-    OwnFlowWorker(const CollisionAvoidanceSettings& settings, QGCToolbox* toolbox);
+    OwnFlowWorker(CollisionAvoidanceSettings& settings, QGCToolbox* toolbox);
     ~OwnFlowWorker();
 
     hw::OwnFlow* ownFlow();
@@ -45,7 +45,7 @@ signals:
     void isPausedChanged(bool isPaused);
 
 private:
-    const CollisionAvoidanceSettings& _settings;
+    CollisionAvoidanceSettings& _settings;
     const CollisionAvoidanceDataProvider * const _collisionAvoidanceDataProvider = nullptr;
 
     bool _isPaused;

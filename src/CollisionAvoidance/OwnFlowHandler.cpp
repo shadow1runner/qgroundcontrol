@@ -8,6 +8,7 @@
 
 OwnFlowHandler::OwnFlowHandler(QGCApplication* app)
     : QGCTool(app)
+    , _settings(CollisionAvoidanceSettings::getInstance())
 {
     QtHelper::registerMetaTypes();
     _ownFlowWorkerThread.setObjectName("OwnFlowHandler");

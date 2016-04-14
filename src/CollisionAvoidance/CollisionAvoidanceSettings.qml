@@ -35,7 +35,7 @@ Rectangle {
 
 
             QGCLabel {
-                text:   "Collision Avoidance Settings (change requires restart)"
+                text:   "Collision Avoidance Settings"
                 font.pixelSize: ScreenTools.mediumFontPixelSize
             }
             Rectangle {
@@ -158,6 +158,40 @@ Rectangle {
                     enabled: _controller.writeToOutputDirEnabled
                     onEditingFinished: {
                         _controller.outputDir = outputDirField.text
+                    }
+                }
+            }
+
+            Item {
+                height: ScreenTools.defaultFontPixelHeight / 2
+                width:  parent.width
+            }
+
+            
+            //-----------------------------------------------------------------
+            //-- writeRawFrames
+            Row {
+                spacing:    ScreenTools.defaultFontPixelWidth
+                QGCCheckBox {
+                    text:       "Write raw frames to:"
+                    anchors.verticalCenter: parent.verticalCenter
+                    checked:    _controller.writeRawFrames
+                    onClicked: {
+                        _controller.writeRawFrames = checked
+                    }
+                }
+                Item {
+                    height: ScreenTools.defaultFontPixelHeight / 2
+                    width: ScreenTools.defaultFontPixelHeight / 2
+                }
+                QGCTextField {
+                    id:     rawFramesDir
+                    text:   _controller.rawFramesDir
+                    width:  ScreenTools.defaultFontPixelWidth * 60
+                    anchors.verticalCenter: parent.verticalCenter
+                    enabled: _controller.writeRawFrames
+                    onEditingFinished: {
+                        _controller.rawFramesDir = rawFramesDir.text
                     }
                 }
             }

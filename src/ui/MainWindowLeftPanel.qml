@@ -258,7 +258,7 @@ Item {
                 QGCButton {
                     anchors.left:   parent.left
                     anchors.right:  parent.right
-                    text:           "Collision Avoidance"
+                    text:           "CA"
                     visible:        ScreenTools.isDebug
                     exclusiveGroup: panelActionGroup
                     onClicked: {
