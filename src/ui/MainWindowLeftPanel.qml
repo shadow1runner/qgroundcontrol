@@ -114,7 +114,8 @@ Item {
         MouseArea {
             anchors.fill: parent
             onClicked: {
-                mainWindow.hideLeftMenu()
+                if (!__animateShowDialog.running)
+                    mainWindow.hideLeftMenu()
             }
         }
     }
@@ -157,14 +158,14 @@ Item {
                 spacing:                 ScreenTools.defaultFontPixelHeight
 
                 QGCLabel {
-                    text:           "Preferences"
+                    text:           qsTr("Preferences")
                     anchors.horizontalCenter: parent.horizontalCenter
                 }
 
                 QGCButton {
                     anchors.left:   parent.left
                     anchors.right:  parent.right
-                    text:           "General"
+                    text:           qsTr("General")
                     exclusiveGroup: panelActionGroup
                     onClicked: {
                         if(__rightPanel.source != "GeneralSettings.qml") {
@@ -177,7 +178,7 @@ Item {
                 QGCButton {
                     anchors.left:   parent.left
                     anchors.right:  parent.right
-                    text:           "Comm Links"
+                    text:           qsTr("Comm Links")
                     exclusiveGroup: panelActionGroup
                     onClicked: {
                         if(__rightPanel.source != "LinkSettings.qml") {
@@ -190,7 +191,7 @@ Item {
                 QGCButton {
                     anchors.left:   parent.left
                     anchors.right:  parent.right
-                    text:           "Offline Maps"
+                    text:           qsTr("Offline Maps")
                     exclusiveGroup: panelActionGroup
                     onClicked: {
                         if(__rightPanel.source != "OfflineMap.qml") {
@@ -203,7 +204,7 @@ Item {
                 QGCButton {
                     anchors.left:   parent.left
                     anchors.right:  parent.right
-                    text:           "MavLink"
+                    text:           qsTr("MavLink")
                     exclusiveGroup: panelActionGroup
                     onClicked: {
                         if(__rightPanel.source != "MavlinkSettings.qml") {
@@ -216,7 +217,7 @@ Item {
                 QGCButton {
                     anchors.left:   parent.left
                     anchors.right:  parent.right
-                    text:           "Console"
+                    text:           qsTr("Console")
                     exclusiveGroup: panelActionGroup
                     onClicked: {
                         if(__rightPanel.source != "QGroundControl/Controls/AppMessages.qml") {
@@ -229,7 +230,7 @@ Item {
                 QGCButton {
                     anchors.left:   parent.left
                     anchors.right:  parent.right
-                    text:           "Mock Link"
+                    text:           qsTr("Mock Link")
                     visible:        ScreenTools.isDebug
                     exclusiveGroup: panelActionGroup
                     onClicked: {
@@ -243,7 +244,7 @@ Item {
                 QGCButton {
                     anchors.left:   parent.left
                     anchors.right:  parent.right
-                    text:           "Debug"
+                    text:           qsTr("Debug")
                     visible:        ScreenTools.isDebug
                     exclusiveGroup: panelActionGroup
                     onClicked: {
@@ -278,7 +279,8 @@ Item {
         anchors.right:  parent.right
         height:         toolBar.height
         onClicked: {
-            mainWindow.hideLeftMenu()
+            if (!__animateShowDialog.running)
+                mainWindow.hideLeftMenu()
         }
     }
 
@@ -325,8 +327,10 @@ Item {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    __rightPanel.source = ""
-                    mainWindow.hideLeftMenu()
+                    if (!__animateShowDialog.running) {
+                        __rightPanel.source = ""
+                        mainWindow.hideLeftMenu()
+                    }
                 }
             }
 

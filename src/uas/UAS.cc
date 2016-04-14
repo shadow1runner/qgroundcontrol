@@ -58,8 +58,6 @@ UAS::UAS(MAVLinkProtocol* protocol, Vehicle* vehicle, FirmwarePluginManager * fi
     receiveDropRate(0),
     sendDropRate(0),
 
-    base_mode(0),
-    custom_mode(0),
     status(-1),
 
     startTime(QGC::groundTimeMilliseconds()),
@@ -607,39 +605,6 @@ void UAS::receiveMessage(mavlink_message_t message)
             processParamValueMsg(message, parameterName,rawValue,paramVal);
          }
             break;
-        case MAVLINK_MSG_ID_COMMAND_ACK:
-        {
-            mavlink_command_ack_t ack;
-            mavlink_msg_command_ack_decode(&message, &ack);
-
-            emit commandAck(this, message.compid, ack.command, ack.result);
-
-            QString commandName;
-            MavCmdInfo* cmdInfo = qgcApp()->toolbox()->missionCommands()->getMavCmdInfo((MAV_CMD)ack.command, _vehicle);
-            if (cmdInfo) {
-                commandName = cmdInfo->friendlyName();
-            } else {
-                commandName = ack.command;
-            }
-
-            switch (ack.result) {
-            case MAV_RESULT_TEMPORARILY_REJECTED:
-                emit textMessageReceived(uasId, message.compid, MAV_SEVERITY_WARNING, tr("%1 temporarily rejected").arg(commandName));
-                break;
-            case MAV_RESULT_DENIED:
-                emit textMessageReceived(uasId, message.compid, MAV_SEVERITY_ERROR, tr("%1 denied").arg(commandName));
-                break;
-            case MAV_RESULT_UNSUPPORTED:
-                emit textMessageReceived(uasId, message.compid, MAV_SEVERITY_WARNING, tr("%1 unsupported").arg(commandName));
-                break;
-            case MAV_RESULT_FAILED:
-                emit textMessageReceived(uasId, message.compid, MAV_SEVERITY_ERROR, tr("%1 failed").arg(commandName));
-                break;
-            default:
-                // Do nothing
-                break;
-            }
-        }
         case MAVLINK_MSG_ID_ATTITUDE_TARGET:
         {
             mavlink_attitude_target_t out;
@@ -1473,6 +1438,7 @@ void UAS::setManual6DOFControlCommands(double x, double y, double z, double roll
     if (!_vehicle) {
         return;
     }
+    const uint8_t base_mode = _vehicle->baseMode();
 
    // If system has manual inputs enabled and is armed
     if(((base_mode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL) && (base_mode & MAV_MODE_FLAG_DECODE_POSITION_SAFETY)) || (base_mode & MAV_MODE_FLAG_HIL_ENABLED))
@@ -1719,7 +1685,7 @@ void UAS::sendHilState(quint64 time_us, float roll, float pitch, float yaw, floa
         return;
     }
 
-    if (this->base_mode & MAV_MODE_FLAG_HIL_ENABLED)
+    if (_vehicle->hilMode())
     {
         float q[4];
 
@@ -1799,7 +1765,7 @@ void UAS::sendHilSensors(quint64 time_us, float xacc, float yacc, float zacc, fl
         return;
     }
 
-    if (this->base_mode & MAV_MODE_FLAG_HIL_ENABLED)
+    if (_vehicle->hilMode())
     {
         float xacc_corrupt = addZeroMeanNoise(xacc, xacc_var);
         float yacc_corrupt = addZeroMeanNoise(yacc, yacc_var);
@@ -1850,7 +1816,7 @@ void UAS::sendHilOpticalFlow(quint64 time_us, qint16 flow_x, qint16 flow_y, floa
     Q_UNUSED(quality);
     Q_UNUSED(ground_distance);
 
-    if (this->base_mode & MAV_MODE_FLAG_HIL_ENABLED)
+    if (_vehicle->hilMode())
     {
 #if 0
         mavlink_message_t msg;
@@ -1882,7 +1848,7 @@ void UAS::sendHilGps(quint64 time_us, double lat, double lon, double alt, int fi
     if (QGC::groundTimeMilliseconds() - lastSendTimeGPS < 100)
         return;
 
-    if (this->base_mode & MAV_MODE_FLAG_HIL_ENABLED)
+    if (_vehicle->hilMode())
     {
         float course = cog;
         // map to 0..2pi

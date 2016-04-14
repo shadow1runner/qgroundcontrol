@@ -564,6 +564,8 @@ public:
     uint            messagesLost        () { return _messagesLost; }
     bool            flying              () const { return _flying; }
     bool            guidedMode          () const;
+    uint8_t         baseMode            () const { return _base_mode; }
+    uint32_t        customMode          () const { return _custom_mode; }
 
     Fact* roll              (void) { return &_rollFact; }
     Fact* heading           (void) { return &_headingFact; }
@@ -614,7 +616,8 @@ signals:
     void flyingChanged(bool flying);
     void guidedModeChanged(bool guidedMode);
     void prearmErrorChanged(const QString& prearmError);
-    void collisionAvoidanceImageIndexChanged();
+    void commandLongAck(uint8_t compID, uint16_t command, uint8_t result);
+	void collisionAvoidanceImageIndexChanged();
     void collisionAvoidanceActiveChanged(bool collisionAvoidanceActive);
 
     void messagesReceivedChanged    ();
@@ -698,6 +701,7 @@ private:
     void _handleWind(mavlink_message_t& message);
     void _handleVibration(mavlink_message_t& message);
     void _handleExtendedSysState(mavlink_message_t& message);
+    void _handleCommandAck(mavlink_message_t& message);
     void _missionManagerError(int errorCode, const QString& errorMsg);
     void _mapTrajectoryStart(void);
     void _mapTrajectoryStop(void);
