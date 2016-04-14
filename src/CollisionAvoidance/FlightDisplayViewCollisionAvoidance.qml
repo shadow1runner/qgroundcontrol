@@ -37,46 +37,7 @@ Item {
             id: backGround
             color: Qt.rgba(0,0,0,0.75)
             anchors.fill:   parent
-
-            // QGCLabel {
-            //     id:             titleLabel
-            //     text:           "Collision Avoidance Camera"
-            //     font.weight:    Font.DemiBold
-            // }
-
-            Row {
-                id:                       buttonRow
-                spacing:                  ScreenTools.defaultFontPixelWidth
-                anchors.top:              parent.top
-                anchors.horizontalCenter: parent.horizontalCenter
-
-                Rectangle {
-                    id: container; 
-                    anchors.centerIn: parent
-                    function toggle() {
-                        if (state=="Start") {state = "Stop"} else { state ="Start"}
-                    }
-                    state: "Start"
-                    states: [
-                        State {
-                            name: "Start";
-                        },
-                        State {
-                            name: "Stop";
-                        }
-                    ]
-                    QGCButton { 
-                        id:             btn; 
-                        text:           container.state;
-                        width:          ScreenTools.defaultFontPixelWidth * 11
-                        // anchors.fill:   parent; 
-                        onClicked: {
-                            container.toggle();
-                            _caController.onStartStopClicked(container.state==="Stop"); 
-                        }
-                    }
-                }
-            }
+            
             Image {
                 source:     _activeVehicle ? "image://OwnFlow/" + _activeVehicle.id + "/" + _activeVehicle.collisionAvoidanceImageIndex  : ""
                 width:      parent.width * 0.5
