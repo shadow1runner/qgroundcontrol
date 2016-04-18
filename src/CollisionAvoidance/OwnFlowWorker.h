@@ -23,6 +23,7 @@
 #include "Divergence.h"
 #include "AvgWatch.h"
 #include "OwnFlowGrapher.h"
+#include "FramePersister.h"
 
 class QGCToolbox;
 
@@ -55,10 +56,12 @@ private:
     hw::Converter _converter;
     hw::OwnFlow _ownFlow;
     OwnFlowGrapher _grapher;
+    FramePersister _framePersister;
 
     QThread _ownFlowThread;
     QThread _converterThread;
     QThread _grapherThread;
+    QThread _ioThread;
 };
 
 #endif // OWNFLOWWORKER_H

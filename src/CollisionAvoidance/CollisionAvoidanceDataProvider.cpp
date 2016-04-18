@@ -106,15 +106,12 @@ void CollisionAvoidanceDataProvider::_activeVehicleChanged(Vehicle* activeVehicl
 void CollisionAvoidanceDataProvider::foeReady(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence) {
   Q_UNUSED(divergence);
 
-  saveRawFrameToFile(frame);
-
   _uiMat = renderGoodFrame(frame, foeFiltered, foeMeasured);
+  emit uiFrameReady(_uiMat);
   _qImage = cvMatToQImage(_uiMat);
   
   if(_activeVehicle!=NULL)
      _activeVehicle->increaseCollisionAvoidanceImageIndex();
-
-  saveCurrentImageToFile();
 }    
 
 void CollisionAvoidanceDataProvider::badFrame(const cv::Mat& badFrame, unsigned long long skipFrameCount, unsigned long long totalFrameCount, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured)
@@ -122,15 +119,12 @@ void CollisionAvoidanceDataProvider::badFrame(const cv::Mat& badFrame, unsigned 
   Q_UNUSED(skipFrameCount);
   Q_UNUSED(totalFrameCount);
 
-  saveRawFrameToFile(badFrame);
-
   _uiMat = renderBadFrame(badFrame, foeMeasured);
+  emit uiFrameReady(_uiMat);
   _qImage = cvMatToQImage(_uiMat);
   
   if(_activeVehicle!=NULL)
      _activeVehicle->increaseCollisionAvoidanceImageIndex();
-
-  saveCurrentImageToFile(true);
 }
 
 void CollisionAvoidanceDataProvider::opticalFlowReady(const cv::Mat& opticalFlow)
@@ -211,26 +205,4 @@ cv::Mat CollisionAvoidanceDataProvider::renderBadFrame(
 
    auto combined = DrawHelper::makeRowCanvas(canvas, cv::Scalar(64, 64, 64));
    return combined;
-}    
-
-void CollisionAvoidanceDataProvider::saveCurrentImageToFile(bool isBadFrame)
-{
-  if(!_settings.getWriteToOutputEnabled())
-    return;
-  
-  auto fileName = QString::number(_frameCount);
-  if(isBadFrame)
-    fileName += "_bad";
-
-  cv::imwrite((_settings.getOutputDir() + fileName + ".jpg").toStdString(), _uiMat);
-}
-
-void CollisionAvoidanceDataProvider::saveRawFrameToFile(const cv::Mat& frame)
-{
-  if(!_settings.getWriteRawFrames())
-    return;
-  
-  auto fileName = QString::number(_frameCount);
-
-  cv::imwrite((_settings.getRawFramesDir() + fileName + ".jpg").toStdString(), frame);
 }

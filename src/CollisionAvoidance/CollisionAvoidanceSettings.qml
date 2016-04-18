@@ -135,73 +135,6 @@ Rectangle {
             }
             
             //-----------------------------------------------------------------
-            //-- Output Dir
-            Row {
-                spacing:    ScreenTools.defaultFontPixelWidth
-                QGCCheckBox {
-                    text:       "Write to output directory (dir has to exist):"
-                    anchors.verticalCenter: parent.verticalCenter
-                    checked:    _controller.writeToOutputDirEnabled
-                    onClicked: {
-                        _controller.writeToOutputDirEnabled = checked
-                    }
-                }
-                Item {
-                    height: ScreenTools.defaultFontPixelHeight / 2
-                    width: ScreenTools.defaultFontPixelHeight / 2
-                }
-                QGCTextField {
-                    id:     outputDirField
-                    text:   _controller.outputDir
-                    width:  ScreenTools.defaultFontPixelWidth * 60
-                    anchors.verticalCenter: parent.verticalCenter
-                    enabled: _controller.writeToOutputDirEnabled
-                    onEditingFinished: {
-                        _controller.outputDir = outputDirField.text
-                    }
-                }
-            }
-
-            Item {
-                height: ScreenTools.defaultFontPixelHeight / 2
-                width:  parent.width
-            }
-
-            
-            //-----------------------------------------------------------------
-            //-- writeRawFrames
-            Row {
-                spacing:    ScreenTools.defaultFontPixelWidth
-                QGCCheckBox {
-                    text:       "Write raw frames to:"
-                    anchors.verticalCenter: parent.verticalCenter
-                    checked:    _controller.writeRawFrames
-                    onClicked: {
-                        _controller.writeRawFrames = checked
-                    }
-                }
-                Item {
-                    height: ScreenTools.defaultFontPixelHeight / 2
-                    width: ScreenTools.defaultFontPixelHeight / 2
-                }
-                QGCTextField {
-                    id:     rawFramesDir
-                    text:   _controller.rawFramesDir
-                    width:  ScreenTools.defaultFontPixelWidth * 60
-                    anchors.verticalCenter: parent.verticalCenter
-                    enabled: _controller.writeRawFrames
-                    onEditingFinished: {
-                        _controller.rawFramesDir = rawFramesDir.text
-                    }
-                }
-            }
-
-            Item {
-                height: ScreenTools.defaultFontPixelHeight / 2
-                width:  parent.width
-            }
-
-            //-----------------------------------------------------------------
             //-- subsampleAmount
             Row {
                 spacing:    ScreenTools.defaultFontPixelWidth
@@ -346,6 +279,263 @@ Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     onEditingFinished: {
                         _controller.divergenceThreshold = parseFloat(divergenceThresholdField.text)
+                    }
+                }
+            }
+
+            Item {
+                height: ScreenTools.defaultFontPixelHeight / 2
+                width:  parent.width
+            }
+
+            //-----------------------------------------------------------------
+            //-- Output Dir
+            Row {
+                spacing:    ScreenTools.defaultFontPixelWidth
+                QGCCheckBox {
+                    text:       "Persist frames"
+                    anchors.verticalCenter: parent.verticalCenter
+                    checked:    _controller.writeToOutputEnabled && _controller.writeToOutputEnabled
+                    onClicked: {
+                        _controller.writeToOutputEnabled = checked
+                    }
+                }
+                Item {
+                    height: ScreenTools.defaultFontPixelHeight / 2
+                    width: ScreenTools.defaultFontPixelHeight / 2
+                }
+            }
+
+            Item {
+                height: ScreenTools.defaultFontPixelHeight / 2
+                width:  parent.width
+            }
+
+            //-----------------------------------------------------------------
+            //-- clearOldFramesEnabled
+            Row {
+                spacing:    ScreenTools.defaultFontPixelWidth
+                QGCCheckBox {
+                    text:       "Clear old persisted frames on start"
+                    anchors.verticalCenter: parent.verticalCenter
+                    checked:    _controller.writeToOutputEnabled && _controller.clearOldFramesEnabled
+                    enabled:    _controller.writeToOutputEnabled
+                    onClicked: {
+                        _controller.clearOldFramesEnabled = checked
+                    }
+                }
+                Item {
+                    height: ScreenTools.defaultFontPixelHeight / 2
+                    width: ScreenTools.defaultFontPixelHeight / 2
+                }
+            }
+
+            Item {
+                height: ScreenTools.defaultFontPixelHeight / 2
+                width:  parent.width
+            }
+
+            
+            //-----------------------------------------------------------------
+            //-- writeRawFrames
+            Row {
+                spacing:    ScreenTools.defaultFontPixelWidth
+                QGCCheckBox {
+                    text:       "Write raw frames to:"
+                    anchors.verticalCenter: parent.verticalCenter
+                    checked:    _controller.writeToOutputEnabled && _controller.writeRawFrames
+                    enabled:    _controller.writeToOutputEnabled
+                    onClicked: {
+                        _controller.writeRawFrames = checked
+                    }
+                }
+                Item {
+                    height: ScreenTools.defaultFontPixelHeight / 2
+                    width: ScreenTools.defaultFontPixelHeight / 2
+                }
+                QGCTextField {
+                    id:     rawFramesPath
+                    text:   _controller.rawFramesPath
+                    width:  ScreenTools.defaultFontPixelWidth * 60
+                    anchors.verticalCenter: parent.verticalCenter
+                    enabled:    _controller.writeToOutputEnabled && _controller.writeRawFrames
+                    onEditingFinished: {
+                        _controller.rawFramesPath = rawFramesPath.text
+                    }
+                }
+            }
+
+            Item {
+                height: ScreenTools.defaultFontPixelHeight / 2
+                width:  parent.width
+            }
+
+            
+            //-----------------------------------------------------------------
+            //-- writeBadFrames
+            Row {
+                spacing:    ScreenTools.defaultFontPixelWidth
+                QGCCheckBox {
+                    text:       "Write bad frames to:"
+                    anchors.verticalCenter: parent.verticalCenter
+                    checked:    _controller.writeToOutputEnabled && _controller.writeBadFrames
+                    enabled:    _controller.writeToOutputEnabled
+                    onClicked: {
+                        _controller.writeBadFrames = checked
+                    }
+                }
+                Item {
+                    height: ScreenTools.defaultFontPixelHeight / 2
+                    width: ScreenTools.defaultFontPixelHeight / 2
+                }
+                QGCTextField {
+                    id:     badFramePath
+                    text:   _controller.badFramesPath
+                    width:  ScreenTools.defaultFontPixelWidth * 60
+                    anchors.verticalCenter: parent.verticalCenter
+                    enabled:    _controller.writeToOutputEnabled && _controller.writeBadFrames
+                    onEditingFinished: {
+                        _controller.badFramesPath = badFramePath.text
+                    }
+                }
+            }
+
+            Item {
+                height: ScreenTools.defaultFontPixelHeight / 2
+                width:  parent.width
+            }
+
+            
+            //-----------------------------------------------------------------
+            //-- writeGoodFrames
+            Row {
+                spacing:    ScreenTools.defaultFontPixelWidth
+                QGCCheckBox {
+                    text:       "Write good frames (i.e. with an FoE) to:"
+                    anchors.verticalCenter: parent.verticalCenter
+                    checked:    _controller.writeToOutputEnabled && _controller.writeGoodFrames
+                    enabled:    _controller.writeToOutputEnabled
+                    onClicked: {
+                        _controller.writeGoodFrames = checked
+                    }
+                }
+                Item {
+                    height: ScreenTools.defaultFontPixelHeight / 2
+                    width: ScreenTools.defaultFontPixelHeight / 2
+                }
+                QGCTextField {
+                    id:     goodFramesPath
+                    text:   _controller.goodFramesPath
+                    width:  ScreenTools.defaultFontPixelWidth * 60
+                    anchors.verticalCenter: parent.verticalCenter
+                    enabled:    _controller.writeToOutputEnabled && _controller.writeGoodFrames
+                    onEditingFinished: {
+                        _controller.goodFramesPath = goodFramesPath.text
+                    }
+                }
+            }
+
+            Item {
+                height: ScreenTools.defaultFontPixelHeight / 2
+                width:  parent.width
+            }
+
+            
+            //-----------------------------------------------------------------
+            //-- writeHistogramFrames
+            Row {
+                spacing:    ScreenTools.defaultFontPixelWidth
+                QGCCheckBox {
+                    text:       "Write histogram frames to:"
+                    anchors.verticalCenter: parent.verticalCenter
+                    checked:    _controller.writeToOutputEnabled && _controller.writeHistogramFrames
+                    enabled:    _controller.writeToOutputEnabled
+                    onClicked: {
+                        _controller.writeHistogramFrames = checked
+                    }
+                }
+                Item {
+                    height: ScreenTools.defaultFontPixelHeight / 2
+                    width: ScreenTools.defaultFontPixelHeight / 2
+                }
+                QGCTextField {
+                    id:     histogramFramesPath
+                    text:   _controller.histogramFramesPath
+                    width:  ScreenTools.defaultFontPixelWidth * 60
+                    anchors.verticalCenter: parent.verticalCenter
+                    enabled:    _controller.writeToOutputEnabled && _controller.writeHistogramFrames
+                    onEditingFinished: {
+                        _controller.histogramFramesPath = histogramFramesPath.text
+                    }
+                }
+            }
+
+            Item {
+                height: ScreenTools.defaultFontPixelHeight / 2
+                width:  parent.width
+            }
+
+            
+            //-----------------------------------------------------------------
+            //-- writeOpticalFlowFrames
+            Row {
+                spacing:    ScreenTools.defaultFontPixelWidth
+                QGCCheckBox {
+                    text:       "Write optical flow frames to:"
+                    anchors.verticalCenter: parent.verticalCenter
+                    checked:    _controller.writeToOutputEnabled && _controller.writeOpticalFlowFrames
+                    enabled:    _controller.writeToOutputEnabled
+                    onClicked: {
+                        _controller.writeOpticalFlowFrames = checked
+                    }
+                }
+                Item {
+                    height: ScreenTools.defaultFontPixelHeight / 2
+                    width: ScreenTools.defaultFontPixelHeight / 2
+                }
+                QGCTextField {
+                    id:     opticalFlowFramesPath
+                    text:   _controller.opticalFlowFramesPath
+                    width:  ScreenTools.defaultFontPixelWidth * 60
+                    anchors.verticalCenter: parent.verticalCenter
+                    enabled:    _controller.writeToOutputEnabled && _controller.writeOpticalFlowFrames
+                    onEditingFinished: {
+                        _controller.opticalFlowFramesPath = opticalFlowFramesPath.text
+                    }
+                }
+            }
+
+            Item {
+                height: ScreenTools.defaultFontPixelHeight / 2
+                width:  parent.width
+            }
+
+            
+            //-----------------------------------------------------------------
+            //-- writeUiFrames
+            Row {
+                spacing:    ScreenTools.defaultFontPixelWidth
+                QGCCheckBox {
+                    text:       "Write UI frames to:"
+                    anchors.verticalCenter: parent.verticalCenter
+                    checked:    _controller.writeToOutputEnabled && _controller.writeUiFrames
+                    enabled:    _controller.writeToOutputEnabled
+                    onClicked: {
+                        _controller.writeUiFrames = checked
+                    }
+                }
+                Item {
+                    height: ScreenTools.defaultFontPixelHeight / 2
+                    width: ScreenTools.defaultFontPixelHeight / 2
+                }
+                QGCTextField {
+                    id:     uiFramesPath
+                    text:   _controller.uiFramesPath
+                    width:  ScreenTools.defaultFontPixelWidth * 60
+                    anchors.verticalCenter: parent.verticalCenter
+                    enabled:    _controller.writeToOutputEnabled && _controller.writeUiFrames
+                    onEditingFinished: {
+                        _controller.uiFramesPath = uiFramesPath.text
                     }
                 }
             }

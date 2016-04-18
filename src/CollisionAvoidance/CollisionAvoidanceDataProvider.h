@@ -26,11 +26,16 @@ class CollisionAvoidanceSettings;
 
 class CollisionAvoidanceDataProvider : public QGCTool, public QQuickImageProvider
 {
+    Q_OBJECT
+
 public:
     CollisionAvoidanceDataProvider    (QGCApplication* app);
     ~CollisionAvoidanceDataProvider   ();
     QImage  requestImage              (const QString & id, QSize * size, const QSize & requestedSize);
     void    setToolbox                (QGCToolbox *toolbox);
+
+signals:
+    void uiFrameReady(const cv::Mat& frame);    
 
 public slots:
     void foeReady(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence);

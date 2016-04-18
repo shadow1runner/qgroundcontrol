@@ -2,6 +2,7 @@
 #define COLLISIONAVOIDANCE_COLLISIONAVOIDANCESETTINGSCONTROLLER_H
 
 #include <QObject>
+#include <QDir>
 
 #include "CollisionAvoidanceSettings.h"
 
@@ -20,71 +21,114 @@ public:
        _settings.storeSettings();
     }
 
-   Q_PROPERTY(bool useRecordedVideoInsteadOfDevice READ getUseRecordedVideoInsteadOfDevice WRITE setUseRecordedVideoInsteadOfDevice NOTIFY useRecordedVideoInsteadOfDeviceChanged);
-   Q_PROPERTY(QString fileName                     READ getFileName WRITE setFileName NOTIFY fileNameChanged);
-   Q_PROPERTY(int device                           READ getDevice WRITE setDevice NOTIFY deviceChanged);
-   Q_PROPERTY(bool writeToOutputDirEnabled         READ getWriteToOutputEnabled WRITE setWriteToOutputEnabled NOTIFY writeToOutputEnabledChanged);
-   Q_PROPERTY(QString outputDir                    READ getOutputDir WRITE setOutputDir NOTIFY outputDirChanged);
-   Q_PROPERTY(bool writeRawFrames                  READ getWriteRawFrames WRITE setWriteRawFrames NOTIFY writeRawFramesChanged);
-   Q_PROPERTY(QString rawFramesDir                 READ getRawFramesDir WRITE setRawFramesDir NOTIFY rawFramesDirChanged);
-   Q_PROPERTY(int subsampleAmount                  READ getSubsampleAmount WRITE setSubsampleAmount NOTIFY subsampleAmountChanged);
-   Q_PROPERTY(int particles                        READ getParticles WRITE setParticles NOTIFY particlesChanged);
-   Q_PROPERTY(int windowSize                       READ getWindowSize WRITE setWindowSize NOTIFY windowSizeChanged);
-   Q_PROPERTY(bool inlierProportionThresholdEnabled     READ getInlierProportionThresholdEnabled WRITE setInlierProportionThresholdEnabled NOTIFY inlierProportionThresholdEnabledChanged);
-   Q_PROPERTY(double inlierProportionThreshold     READ getInlierProportionThreshold WRITE setInlierProportionThreshold NOTIFY inlierProportionThresholdChanged);
-   Q_PROPERTY(int divergencePatchSize              READ getDivergencePatchSize WRITE setDivergencePatchSize NOTIFY divergencePatchSizeChanged);
-   Q_PROPERTY(double divergenceThreshold           READ getDivergenceThreshold WRITE setDivergenceThreshold NOTIFY divergenceThresholdChanged);
+   Q_PROPERTY(bool useRecordedVideoInsteadOfDevice  READ getUseRecordedVideoInsteadOfDevice WRITE setUseRecordedVideoInsteadOfDevice NOTIFY useRecordedVideoInsteadOfDeviceChanged);
+   Q_PROPERTY(QString fileName                      READ getFileName WRITE setFileName NOTIFY fileNameChanged);
+   Q_PROPERTY(int device                            READ getDevice WRITE setDevice NOTIFY deviceChanged);
+   Q_PROPERTY(int subsampleAmount                   READ getSubsampleAmount WRITE setSubsampleAmount NOTIFY subsampleAmountChanged);
+   Q_PROPERTY(int particles                         READ getParticles WRITE setParticles NOTIFY particlesChanged);
+   Q_PROPERTY(int windowSize                        READ getWindowSize WRITE setWindowSize NOTIFY windowSizeChanged);
+   Q_PROPERTY(bool inlierProportionThresholdEnabled READ getInlierProportionThresholdEnabled WRITE setInlierProportionThresholdEnabled NOTIFY inlierProportionThresholdEnabledChanged);
+   Q_PROPERTY(double inlierProportionThreshold      READ getInlierProportionThreshold WRITE setInlierProportionThreshold NOTIFY inlierProportionThresholdChanged);
+   Q_PROPERTY(int divergencePatchSize               READ getDivergencePatchSize WRITE setDivergencePatchSize NOTIFY divergencePatchSizeChanged);
+   Q_PROPERTY(double divergenceThreshold            READ getDivergenceThreshold WRITE setDivergenceThreshold NOTIFY divergenceThresholdChanged);
 
-    bool              getUseRecordedVideoInsteadOfDevice() const  { return _settings.getUseRecordedVideoInsteadOfDevice(); }
-    const QString     getFileName() const                         { return _settings.getFileName();                  }
-    int               getDevice() const                           { return _settings.getDevice();                    }
-    bool              getWriteToOutputEnabled() const             { return _settings.getWriteToOutputEnabled();      }
-    const QString     getOutputDir() const                        { return _settings.getOutputDir();                 }
-    bool              getWriteRawFrames() const                   { return _settings.getWriteRawFrames();            }
-    const QString     getRawFramesDir() const                     { return _settings.getRawFramesDir();              }
-    int               getSubsampleAmount() const                  { return _settings.getSubsampleAmount();           }
-    int               getParticles() const                        { return _settings.getParticles();                 }
-    int               getWindowSize() const                       { return _settings.getWindowSize();                }
-    bool              getInlierProportionThresholdEnabled() const { return _settings.getInlierProportionThresholdEnabled(); }
-    double            getInlierProportionThreshold() const        { return _settings.getInlierProportionThreshold(); }
-    int               getDivergencePatchSize() const              { return _settings.getDivergencePatchSize();       }
-    double            getDivergenceThreshold() const              { return _settings.getDivergenceThreshold();       }
+   Q_PROPERTY(bool clearOldFramesEnabled            READ getClearOldFramesEnabled WRITE setClearOldFramesEnabled NOTIFY clearOldFramesEnabledChanged);
+   Q_PROPERTY(bool writeBadFrames                   READ getWriteBadFrames WRITE setWriteBadFrames NOTIFY writeBadFramesChanged);
+   Q_PROPERTY(bool writeGoodFrames                  READ getWriteGoodFrames WRITE setWriteGoodFrames NOTIFY writeGoodFramesChanged);
+   Q_PROPERTY(bool writeHistogramFrames             READ getWriteHistogramFrames WRITE setWriteHistogramFrames NOTIFY writeHistogramFramesChanged);
+   Q_PROPERTY(bool writeOpticalFlowFrames           READ getWriteOpticalFlowFrames WRITE setWriteOpticalFlowFrames NOTIFY writeOpticalFlowFramesChanged);
+   Q_PROPERTY(bool writeRawFrames                   READ getWriteRawFrames WRITE setWriteRawFrames NOTIFY writeRawFramesChanged);
+   Q_PROPERTY(bool writeToOutputEnabled             READ getWriteToOutputEnabled WRITE setWriteToOutputEnabled NOTIFY writeToOutputEnabledChanged);
+   Q_PROPERTY(bool writeUiFrames                    READ getWriteUiFrames WRITE setWriteUiFrames NOTIFY writeUiFramesChanged);
+   Q_PROPERTY(QString badFramesPath                 READ getBadFramesPath WRITE setBadFramesPath NOTIFY badFramesPathChanged);
+   Q_PROPERTY(QString goodFramesPath                READ getGoodFramesPath WRITE setGoodFramesPath NOTIFY goodFramesPathChanged);
+   Q_PROPERTY(QString histogramFramesPath           READ getHistogramFramesPath WRITE setHistogramFramesPath NOTIFY histogramFramesPathChanged);
+   Q_PROPERTY(QString opticalFlowFramesPath         READ getOpticalFlowFramesPath WRITE setOpticalFlowFramesPath NOTIFY opticalFlowFramesPathChanged);
+   Q_PROPERTY(QString rawFramesPath                 READ getRawFramesPath WRITE setRawFramesPath NOTIFY rawFramesPathChanged);
+   Q_PROPERTY(QString uiFramesPath                  READ getUiFramesPath WRITE setUiFramesPath NOTIFY uiFramesPathChanged);
+
+    bool              getUseRecordedVideoInsteadOfDevice() const  { return _settings.UseRecordedVideoInsteadOfDevice; }
+    const QString     getFileName() const                         { return _settings.FileName;                  }
+    int               getDevice() const                           { return _settings.Device;                    }
+    int               getSubsampleAmount() const                  { return _settings.SubsampleAmount;           }
+    int               getParticles() const                        { return _settings.Particles;                 }
+    int               getWindowSize() const                       { return _settings.WindowSize;                }
+    bool              getInlierProportionThresholdEnabled() const { return _settings.InlierProportionThresholdEnabled; }
+    double            getInlierProportionThreshold() const        { return _settings.InlierProportionThreshold; }
+    int               getDivergencePatchSize() const              { return _settings.DivergencePatchSize;       }
+    double            getDivergenceThreshold() const              { return _settings.DivergenceThreshold;       }
+
+    bool              getClearOldFramesEnabled() const            { return _settings.ClearOldFramesEnabled; }
+    bool              getWriteBadFrames() const                   { return _settings.WriteBadFrames; }
+    bool              getWriteGoodFrames() const                  { return _settings.WriteGoodFrames; }
+    bool              getWriteHistogramFrames() const             { return _settings.WriteHistogramFrames; }
+    bool              getWriteOpticalFlowFrames() const           { return _settings.WriteOpticalFlowFrames; }
+    bool              getWriteRawFrames() const                   { return _settings.WriteRawFrames; }
+    bool              getWriteToOutputEnabled() const             { return _settings.WriteToOutputEnabled; }
+    bool              getWriteUiFrames() const                    { return _settings.WriteUiFrames; }
+    const QString     getBadFramesPath() const                    { return _settings.BadFramesPath; }
+    const QString     getGoodFramesPath() const                   { return _settings.GoodFramesPath; }
+    const QString     getHistogramFramesPath() const              { return _settings.HistogramFramesPath; }
+    const QString     getOpticalFlowFramesPath() const            { return _settings.OpticalFlowFramesPath; }
+    const QString     getRawFramesPath() const                    { return _settings.RawFramesPath; }
+    const QString     getUiFramesPath() const                     { return _settings.UiFramesPath; }
 
 signals:
-    void useRecordedVideoInsteadOfDeviceChanged(bool value);
-    void fileNameChanged(const QString value);
-    void deviceChanged(int value);
-    void writeToOutputEnabledChanged(bool value);
-    void outputDirChanged(const QString value);
-    void writeRawFramesChanged(bool value);
-    void rawFramesDirChanged(const QString value);
-    void subsampleAmountChanged(int value);
-    void particlesChanged(int value);
-    void windowSizeChanged(int value);
-    void inlierProportionThresholdEnabledChanged(bool value);
-    void inlierProportionThresholdChanged(double value);
-    void divergencePatchSizeChanged(int value);
-    void divergenceThresholdChanged(double value);
+  void useRecordedVideoInsteadOfDeviceChanged(bool value);
+  void fileNameChanged(QString value);
+  void deviceChanged(int value);
+  void subsampleAmountChanged(int value);
+  void particlesChanged(int value);
+  void windowSizeChanged(int value);
+  void inlierProportionThresholdEnabledChanged(bool value);
+  void inlierProportionThresholdChanged(double value);
+  void divergencePatchSizeChanged(int value);
+  void divergenceThresholdChanged(double value);
+
+  void clearOldFramesEnabledChanged(bool value);
+  void writeBadFramesChanged(bool value);
+  void writeGoodFramesChanged(bool value);
+  void writeHistogramFramesChanged(bool value);
+  void writeOpticalFlowFramesChanged(bool value);
+  void writeRawFramesChanged(bool value);
+  void writeToOutputEnabledChanged(bool value);
+  void writeUiFramesChanged(bool value);
+  void badFramesPathChanged(QString value);
+  void goodFramesPathChanged(QString value);
+  void histogramFramesPathChanged(QString value);
+  void opticalFlowFramesPathChanged(QString value);
+  void rawFramesPathChanged(QString value);
+  void uiFramesPathChanged(QString value);
 
 public slots:
-    void setUseRecordedVideoInsteadOfDevice(bool useRecordedVideoInsteadOfDevice) { _settings.setUseRecordedVideoInsteadOfDevice(useRecordedVideoInsteadOfDevice); emit useRecordedVideoInsteadOfDeviceChanged(useRecordedVideoInsteadOfDevice); _settings.storeSettings();                  }
-    void setFileName(QString fileName)                                            { _settings.setFileName(fileName); emit fileNameChanged(fileName); _settings.storeSettings();                                   }
-    void setWriteToOutputEnabled(bool writeToOutputEnabled)                       { _settings.setWriteToOutputEnabled(writeToOutputEnabled); emit writeToOutputEnabledChanged(writeToOutputEnabled); _settings.storeSettings();     }
-    void setOutputDir(QString  outputDir)                                         { _settings.setOutputDir(outputDir); emit outputDirChanged(outputDir); _settings.storeSettings();                                }
-    void setWriteRawFrames(bool writeRawFrames)                                   { _settings.setWriteRawFrames(writeRawFrames); emit writeRawFramesChanged(writeRawFrames); _settings.storeSettings();     }
-    void setRawFramesDir(QString rawFramesDir)                                    { _settings.setRawFramesDir(rawFramesDir); emit rawFramesDirChanged(rawFramesDir); _settings.storeSettings();     }
-    void setDevice(int device)                                                    { _settings.setDevice(device); emit deviceChanged(device); _settings.storeSettings();                                       }
-    void setSubsampleAmount(int subsampleAmount)                                  { _settings.setSubsampleAmount(subsampleAmount); emit subsampleAmountChanged(subsampleAmount); _settings.storeSettings();                     }
-    void setParticles(int particles)                                              { _settings.setParticles(particles); emit particlesChanged(particles); _settings.storeSettings();                                  }
-    void setWindowSize(int windowSize)                                            { _settings.setWindowSize(windowSize); emit windowSizeChanged(windowSize); _settings.storeSettings();                               }
-    void setInlierProportionThresholdEnabled(bool value)                          { _settings.setInlierProportionThresholdEnabled(value); emit inlierProportionThresholdEnabledChanged(value); _settings.storeSettings(); }
-    void setInlierProportionThreshold(double inlierProportionThreshold)           { _settings.setInlierProportionThreshold(inlierProportionThreshold); emit inlierProportionThresholdChanged(inlierProportionThreshold); _settings.storeSettings(); }
-    void setDivergencePatchSize(int divergencePatchSize)                          { _settings.setDivergencePatchSize(divergencePatchSize); emit divergencePatchSizeChanged(divergencePatchSize); _settings.storeSettings();             }
-    void setDivergenceThreshold(double divergenceThreshold)                       { _settings.setDivergenceThreshold(divergenceThreshold); emit divergenceThresholdChanged(divergenceThreshold); _settings.storeSettings();        }
+    void setUseRecordedVideoInsteadOfDevice(bool value)     { _settings.UseRecordedVideoInsteadOfDevice = value; _settings.storeSettings(); emit useRecordedVideoInsteadOfDeviceChanged(value); }
+    void setFileName(QString value)                         { _settings.FileName = value; _settings.storeSettings(); emit fileNameChanged(value); }
+    void setDevice(int value)                               { _settings.Device = value; _settings.storeSettings(); emit deviceChanged(value); }
+    void setSubsampleAmount(int value)                      { _settings.SubsampleAmount = value; _settings.storeSettings(); emit subsampleAmountChanged(value); }
+    void setParticles(int value)                            { _settings.Particles = value; _settings.storeSettings(); emit particlesChanged(value); }
+    void setWindowSize(int value)                           { _settings.WindowSize = value; _settings.storeSettings(); emit windowSizeChanged(value); }
+    void setInlierProportionThresholdEnabled(bool value)    { _settings.InlierProportionThresholdEnabled = value; _settings.storeSettings(); emit inlierProportionThresholdEnabledChanged(value); }
+    void setInlierProportionThreshold(double value)         { _settings.InlierProportionThreshold = value; _settings.storeSettings(); emit inlierProportionThresholdChanged(value); }
+    void setDivergencePatchSize(int value)                  { _settings.DivergencePatchSize = value; _settings.storeSettings(); emit divergencePatchSizeChanged(value); }
+    void setDivergenceThreshold(double value)               { _settings.DivergenceThreshold = value; _settings.storeSettings();emit divergenceThresholdChanged(value); }
+
+    void setClearOldFramesEnabled(bool value)    { _settings.ClearOldFramesEnabled = value; _settings.storeSettings(); emit clearOldFramesEnabledChanged(value); }
+    void setWriteBadFrames(bool value)           { _settings.WriteBadFrames = value; _settings.storeSettings(); emit writeBadFramesChanged(value); }
+    void setWriteGoodFrames(bool value)          { _settings.WriteGoodFrames = value; _settings.storeSettings(); emit writeGoodFramesChanged(value); }
+    void setWriteHistogramFrames(bool value)     { _settings.WriteHistogramFrames = value; _settings.storeSettings(); emit writeHistogramFramesChanged(value); }
+    void setWriteOpticalFlowFrames(bool value)   { _settings.WriteOpticalFlowFrames = value; _settings.storeSettings(); emit writeOpticalFlowFramesChanged(value); }
+    void setWriteRawFrames(bool value)           { _settings.WriteRawFrames = value; _settings.storeSettings(); emit writeRawFramesChanged(value); }
+    void setWriteToOutputEnabled(bool value)     { _settings.WriteToOutputEnabled = value; _settings.storeSettings(); emit writeToOutputEnabledChanged(value); }
+    void setWriteUiFrames(bool value)            { _settings.WriteUiFrames = value; _settings.storeSettings(); emit writeUiFramesChanged(value); }
+    void setBadFramesPath(QString value)         { _settings.BadFramesPath = value; _settings.storeSettings(); emit badFramesPathChanged(value);  }
+    void setGoodFramesPath(QString value)        { _settings.GoodFramesPath = value; _settings.storeSettings(); emit goodFramesPathChanged(value);  }
+    void setHistogramFramesPath(QString value)   { _settings.HistogramFramesPath = value; _settings.storeSettings(); emit histogramFramesPathChanged(value);  }
+    void setOpticalFlowFramesPath(QString value) { _settings.OpticalFlowFramesPath = value; _settings.storeSettings(); emit opticalFlowFramesPathChanged(value);  }
+    void setRawFramesPath(QString value)         { _settings.RawFramesPath = value; _settings.storeSettings(); emit rawFramesPathChanged(value);  }
+    void setUiFramesPath(QString value)          { _settings.UiFramesPath = value; _settings.storeSettings(); emit uiFramesPathChanged(value);  }
 
 private:
     CollisionAvoidanceSettings& _settings;
-    
 };
 
 #endif // COLLISIONAVOIDANCE_COLLISIONAVOIDANCES fETTINGSCONTROLLER_H
