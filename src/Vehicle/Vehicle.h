@@ -591,6 +591,11 @@ public:
     bool containsLink(LinkInterface* link) { return _links.contains(link); }
     void doCommandLong(int component, MAV_CMD command, float param1 = 0.0f, float param2 = 0.0f, float param3 = 0.0f, float param4 = 0.0f, float param5 = 0.0f, float param6 = 0.0f, float param7 = 0.0f);
 
+    int firmwareMajorVersion(void) const { return _firmwareMajorVersion; }
+    int firmwareMinorVersion(void) const { return _firmwareMinorVersion; }
+    int firmwarePatchVersion(void) const { return _firmwarePatchVersion; }
+    void setFirmwareVersion(int majorVersion, int minorVersion, int patchVersion);
+    static const int versionNotSetValue = -1;
 
 public slots:
     void setLatitude(double latitude);
@@ -812,6 +817,10 @@ private:
     uint8_t             _messageSeq;
     uint8_t             _compID;
     bool                _heardFrom;
+
+    int _firmwareMajorVersion;
+    int _firmwareMinorVersion;
+    int _firmwarePatchVersion;
 
     static const int    _lowBatteryAnnounceRepeatMSecs; // Amount of time in between each low battery announcement
     QElapsedTimer       _lowBatteryAnnounceTimer;

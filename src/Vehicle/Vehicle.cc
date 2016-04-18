@@ -47,6 +47,8 @@ QGC_LOGGING_CATEGORY(VehicleLog, "VehicleLog")
 #define DEFAULT_LAT  38.965767f
 #define DEFAULT_LON -120.083923f
 
+extern const char* guided_mode_not_supported_by_vehicle;
+
 const char* Vehicle::_settingsGroup =               "Vehicle%1";        // %1 replaced with mavlink system id
 const char* Vehicle::_joystickModeSettingsKey =     "JoystickMode";
 const char* Vehicle::_joystickEnabledSettingsKey =  "JoystickEnabled";
@@ -128,6 +130,9 @@ Vehicle::Vehicle(LinkInterface*             link,
     , _messageSeq(0)
     , _compID(0)
     , _heardFrom(false)
+    , _firmwareMajorVersion(versionNotSetValue)
+    , _firmwareMinorVersion(versionNotSetValue)
+    , _firmwarePatchVersion(versionNotSetValue)
     , _rollFact             (0, _rollFactName,              FactMetaData::valueTypeDouble)
     , _pitchFact            (0, _pitchFactName,             FactMetaData::valueTypeDouble)
     , _headingFact          (0, _headingFactName,           FactMetaData::valueTypeDouble)
@@ -317,6 +322,9 @@ Vehicle::Vehicle(QObject* parent)
     , _messageSeq(0)
     , _compID(0)
     , _heardFrom(false)
+    , _firmwareMajorVersion(versionNotSetValue)
+    , _firmwareMinorVersion(versionNotSetValue)
+    , _firmwarePatchVersion(versionNotSetValue)
     , _rollFact             (0, _rollFactName,              FactMetaData::valueTypeDouble)
     , _pitchFact            (0, _pitchFactName,             FactMetaData::valueTypeDouble)
     , _headingFact          (0, _headingFactName,           FactMetaData::valueTypeDouble)
@@ -1544,7 +1552,7 @@ bool Vehicle::pauseVehicleSupported(void) const
 void Vehicle::guidedModeRTL(void)
 {
     if (!guidedModeSupported()) {
-        qgcApp()->showMessage(QStringLiteral("Guided mode not supported by vehicle."));
+        qgcApp()->showMessage(guided_mode_not_supported_by_vehicle);
         return;
     }
     _firmwarePlugin->guidedModeRTL(this);
@@ -1553,7 +1561,7 @@ void Vehicle::guidedModeRTL(void)
 void Vehicle::guidedModeLand(void)
 {
     if (!guidedModeSupported()) {
-        qgcApp()->showMessage(QStringLiteral("Guided mode not supported by vehicle."));
+        qgcApp()->showMessage(guided_mode_not_supported_by_vehicle);
         return;
     }
     _firmwarePlugin->guidedModeLand(this);
@@ -1562,7 +1570,7 @@ void Vehicle::guidedModeLand(void)
 void Vehicle::guidedModeTakeoff(double altitudeRel)
 {
     if (!guidedModeSupported()) {
-        qgcApp()->showMessage(QStringLiteral("Guided mode not supported by vehicle."));
+        qgcApp()->showMessage(guided_mode_not_supported_by_vehicle);
         return;
     }
     setGuidedMode(true);
@@ -1572,7 +1580,7 @@ void Vehicle::guidedModeTakeoff(double altitudeRel)
 void Vehicle::guidedModeGotoLocation(const QGeoCoordinate& gotoCoord)
 {
     if (!guidedModeSupported()) {
-        qgcApp()->showMessage(QStringLiteral("Guided mode not supported by vehicle."));
+        qgcApp()->showMessage(guided_mode_not_supported_by_vehicle);
         return;
     }
     _firmwarePlugin->guidedModeGotoLocation(this, gotoCoord);
@@ -1581,7 +1589,7 @@ void Vehicle::guidedModeGotoLocation(const QGeoCoordinate& gotoCoord)
 void Vehicle::guidedModeChangeAltitude(double altitudeRel)
 {
     if (!guidedModeSupported()) {
-        qgcApp()->showMessage(QStringLiteral("Guided mode not supported by vehicle."));
+        qgcApp()->showMessage(guided_mode_not_supported_by_vehicle);
         return;
     }
     _firmwarePlugin->guidedModeChangeAltitude(this, altitudeRel);
@@ -1686,6 +1694,13 @@ void Vehicle::setPrearmError(const QString& prearmError)
 void Vehicle::_prearmErrorTimeout(void)
 {
     setPrearmError(QString());
+}
+
+void Vehicle::setFirmwareVersion(int majorVersion, int minorVersion, int patchVersion)
+{
+    _firmwareMajorVersion = majorVersion;
+    _firmwareMinorVersion = minorVersion;
+    _firmwarePatchVersion = patchVersion;
 }
 
 const char* VehicleGPSFactGroup::_hdopFactName =                "hdop";
