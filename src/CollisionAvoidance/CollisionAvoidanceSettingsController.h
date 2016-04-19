@@ -24,6 +24,7 @@ public:
    Q_PROPERTY(bool useRecordedVideoInsteadOfDevice  READ getUseRecordedVideoInsteadOfDevice WRITE setUseRecordedVideoInsteadOfDevice NOTIFY useRecordedVideoInsteadOfDeviceChanged);
    Q_PROPERTY(QString fileName                      READ getFileName WRITE setFileName NOTIFY fileNameChanged);
    Q_PROPERTY(int device                            READ getDevice WRITE setDevice NOTIFY deviceChanged);
+   Q_PROPERTY(int rawFrameRotation                  READ getRawFrameRotation WRITE setRawFrameRotation NOTIFY rawFrameRotationChanged);
    Q_PROPERTY(int subsampleAmount                   READ getSubsampleAmount WRITE setSubsampleAmount NOTIFY subsampleAmountChanged);
    Q_PROPERTY(int particles                         READ getParticles WRITE setParticles NOTIFY particlesChanged);
    Q_PROPERTY(int windowSize                        READ getWindowSize WRITE setWindowSize NOTIFY windowSizeChanged);
@@ -50,6 +51,7 @@ public:
     bool              getUseRecordedVideoInsteadOfDevice() const  { return _settings.UseRecordedVideoInsteadOfDevice; }
     const QString     getFileName() const                         { return _settings.FileName;                  }
     int               getDevice() const                           { return _settings.Device;                    }
+    int               getRawFrameRotation() const                 { return _settings.RawFrameRotation;           }
     int               getSubsampleAmount() const                  { return _settings.SubsampleAmount;           }
     int               getParticles() const                        { return _settings.Particles;                 }
     int               getWindowSize() const                       { return _settings.WindowSize;                }
@@ -77,6 +79,7 @@ signals:
   void useRecordedVideoInsteadOfDeviceChanged(bool value);
   void fileNameChanged(QString value);
   void deviceChanged(int value);
+  void rawFrameRotationChanged(int value);
   void subsampleAmountChanged(int value);
   void particlesChanged(int value);
   void windowSizeChanged(int value);
@@ -104,6 +107,7 @@ public slots:
     void setUseRecordedVideoInsteadOfDevice(bool value)     { _settings.UseRecordedVideoInsteadOfDevice = value; _settings.storeSettings(); emit useRecordedVideoInsteadOfDeviceChanged(value); }
     void setFileName(QString value)                         { _settings.FileName = value; _settings.storeSettings(); emit fileNameChanged(value); }
     void setDevice(int value)                               { _settings.Device = value; _settings.storeSettings(); emit deviceChanged(value); }
+    void setRawFrameRotation(int value)                     { _settings.RawFrameRotation = value; _settings.storeSettings(); emit rawFrameRotationChanged(value); }
     void setSubsampleAmount(int value)                      { _settings.SubsampleAmount = value; _settings.storeSettings(); emit subsampleAmountChanged(value); }
     void setParticles(int value)                            { _settings.Particles = value; _settings.storeSettings(); emit particlesChanged(value); }
     void setWindowSize(int value)                           { _settings.WindowSize = value; _settings.storeSettings(); emit windowSizeChanged(value); }

@@ -133,6 +133,43 @@ Rectangle {
                 height: ScreenTools.defaultFontPixelHeight / 2
                 width:  parent.width
             }
+            //-----------------------------------------------------------------
+            //-- Rotation
+            Row {
+                QGCLabel {
+                    text:   "Rotate incoming frames:"
+                }
+
+                ListModel {
+                    id: rotationModel
+                    ListElement { text: "0°"   ; value: 0 }
+                    ListElement { text: "90°"  ; value: 1 }
+                    ListElement { text: "180°" ; value: 2 }
+                    ListElement { text: "270°" ; value: 3 }
+                }
+
+                Item {
+                    height: ScreenTools.defaultFontPixelHeight / 2
+                    width:  20
+                }
+
+                QGCComboBox {
+                    id:                 rotationCombo
+                    anchors.margins:    ScreenTools.defaultFontPixelWidth
+                    width:              ScreenTools.defaultFontPixelWidth * 20
+                    model:              rotationModel
+                    currentIndex:       _controller.rawFrameRotation
+
+                    onActivated: {
+                      _controller.rawFrameRotation = Boolean(index) //fileNameDeviceModel.get(index).value
+                    }
+                }
+            }
+
+            Item {
+                height: ScreenTools.defaultFontPixelHeight / 2
+                width:  parent.width
+            }
             
             //-----------------------------------------------------------------
             //-- subsampleAmount
