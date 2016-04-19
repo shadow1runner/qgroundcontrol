@@ -118,3 +118,8 @@ void OwnFlowWorker::stop()
     _ioThread.quit();
     _ioThread.wait();
 }
+
+void OwnFlowWorker::_collisionImmanent(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence)
+{
+    pause();
+}
