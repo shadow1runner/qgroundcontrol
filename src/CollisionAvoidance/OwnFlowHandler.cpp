@@ -5,6 +5,8 @@
 
 #include "QGCToolbox.h"
 #include "QtHelper.h"
+#include "CollisionActor.h"
+
 
 OwnFlowHandler::OwnFlowHandler(QGCApplication* app)
     : QGCTool(app)
@@ -28,6 +30,8 @@ void OwnFlowHandler::setToolbox(QGCToolbox* toolbox)
     _ownFlowWorker = new OwnFlowWorker(_settings, toolbox);
     _ownFlowWorker->moveToThread(&_ownFlowWorkerThread);
     _ownFlowWorkerThread.start();
+
+    _collisionActor = new CollisionActor(_settings, toolbox);
 }
 
 OwnFlowWorker* OwnFlowHandler::ownFlowWorker() 
@@ -35,6 +39,10 @@ OwnFlowWorker* OwnFlowHandler::ownFlowWorker()
     return _ownFlowWorker;
 }
 
+CollisionActor* OwnFlowHandler::collisionActor()
+{
+    return _collisionActor;
+}
 
 void OwnFlowHandler::start()
 {

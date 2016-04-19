@@ -35,8 +35,6 @@ along with QGROUNDCONTROL. If not, see <http://www.gnu.org/licenses/>.
 #include "Vehicle.h"
 #include "QGCApplication.h"
 
-#include <opencv2/highgui.hpp>
-
 #include <QPainter>
 #include <QFont>
 

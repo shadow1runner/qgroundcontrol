@@ -20,6 +20,7 @@
 #include "CollisionAvoidanceSettings.h"
 
 class OwnFlowWorker;
+class CollisionActor;
 
 class OwnFlowHandler : public QGCTool
 {
@@ -37,12 +38,15 @@ public:
     virtual void setToolbox(QGCToolbox* toolbox);
 
     OwnFlowWorker* ownFlowWorker();
+    CollisionActor* collisionActor();
 
 private:
 	CollisionAvoidanceSettings& _settings;
 
     QThread _ownFlowWorkerThread;
 	OwnFlowWorker* _ownFlowWorker = nullptr;
+
+    CollisionActor* _collisionActor = nullptr;
 };
 
 #endif // COLLISIONAVOIDANCE_OWNFLOWHANDLER_H
