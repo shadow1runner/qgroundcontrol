@@ -32,6 +32,7 @@ class FactSystem;
 class FirmwarePluginManager;
 class FlightMapSettings;
 class GAudioOutput;
+class GPSManager;
 class HomePositionManager;
 class JoystickManager;
 class FollowMe;
@@ -76,6 +77,7 @@ private:
     FactSystem*                 _factSystem;
     FirmwarePluginManager*      _firmwarePluginManager;
     FlightMapSettings*          _flightMapSettings;
+    GPSManager*                 _gpsManager;
     HomePositionManager*        _homePositionManager;
     QGCImageProvider*           _imageProvider;
     JoystickManager*            _joystickManager;

@@ -1,6 +1,9 @@
 [submodule "libs/mavlink/include/mavlink/v1.0"]
 	path = libs/mavlink/include/mavlink/v1.0
 	url = https://github.com/mavlink/c_library.git
+[submodule "src/GPS/Drivers"]
+	path = src/GPS/Drivers
+	url = https://github.com/PX4/GpsDrivers.git
 [submodule "src/CollisionAvoidance/opticalflow"]
 	path = src/CollisionAvoidance/opticalflow
 	url = https://shadow1runner@bitbucket.org/shadow1runner/opticalflow.git
