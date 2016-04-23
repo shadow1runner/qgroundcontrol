@@ -73,6 +73,7 @@ QGCView {
     property string _flightVideoState:                  QGroundControl.loadGlobalSetting(_flightVideoStateKey, "leftPip")
     property string _flightCollisionAvoidanceState:     QGroundControl.loadGlobalSetting(_flightCollisionAvoidanceStateKey, "rightPip")
 
+
     property real _roll:                _activeVehicle ? _activeVehicle.roll.value    : _defaultRoll
     property real _pitch:               _activeVehicle ? _activeVehicle.pitch.value   : _defaultPitch
     property real _heading:             _activeVehicle ? _activeVehicle.heading.value : _defaultHeading
@@ -327,7 +328,10 @@ QGCView {
         Loader {
             id:             widgetsLoader
             z:              _panel.z + 4
-            anchors.fill:   parent
+            height:         ScreenTools.availableHeight
+            anchors.left:   parent.left
+            anchors.right:  parent.right
+            anchors.bottom: parent.bottom
             asynchronous:   true
             visible:        status == Loader.Ready
 
@@ -344,7 +348,7 @@ QGCView {
             visible:                    QGroundControl.virtualTabletJoystick
             anchors.bottom:             _leftPipControl.top
             anchors.bottomMargin:       ScreenTools.defaultFontPixelHeight * 2
-            anchors.horizontalCenter:   parent.horizontalCenter
+            anchors.horizontalCenter:   widgetsLoader.horizontalCenter
             source:                     "qrc:/qml/VirtualJoystick.qml"
             active:                     QGroundControl.virtualTabletJoystick
         }
