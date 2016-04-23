@@ -59,7 +59,7 @@ public:
     static void usleep(unsigned long usecs) { QThread::usleep(usecs); }
 };
 
-#define usleep Sleeper::usleep
+//#define usleep Sleeper::usleep
 
 
 typedef uint64_t gps_abstime;
