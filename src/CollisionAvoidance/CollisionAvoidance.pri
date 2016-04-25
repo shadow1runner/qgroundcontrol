@@ -62,7 +62,10 @@ INCLUDEPATH += \
 INCLUDEPATH += \
     "/usr/include/" \
     "/usr/include/opencv" \
-    "/usr/include/opencv2"
+    "/usr/include/opencv2" \
+    "/usr/local/include/" \
+    "/usr/local/include/opencv" \
+    "/usr/local/include/opencv2"
 
 LIBS += \
     -L/usr/local/lib/ \
