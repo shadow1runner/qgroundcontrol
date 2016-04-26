@@ -18,6 +18,7 @@ HEADERS += \
     $$PWD/opticalflow/helper/Macros.h \
     $$PWD/opticalflow/helper/StopWatch.h \
     $$PWD/opticalflow/helper/ThreadWarmupHelper.h \
+    $$PWD/opticalflow/OCamCalib/undistortFunctions/ocam_functions.h \
     $$PWD/opticalflow/Kalman.h \
     $$PWD/opticalflow/OwnFlow.h \
     $$PWD/opticalflow/RandomCollider.h \
@@ -40,6 +41,7 @@ SOURCES += \
     $$PWD/opticalflow/helper/QtHelper.cpp \
     $$PWD/opticalflow/helper/DrawHelper.cpp \
     $$PWD/opticalflow/helper/HeatMap.cpp \
+    $$PWD/opticalflow/OCamCalib/undistortFunctions/ocam_functions.cpp \
     $$PWD/opticalflow/Kalman.cpp \
     # $$PWD/opticalflow/main.cpp \
     $$PWD/opticalflow/OwnFlow.cpp \
@@ -54,8 +56,8 @@ SOURCES += \
 
 INCLUDEPATH += \
     $$PWD/opticalflow \
-    $$PWD/opticalflow/helper
-
+    $$PWD/opticalflow/helper \
+    $$PWD/opticalflow/OCamCalib/undistortFunctions
 
 #-------------------------------------------------------------------------------------
 # OpenCV

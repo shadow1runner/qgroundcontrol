@@ -25,6 +25,7 @@ public:
    Q_PROPERTY(QString fileName                      READ getFileName WRITE setFileName NOTIFY fileNameChanged);
    Q_PROPERTY(int device                            READ getDevice WRITE setDevice NOTIFY deviceChanged);
    Q_PROPERTY(int rawFrameRotation                  READ getRawFrameRotation WRITE setRawFrameRotation NOTIFY rawFrameRotationChanged);
+
    Q_PROPERTY(int subsampleAmount                   READ getSubsampleAmount WRITE setSubsampleAmount NOTIFY subsampleAmountChanged);
    Q_PROPERTY(int particles                         READ getParticles WRITE setParticles NOTIFY particlesChanged);
    Q_PROPERTY(int windowSize                        READ getWindowSize WRITE setWindowSize NOTIFY windowSizeChanged);
@@ -32,6 +33,9 @@ public:
    Q_PROPERTY(double inlierProportionThreshold      READ getInlierProportionThreshold WRITE setInlierProportionThreshold NOTIFY inlierProportionThresholdChanged);
    Q_PROPERTY(int divergencePatchSize               READ getDivergencePatchSize WRITE setDivergencePatchSize NOTIFY divergencePatchSizeChanged);
    Q_PROPERTY(double divergenceThreshold            READ getDivergenceThreshold WRITE setDivergenceThreshold NOTIFY divergenceThresholdChanged);
+
+   Q_PROPERTY(bool undistortFrames                  READ getUndistortFrames WRITE setUndistortFrames NOTIFY undistortFramesChanged);
+   Q_PROPERTY(QString ocamModelPath                 READ getOcamModelPath WRITE setOcamModelPath NOTIFY ocamModelPathChanged);
 
    Q_PROPERTY(bool clearOldFramesEnabled            READ getClearOldFramesEnabled WRITE setClearOldFramesEnabled NOTIFY clearOldFramesEnabledChanged);
    Q_PROPERTY(bool writeBadFrames                   READ getWriteBadFrames WRITE setWriteBadFrames NOTIFY writeBadFramesChanged);
@@ -59,6 +63,9 @@ public:
     double            getInlierProportionThreshold() const        { return _settings.InlierProportionThreshold; }
     int               getDivergencePatchSize() const              { return _settings.DivergencePatchSize;       }
     double            getDivergenceThreshold() const              { return _settings.DivergenceThreshold;       }
+
+    bool              getUndistortFrames() const { return _settings.UndistortFrames; }
+    const QString     getOcamModelPath() const   { return _settings.OcamModelPath; }
 
     bool              getClearOldFramesEnabled() const            { return _settings.ClearOldFramesEnabled; }
     bool              getWriteBadFrames() const                   { return _settings.WriteBadFrames; }
@@ -88,6 +95,9 @@ signals:
   void divergencePatchSizeChanged(int value);
   void divergenceThresholdChanged(double value);
 
+  void undistortFramesChanged(bool value);
+  void ocamModelPathChanged(QString value);
+
   void clearOldFramesEnabledChanged(bool value);
   void writeBadFramesChanged(bool value);
   void writeGoodFramesChanged(bool value);
@@ -115,6 +125,9 @@ public slots:
     void setInlierProportionThreshold(double value)         { _settings.InlierProportionThreshold = value; _settings.storeSettings(); emit inlierProportionThresholdChanged(value); }
     void setDivergencePatchSize(int value)                  { _settings.DivergencePatchSize = value; _settings.storeSettings(); emit divergencePatchSizeChanged(value); }
     void setDivergenceThreshold(double value)               { _settings.DivergenceThreshold = value; _settings.storeSettings();emit divergenceThresholdChanged(value); }
+
+    void setUndistortFrames(bool value) { _settings.UndistortFrames = value; _settings.storeSettings(); emit undistortFramesChanged(value); }
+    void setOcamModelPath(QString value)   { _settings.OcamModelPath = value; _settings.storeSettings(); emit ocamModelPathChanged(value); }
 
     void setClearOldFramesEnabled(bool value)    { _settings.ClearOldFramesEnabled = value; _settings.storeSettings(); emit clearOldFramesEnabledChanged(value); }
     void setWriteBadFrames(bool value)           { _settings.WriteBadFrames = value; _settings.storeSettings(); emit writeBadFramesChanged(value); }

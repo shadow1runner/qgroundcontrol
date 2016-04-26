@@ -349,6 +349,44 @@ Rectangle {
             }
 
             //-----------------------------------------------------------------
+            //-- undistortFrames
+            Item {
+                height: ScreenTools.defaultFontPixelHeight / 2
+                width:  parent.width
+            }
+
+            Row {
+                spacing:    ScreenTools.defaultFontPixelWidth
+                QGCCheckBox {
+                    text:       "Undistort Frames - Path to calibration file:"
+                    anchors.verticalCenter: parent.verticalCenter
+                    checked:    _controller.undistortFrames
+                    onClicked: {
+                        _controller.undistortFrames = checked
+                    }
+                }
+                Item {
+                    height: ScreenTools.defaultFontPixelHeight / 2
+                    width: ScreenTools.defaultFontPixelHeight / 2
+                }
+                QGCTextField {
+                    id:     ocamModelPathField
+                    text:   _controller.ocamModelPath.toString()
+                    width:  ScreenTools.defaultFontPixelWidth * 60
+                    anchors.verticalCenter: parent.verticalCenter
+                    enabled: _controller.undistortFrames
+                    onEditingFinished: {
+                        _controller.ocamModelPath = ocamModelPathField.text
+                    }
+                }
+            }
+
+            Item {
+                height: ScreenTools.defaultFontPixelHeight / 2
+                width:  parent.width
+            }
+
+            //-----------------------------------------------------------------
             //-- clearOldFramesEnabled
             Row {
                 spacing:    ScreenTools.defaultFontPixelWidth
