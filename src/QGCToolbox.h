@@ -44,6 +44,7 @@ class QGCMapEngineManager;
 class QGCApplication;
 class QGCImageProvider;
 class UASMessageHandler;
+class QGCPositionManager;
 class OwnFlowHandler;
 class CollisionAvoidanceDataProvider;
 
@@ -68,6 +69,7 @@ public:
     QGCImageProvider*           imageProvider()                 { return _imageProvider; }
     UASMessageHandler*          uasMessageHandler(void)         { return _uasMessageHandler; }
     FollowMe*                   followMe(void)                  { return _followMe; }
+    QGCPositionManager*         qgcPositionManager(void)        { return _qgcPositionManager; }
     OwnFlowHandler*             ownFlowHandler(void)            { return _ownFlowHandler; }
     CollisionAvoidanceDataProvider*  collisionAvoidanceDataProvider(void)         { return _collisionAvoidanceDataProvider; }
 
@@ -88,6 +90,7 @@ private:
     QGCMapEngineManager*         _mapEngineManager;
     UASMessageHandler*          _uasMessageHandler;
     FollowMe*                   _followMe;
+    QGCPositionManager*         _qgcPositionManager;
     OwnFlowHandler*             _ownFlowHandler;
     CollisionAvoidanceDataProvider*          _collisionAvoidanceDataProvider;
 

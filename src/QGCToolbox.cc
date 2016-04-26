@@ -39,6 +39,7 @@
 #include "UASMessageHandler.h"
 #include "QGCMapEngineManager.h"
 #include "FollowMe.h"
+#include "PositionManager.h"
 #include "OwnFlowHandler.h"
 #include "CollisionAvoidanceDataProvider.h"
 
@@ -58,6 +59,7 @@ QGCToolbox::QGCToolbox(QGCApplication* app)
     , _mapEngineManager(NULL)
     , _uasMessageHandler(NULL)
     , _followMe(NULL)
+    , _qgcPositionManager(NULL)
     , _ownFlowHandler(NULL)
     , _collisionAvoidanceDataProvider(NULL)
     , _ownFlowHandlerThread(NULL)
@@ -77,8 +79,9 @@ QGCToolbox::QGCToolbox(QGCApplication* app)
     _mavlinkProtocol =          new MAVLinkProtocol(app);
     _missionCommands =          new MissionCommands(app);
     _multiVehicleManager =      new MultiVehicleManager(app);
-    _mapEngineManager =       new QGCMapEngineManager(app);
+    _mapEngineManager =         new QGCMapEngineManager(app);
     _uasMessageHandler =        new UASMessageHandler(app);
+    _qgcPositionManager =       new QGCPositionManager(app);
     _followMe =                 new FollowMe(app);
     _collisionAvoidanceDataProvider = new CollisionAvoidanceDataProvider(app);
     _ownFlowHandler =           new OwnFlowHandler(app);
@@ -109,6 +112,7 @@ QGCToolbox::QGCToolbox(QGCApplication* app)
 
     //FIXME: make this configurable...
     //_gpsManager->setupGPS("ttyACM0");
+    _qgcPositionManager->setToolbox(this);
 }
 
 QGCToolbox::~QGCToolbox()
@@ -127,6 +131,7 @@ QGCToolbox::~QGCToolbox()
     delete _multiVehicleManager;
     delete _uasMessageHandler;
     delete _followMe;
+    delete _qgcPositionManager;
     delete _ownFlowHandler;
     // delete _collisionAvoidanceDataProvider; <- is deleted by the QML engine, same as _imageProvider
 
