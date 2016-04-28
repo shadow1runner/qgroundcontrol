@@ -420,6 +420,9 @@ public:
     /// Alter the current mission item on the vehicle
     Q_INVOKABLE void setCurrentMissionSequence(int seq);
 
+    /// Reboot vehicle
+    Q_INVOKABLE void rebootVehicle();
+
     /// Starts collision avoidance detection algorithm
     Q_INVOKABLE void startCollisionAvoidance();
 
