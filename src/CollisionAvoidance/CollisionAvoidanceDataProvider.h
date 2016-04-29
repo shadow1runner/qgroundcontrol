@@ -37,6 +37,8 @@ public:
 signals:
     void uiFrameReady(const cv::Mat& frame);    
 
+    void uiFrameDetailsReady(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence);
+
 public slots:
     void foeReady(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence);
 
@@ -56,7 +58,7 @@ private:
     CollisionAvoidanceSettings& _settings;
 
     QImage  cvMatToQImage(const cv::Mat& mat);
-    cv::Mat renderGoodFrame(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured);
+    cv::Mat renderGoodFrame(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence);
     cv::Mat renderBadFrame(const cv::Mat& badFrame, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured);
     void saveCurrentImageToFile(bool isBadFrame=false);
     void saveRawFrameToFile(const cv::Mat& frame);
@@ -72,7 +74,7 @@ private:
     cv::Mat heatMap;
     const cv::Scalar GREEN = cv::Scalar(0, 255, 0);
     const cv::Scalar GOOD_FRAME_COLOR = cv::Scalar(255, 0, 0);
-    const cv::Scalar BAD_FRAME_COLOR = cv::Scalar(0, 255, 0);
+    const cv::Scalar BAD_FRAME_COLOR = cv::Scalar(0, 0, 255);
     
 };
 

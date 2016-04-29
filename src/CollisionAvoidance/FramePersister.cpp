@@ -2,10 +2,14 @@
 #include "CollisionAvoidanceSettings.h"
 #include "DrawHelper.h"
 #include "HeatMap.h"
-
-#include <opencv2/highgui.hpp>
+#include "DrawHelper.h"
 
 #include <QDir>
+
+#include <string>
+
+using namespace std;
+using namespace cv;
 
 FramePersister::FramePersister(CollisionAvoidanceSettings& settings, QObject *parent)
     : QObject(parent)
@@ -103,13 +107,13 @@ void FramePersister::histogramReady(const cv::Mat& histogram)
 	persistFrame(HeatMap::createHeatMap(histogram), fileName);
 }
 
-void FramePersister::uiFrameReady(const cv::Mat& ui) 
+void FramePersister::uiFrameReady(const cv::Mat& frame)//, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence)
 {
 	if(!_settings.WriteUiFrames)
 		return;
 
 	auto fileName = _settings.UiFramesPath + QString::number(_uiCount++) + ".jpg";
-	persistFrame(ui, fileName);	
+	persistFrame(frame, fileName);
 }
 
 
@@ -140,4 +144,13 @@ void FramePersister::persistFrame(const cv::Mat& frame, QString& path)
 		return;
 
     cv::imwrite(path.toStdString(), frame);
+}
+
+void FramePersister::persistFrame(const cv::Mat& frame, QString& path, std::vector<std::string>& lines)
+{
+	Mat tmp = frame;
+	if(lines.size()>0)
+		tmp = DrawHelper::renderText(frame, lines);
+
+    persistFrame(tmp, path);
 }

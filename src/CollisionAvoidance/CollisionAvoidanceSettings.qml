@@ -326,29 +326,6 @@ Rectangle {
             }
 
             //-----------------------------------------------------------------
-            //-- Output Dir
-            Row {
-                spacing:    ScreenTools.defaultFontPixelWidth
-                QGCCheckBox {
-                    text:       "Persist frames"
-                    anchors.verticalCenter: parent.verticalCenter
-                    checked:    _controller.writeToOutputEnabled && _controller.writeToOutputEnabled
-                    onClicked: {
-                        _controller.writeToOutputEnabled = checked
-                    }
-                }
-                Item {
-                    height: ScreenTools.defaultFontPixelHeight / 2
-                    width: ScreenTools.defaultFontPixelHeight / 2
-                }
-            }
-
-            Item {
-                height: ScreenTools.defaultFontPixelHeight / 2
-                width:  parent.width
-            }
-
-            //-----------------------------------------------------------------
             //-- undistortFrames
             Item {
                 height: ScreenTools.defaultFontPixelHeight / 2
@@ -378,6 +355,29 @@ Rectangle {
                     onEditingFinished: {
                         _controller.ocamModelPath = ocamModelPathField.text
                     }
+                }
+            }
+
+            Item {
+                height: ScreenTools.defaultFontPixelHeight / 2
+                width:  parent.width
+            }
+
+            //-----------------------------------------------------------------
+            //-- Output Dir
+            Row {
+                spacing:    ScreenTools.defaultFontPixelWidth
+                QGCCheckBox {
+                    text:       "Persist frames"
+                    anchors.verticalCenter: parent.verticalCenter
+                    checked:    _controller.writeToOutputEnabled && _controller.writeToOutputEnabled
+                    onClicked: {
+                        _controller.writeToOutputEnabled = checked
+                    }
+                }
+                Item {
+                    height: ScreenTools.defaultFontPixelHeight / 2
+                    width: ScreenTools.defaultFontPixelHeight / 2
                 }
             }
 

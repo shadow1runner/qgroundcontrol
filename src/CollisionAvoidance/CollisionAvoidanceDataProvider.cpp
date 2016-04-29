@@ -38,6 +38,9 @@ along with QGROUNDCONTROL. If not, see <http://www.gnu.org/licenses/>.
 #include <QPainter>
 #include <QFont>
 
+#include <string>
+#include <sstream>
+
 CollisionAvoidanceDataProvider::CollisionAvoidanceDataProvider(QGCApplication *app)
     : QGCTool(app)
     , QQuickImageProvider(QQmlImageProviderBase::Image)
@@ -104,8 +107,9 @@ void CollisionAvoidanceDataProvider::_activeVehicleChanged(Vehicle* activeVehicl
 void CollisionAvoidanceDataProvider::foeReady(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence) {
   Q_UNUSED(divergence);
 
-  _uiMat = renderGoodFrame(frame, foeFiltered, foeMeasured);
+  _uiMat = renderGoodFrame(frame, foeFiltered, foeMeasured, divergence);
   emit uiFrameReady(_uiMat);
+  emit uiFrameDetailsReady(_uiMat, foeFiltered, foeMeasured, divergence);
   _qImage = cvMatToQImage(_uiMat);
   
   if(_activeVehicle!=NULL)
@@ -148,7 +152,8 @@ QImage CollisionAvoidanceDataProvider::cvMatToQImage(const cv::Mat& mat) {
 cv::Mat CollisionAvoidanceDataProvider::renderGoodFrame(
   const cv::Mat& frame,
   std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered,
-  std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured)
+  std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured,
+  std::shared_ptr<hw::Divergence> divergence)
 {
    std::vector<cv::Mat> canvas;
 
@@ -177,7 +182,14 @@ cv::Mat CollisionAvoidanceDataProvider::renderGoodFrame(
 //   canvas.push_back(hsv);
 
    auto combined = DrawHelper::makeRowCanvas(canvas, cv::Scalar(64, 64, 64));
-   return combined;
+
+   std::vector<std::string> lines;
+   std::stringstream ss;
+   ss << "#" << _frameCount << ": GOOD; " << std::setprecision(4) << divergence->getDivergence(); lines.push_back(ss.str()); ss.str(std::string());
+   ss << "FoE: (" << foeFiltered->getFoE().x << ", " << foeFiltered->getFoE().y << ") - " <<  std::setprecision(3) << foeFiltered->getInlierProportion()*100 << "%"; lines.push_back(ss.str()); ss.str(std::string());
+   ss << "(foe: (" << foeMeasured->getFoE().x << ", " << foeMeasured->getFoE().y << ") - "  << std::setprecision(3) << foeMeasured->getInlierProportion()*100 << "%)"; lines.push_back(ss.str()); ss.str(std::string());
+
+   return DrawHelper::renderText(combined, lines);
 }  
 
 cv::Mat CollisionAvoidanceDataProvider::renderBadFrame(
@@ -202,5 +214,11 @@ cv::Mat CollisionAvoidanceDataProvider::renderBadFrame(
    canvas.push_back(flowOverlay);
 
    auto combined = DrawHelper::makeRowCanvas(canvas, cv::Scalar(64, 64, 64));
-   return combined;
+
+   std::vector<std::string> lines;
+   std::stringstream ss;
+   ss << "#" << _frameCount << ": BAD"; lines.push_back(ss.str()); ss.str(std::string());
+   ss << "(foe: (" << foeMeasured->getFoE().x << ", " << foeMeasured->getFoE().y << ") - "  << std::setprecision(3) << foeMeasured->getInlierProportion()*100 << "%)"; lines.push_back(ss.str()); ss.str(std::string());
+
+   return DrawHelper::renderText(combined, lines);
 }

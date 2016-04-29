@@ -7,6 +7,8 @@
 #include <opencv2/highgui.hpp>
 
 #include <memory>
+#include <string>
+#include <vector>
 
 #include <QObject>
 
@@ -32,7 +34,7 @@ public slots:
 
     void histogramReady(const cv::Mat& histogram);
 
-    void uiFrameReady(const cv::Mat& ui);
+    void uiFrameReady(const cv::Mat& frame);//, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence);
 
 private:
 	CollisionAvoidanceSettings& _settings;
@@ -46,6 +48,7 @@ private:
     void clearDirectory(QString& path);
     void checkOrMakeDirectory(QString& path);
     void persistFrame(const cv::Mat& frame, QString& fileName);
+    void persistFrame(const cv::Mat& frame, QString& fileName, std::vector<std::string>& lines);
 };
 
 #endif // FRAMEPERSISTER_H
