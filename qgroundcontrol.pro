@@ -765,9 +765,6 @@ SOURCES += \
 #-------------------------------------------------------------------------------------
 # Video Streaming
 
-message("HWO: Manually disabling video streaming support -- otherwise: \":-1: error: gstreamer-video-1.0 development package not found\" (after upgrade to Ubuntu 16.04 LTS")
-DEFINES += DISABLE_VIDEOSTREAMING
-
 INCLUDEPATH += \
     src/VideoStreaming
 
