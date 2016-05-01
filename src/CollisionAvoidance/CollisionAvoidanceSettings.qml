@@ -43,7 +43,21 @@ Rectangle {
                 width:  parent.width
                 color:  qgcPal.button
             }
+            Item {
+                height: ScreenTools.defaultFontPixelHeight
+                width:  parent.width
+            }
 
+
+            QGCLabel {
+                text:   "Data Source"
+                font.pixelSize: ScreenTools.mediumFontPixelSize
+            }
+            Rectangle {
+                height: 1
+                width:  parent.width/2
+                color:  qgcPal.button
+            }
             Item {
                 height: ScreenTools.defaultFontPixelHeight / 2
                 width:  parent.width
@@ -166,6 +180,20 @@ Rectangle {
                 }
             }
 
+            Item {
+                height: ScreenTools.defaultFontPixelHeight
+                width:  parent.width
+            }
+
+            QGCLabel {
+                text:   "OwnFlow Details"
+                font.pixelSize: ScreenTools.mediumFontPixelSize
+            }
+            Rectangle {
+                height: 1
+                width:  parent.width/2
+                color:  qgcPal.button
+            }
             Item {
                 height: ScreenTools.defaultFontPixelHeight / 2
                 width:  parent.width
@@ -359,9 +387,23 @@ Rectangle {
             }
 
             Item {
-                height: ScreenTools.defaultFontPixelHeight / 2
+                height: ScreenTools.defaultFontPixelHeight
                 width:  parent.width
             }            
+
+            QGCLabel {
+                text:   "UI settings"
+                font.pixelSize: ScreenTools.mediumFontPixelSize
+            }
+            Rectangle {
+                height: 1
+                width:  parent.width/2
+                color:  qgcPal.button
+            }
+            Item {
+                height: ScreenTools.defaultFontPixelHeight / 2
+                width:  parent.width
+            }
 
             //-----------------------------------------------------------------
             //-- DisplayBadFramesInUi
@@ -382,10 +424,24 @@ Rectangle {
             }
 
             Item {
-                height: ScreenTools.defaultFontPixelHeight / 2
+                height: ScreenTools.defaultFontPixelHeight
                 width:  parent.width
             }
 
+
+            QGCLabel {
+                text:   "Frame Persistence Settings"
+                font.pixelSize: ScreenTools.mediumFontPixelSize
+            }
+            Rectangle {
+                height: 1
+                width:  parent.width/2
+                color:  qgcPal.button
+            }
+            Item {
+                height: ScreenTools.defaultFontPixelHeight / 2
+                width:  parent.width
+            }
 
 
             //-----------------------------------------------------------------
