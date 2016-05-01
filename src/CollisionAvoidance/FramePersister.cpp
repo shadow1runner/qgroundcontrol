@@ -2,7 +2,6 @@
 #include "CollisionAvoidanceSettings.h"
 #include "DrawHelper.h"
 #include "HeatMap.h"
-#include "DrawHelper.h"
 
 #include <QDir>
 
@@ -93,7 +92,7 @@ void FramePersister::opticalFlowReady(const cv::Mat& opticalFlow)
 	auto fileName = _settings.OpticalFlowFramesPath + QString::number(_opticalFlowCount++) + ".jpg";
 	
     cv::Mat flowOverlay(opticalFlow.size(), CV_8UC3, cv::Scalar(0,0,0));;
-    DrawHelper::drawOpticalFlowMap(opticalFlow, flowOverlay, cv::Scalar(0, 255, 0)); // GREEN
+    DrawHelper::drawOpticalFlowMap(opticalFlow, flowOverlay, cv::Scalar(0, 255, 0), 16, _settings.OpticalFlowVectorVisualizationFactor, _settings.OpticalFlowVectorVisualizationFactor); // GREEN
 
 	persistFrame(flowOverlay, fileName);
 }

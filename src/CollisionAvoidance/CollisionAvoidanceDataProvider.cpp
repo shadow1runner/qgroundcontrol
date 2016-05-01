@@ -174,7 +174,7 @@ cv::Mat CollisionAvoidanceDataProvider::renderGoodFrame(
 
    cv::Mat flowOverlay;
    cv::cvtColor(frame, flowOverlay, cv::COLOR_GRAY2BGR);
-   DrawHelper::drawOpticalFlowMap(opticalFlow, flowOverlay, GREEN);
+   DrawHelper::drawOpticalFlowMap(opticalFlow, flowOverlay, GREEN, 16, _settings.OpticalFlowVectorVisualizationFactor, _settings.OpticalFlowVectorVisualizationFactor);
    DrawHelper::drawRings(flowOverlay, foeMeasured->getFoE(), color);
    DrawHelper::drawRings(flowOverlay, foeFiltered->getFoE(), cv::Scalar(255, 156, 0));
    canvas.push_back(flowOverlay);

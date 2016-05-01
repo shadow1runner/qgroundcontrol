@@ -33,11 +33,11 @@ public:
    Q_PROPERTY(double inlierProportionThreshold      READ getInlierProportionThreshold WRITE setInlierProportionThreshold NOTIFY inlierProportionThresholdChanged);
    Q_PROPERTY(int divergencePatchSize               READ getDivergencePatchSize WRITE setDivergencePatchSize NOTIFY divergencePatchSizeChanged);
    Q_PROPERTY(double divergenceThreshold            READ getDivergenceThreshold WRITE setDivergenceThreshold NOTIFY divergenceThresholdChanged);
-
    Q_PROPERTY(bool undistortFrames                  READ getUndistortFrames WRITE setUndistortFrames NOTIFY undistortFramesChanged);
    Q_PROPERTY(QString ocamModelPath                 READ getOcamModelPath WRITE setOcamModelPath NOTIFY ocamModelPathChanged);
 
-   Q_PROPERTY(bool displayBadFramesInUi             READ getDisplayBadFramesInUi WRITE setDisplayBadFramesInUi NOTIFY displayBadFramesInUiChanged);
+   Q_PROPERTY(bool displayBadFramesInUi                   READ getDisplayBadFramesInUi WRITE setDisplayBadFramesInUi NOTIFY displayBadFramesInUiChanged);
+   Q_PROPERTY(double opticalFlowVectorVisualizationFactor READ getOpticalFlowVectorVisualizationFactor WRITE setOpticalFlowVectorVisualizationFactor NOTIFY opticalFlowVectorVisualizationFactorChanged);
 
    Q_PROPERTY(bool clearOldFramesEnabled            READ getClearOldFramesEnabled WRITE setClearOldFramesEnabled NOTIFY clearOldFramesEnabledChanged);
    Q_PROPERTY(bool writeBadFrames                   READ getWriteBadFrames WRITE setWriteBadFrames NOTIFY writeBadFramesChanged);
@@ -70,6 +70,7 @@ public:
     const QString     getOcamModelPath() const   { return _settings.OcamModelPath; }
 
     bool              getDisplayBadFramesInUi() const { return _settings.DisplayBadFramesInUi; }
+    double            getOpticalFlowVectorVisualizationFactor() const { return _settings.OpticalFlowVectorVisualizationFactor; }
 
     bool              getClearOldFramesEnabled() const            { return _settings.ClearOldFramesEnabled; }
     bool              getWriteBadFrames() const                   { return _settings.WriteBadFrames; }
@@ -103,6 +104,7 @@ signals:
   void ocamModelPathChanged(QString value);
 
   void displayBadFramesInUiChanged(bool value);
+  void opticalFlowVectorVisualizationFactorChanged(double value);
 
   void clearOldFramesEnabledChanged(bool value);
   void writeBadFramesChanged(bool value);
@@ -131,11 +133,11 @@ public slots:
     void setInlierProportionThreshold(double value)         { _settings.InlierProportionThreshold = value; _settings.storeSettings(); emit inlierProportionThresholdChanged(value); }
     void setDivergencePatchSize(int value)                  { _settings.DivergencePatchSize = value; _settings.storeSettings(); emit divergencePatchSizeChanged(value); }
     void setDivergenceThreshold(double value)               { _settings.DivergenceThreshold = value; _settings.storeSettings();emit divergenceThresholdChanged(value); }
-
     void setUndistortFrames(bool value)  { _settings.UndistortFrames = value; _settings.storeSettings(); emit undistortFramesChanged(value); }
     void setOcamModelPath(QString value) { _settings.OcamModelPath = value; _settings.storeSettings(); emit ocamModelPathChanged(value); }
 
-    void setDisplayBadFramesInUi(bool value) { _settings.DisplayBadFramesInUi = value; _settings.storeSettings(); emit displayBadFramesInUiChanged(value); }
+    void setDisplayBadFramesInUi(bool value)   { _settings.DisplayBadFramesInUi = value; _settings.storeSettings(); emit displayBadFramesInUiChanged(value); }
+    void setOpticalFlowVectorVisualizationFactor(double value) { _settings.OpticalFlowVectorVisualizationFactor = value; _settings.storeSettings(); emit opticalFlowVectorVisualizationFactorChanged(value); }
     
     void setClearOldFramesEnabled(bool value)    { _settings.ClearOldFramesEnabled = value; _settings.storeSettings(); emit clearOldFramesEnabledChanged(value); }
     void setWriteBadFrames(bool value)           { _settings.WriteBadFrames = value; _settings.storeSettings(); emit writeBadFramesChanged(value); }

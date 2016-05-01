@@ -392,7 +392,7 @@ Rectangle {
             }            
 
             QGCLabel {
-                text:   "UI settings"
+                text:   "UI Settings"
                 font.pixelSize: ScreenTools.mediumFontPixelSize
             }
             Rectangle {
@@ -424,9 +424,34 @@ Rectangle {
             }
 
             Item {
+                height: ScreenTools.defaultFontPixelHeight / 2
+                width:  parent.width
+            }
+
+            Row {
+                spacing:    ScreenTools.defaultFontPixelWidth
+                QGCLabel {
+                    text:   "Optical Flow Visualization - Factor (dx, dy):"
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                QGCTextField {
+                    id:     opticalFlowVectorVisualizationFactorField
+                    text:   _controller.opticalFlowVectorVisualizationFactor.toString()
+                    width:  ScreenTools.defaultFontPixelWidth * 2
+                    inputMethodHints:       Qt.ImhFormattedNumbersOnly
+                    anchors.verticalCenter: parent.verticalCenter
+                    onEditingFinished: {
+                        _controller.opticalFlowVectorVisualizationFactor = parseFloat(opticalFlowVectorVisualizationFactorField.text)
+                    }
+                }
+            }
+
+            Item {
                 height: ScreenTools.defaultFontPixelHeight
                 width:  parent.width
             }
+
+
 
 
             QGCLabel {
