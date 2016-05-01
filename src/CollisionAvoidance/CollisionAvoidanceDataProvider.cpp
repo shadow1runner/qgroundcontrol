@@ -121,6 +121,9 @@ void CollisionAvoidanceDataProvider::badFrame(const cv::Mat& badFrame, unsigned 
   Q_UNUSED(skipFrameCount);
   Q_UNUSED(totalFrameCount);
 
+  if(!_settings.DisplayBadFramesInUi)
+    return;
+
   _uiMat = renderBadFrame(badFrame, foeMeasured);
   emit uiFrameReady(_uiMat);
   _qImage = cvMatToQImage(_uiMat);

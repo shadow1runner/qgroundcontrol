@@ -361,7 +361,32 @@ Rectangle {
             Item {
                 height: ScreenTools.defaultFontPixelHeight / 2
                 width:  parent.width
+            }            
+
+            //-----------------------------------------------------------------
+            //-- DisplayBadFramesInUi
+            Row {
+                spacing:    ScreenTools.defaultFontPixelWidth
+                QGCCheckBox {
+                    text:       "Display bad frames in UI"
+                    anchors.verticalCenter: parent.verticalCenter
+                    checked:    _controller.displayBadFramesInUi
+                    onClicked: {
+                        _controller.displayBadFramesInUi = checked
+                    }
+                }
+                Item {
+                    height: ScreenTools.defaultFontPixelHeight / 2
+                    width: ScreenTools.defaultFontPixelHeight / 2
+                }
             }
+
+            Item {
+                height: ScreenTools.defaultFontPixelHeight / 2
+                width:  parent.width
+            }
+
+
 
             //-----------------------------------------------------------------
             //-- Output Dir

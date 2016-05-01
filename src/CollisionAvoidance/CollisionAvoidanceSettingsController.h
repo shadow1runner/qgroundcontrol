@@ -37,6 +37,8 @@ public:
    Q_PROPERTY(bool undistortFrames                  READ getUndistortFrames WRITE setUndistortFrames NOTIFY undistortFramesChanged);
    Q_PROPERTY(QString ocamModelPath                 READ getOcamModelPath WRITE setOcamModelPath NOTIFY ocamModelPathChanged);
 
+   Q_PROPERTY(bool displayBadFramesInUi             READ getDisplayBadFramesInUi WRITE setDisplayBadFramesInUi NOTIFY displayBadFramesInUiChanged);
+
    Q_PROPERTY(bool clearOldFramesEnabled            READ getClearOldFramesEnabled WRITE setClearOldFramesEnabled NOTIFY clearOldFramesEnabledChanged);
    Q_PROPERTY(bool writeBadFrames                   READ getWriteBadFrames WRITE setWriteBadFrames NOTIFY writeBadFramesChanged);
    Q_PROPERTY(bool writeGoodFrames                  READ getWriteGoodFrames WRITE setWriteGoodFrames NOTIFY writeGoodFramesChanged);
@@ -66,6 +68,8 @@ public:
 
     bool              getUndistortFrames() const { return _settings.UndistortFrames; }
     const QString     getOcamModelPath() const   { return _settings.OcamModelPath; }
+
+    bool              getDisplayBadFramesInUi() const { return _settings.DisplayBadFramesInUi; }
 
     bool              getClearOldFramesEnabled() const            { return _settings.ClearOldFramesEnabled; }
     bool              getWriteBadFrames() const                   { return _settings.WriteBadFrames; }
@@ -98,6 +102,8 @@ signals:
   void undistortFramesChanged(bool value);
   void ocamModelPathChanged(QString value);
 
+  void displayBadFramesInUiChanged(bool value);
+
   void clearOldFramesEnabledChanged(bool value);
   void writeBadFramesChanged(bool value);
   void writeGoodFramesChanged(bool value);
@@ -126,9 +132,11 @@ public slots:
     void setDivergencePatchSize(int value)                  { _settings.DivergencePatchSize = value; _settings.storeSettings(); emit divergencePatchSizeChanged(value); }
     void setDivergenceThreshold(double value)               { _settings.DivergenceThreshold = value; _settings.storeSettings();emit divergenceThresholdChanged(value); }
 
-    void setUndistortFrames(bool value) { _settings.UndistortFrames = value; _settings.storeSettings(); emit undistortFramesChanged(value); }
-    void setOcamModelPath(QString value)   { _settings.OcamModelPath = value; _settings.storeSettings(); emit ocamModelPathChanged(value); }
+    void setUndistortFrames(bool value)  { _settings.UndistortFrames = value; _settings.storeSettings(); emit undistortFramesChanged(value); }
+    void setOcamModelPath(QString value) { _settings.OcamModelPath = value; _settings.storeSettings(); emit ocamModelPathChanged(value); }
 
+    void setDisplayBadFramesInUi(bool value) { _settings.DisplayBadFramesInUi = value; _settings.storeSettings(); emit displayBadFramesInUiChanged(value); }
+    
     void setClearOldFramesEnabled(bool value)    { _settings.ClearOldFramesEnabled = value; _settings.storeSettings(); emit clearOldFramesEnabledChanged(value); }
     void setWriteBadFrames(bool value)           { _settings.WriteBadFrames = value; _settings.storeSettings(); emit writeBadFramesChanged(value); }
     void setWriteGoodFrames(bool value)          { _settings.WriteGoodFrames = value; _settings.storeSettings(); emit writeGoodFramesChanged(value); }
