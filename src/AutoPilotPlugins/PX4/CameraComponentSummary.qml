@@ -14,7 +14,7 @@ FactPanel {
     QGCPalette { id: qgcPal; colorGroupEnabled: enabled }
     FactPanelController { id: controller; factPanel: panel }
 
-    property Fact _camTriggerMode:  controller.getParameterFact(-1, "TRIG_MODE")
+    property Fact _camTriggerMode:  controller.getParameterFact(-1, "TRIG_MODE", false)
     property Fact _camTriggerPol:   controller.getParameterFact(-1, "TRIG_POLARITY", false) // Don't bitch about missing as these only exist if trigger mode is enabled
     property Fact _auxPins:         controller.getParameterFact(-1, "TRIG_PINS",     false) // Ditto
     property Fact _timeInterval:    controller.getParameterFact(-1, "TRIG_INTERVAL", false) // Ditto
@@ -25,7 +25,7 @@ FactPanel {
         anchors.margins:    8
 
         VehicleSummaryRow {
-            labelText: qsTr("Camera trigger mode:")
+            labelText: qsTr("Trigger mode:")
             valueText: _camTriggerMode ? _camTriggerMode.enumStringValue : ""
         }
 
