@@ -72,6 +72,9 @@ public:
     QGCPositionManager*         qgcPositionManager(void)        { return _qgcPositionManager; }
     OwnFlowHandler*             ownFlowHandler(void)            { return _ownFlowHandler; }
     CollisionAvoidanceDataProvider*  collisionAvoidanceDataProvider(void)         { return _collisionAvoidanceDataProvider; }
+#ifndef __mobile__
+    GPSManager*                 gpsManager(void)                { return _gpsManager; }
+#endif
 
 private:
     GAudioOutput*               _audioOutput;
@@ -79,7 +82,9 @@ private:
     FactSystem*                 _factSystem;
     FirmwarePluginManager*      _firmwarePluginManager;
     FlightMapSettings*          _flightMapSettings;
+#ifndef __mobile__
     GPSManager*                 _gpsManager;
+#endif
     HomePositionManager*        _homePositionManager;
     QGCImageProvider*           _imageProvider;
     JoystickManager*            _joystickManager;
