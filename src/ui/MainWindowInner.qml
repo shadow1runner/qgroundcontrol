@@ -45,7 +45,7 @@ Item {
 
     QGCPalette { id: qgcPal; colorGroupEnabled: true }
 
-    property real   tbHeight:           ScreenTools.isMobile ? (ScreenTools.isTinyScreen ? (mainWindow.width * 0.0666) : (mainWindow.width * 0.05)) : ScreenTools.defaultFontPixelSize * 4
+    property real   tbHeight:           ScreenTools.isMobile ? (ScreenTools.isTinyScreen ? (mainWindow.width * 0.0666) : (mainWindow.width * 0.05)) : ScreenTools.defaultFontPixelHeight * 3
     property int    tbCellHeight:       tbHeight * 0.75
     property real   tbSpacing:          ScreenTools.isMobile ? width * 0.00824 : 9.54
     property real   tbButtonWidth:      tbCellHeight * 1.35
@@ -368,10 +368,12 @@ Item {
             pixelAligned:       true
             clip:               true
             TextEdit {
-                id:         messageText
-                readOnly:   true
-                textFormat: TextEdit.RichText
-                color:      "white"
+                id:             messageText
+                readOnly:       true
+                textFormat:     TextEdit.RichText
+                color:          "white"
+                font.family:    ScreenTools.normalFontFamily
+                font.pointSize: ScreenTools.defaultFontPointSize
             }
         }
         //-- Dismiss System Message
@@ -380,7 +382,8 @@ Item {
             anchors.top:        parent.top
             anchors.right:      parent.right
             width:              ScreenTools.defaultFontPixelHeight * 1.5
-            height:             ScreenTools.defaultFontPixelHeight * 1.5
+            height:             width
+            sourceSize.height:  height
             source:             "/res/XDelete.svg"
             fillMode:           Image.PreserveAspectFit
             mipmap:             true
@@ -404,7 +407,8 @@ Item {
                 criticalMessageText.text = ""
                 //-- Show all messages in queue
                 for (var i = 0; i < mainWindow.messageQueue.length; i++) {
-                    criticalMessageText.append(mainWindow.messageQueue[i])
+                    var text = mainWindow.messageQueue[i]
+                    criticalMessageText.append(text)
                 }
                 //-- Clear it
                 mainWindow.messageQueue = []
@@ -415,7 +419,7 @@ Item {
         }
 
         width:              mainWindow.width  * 0.55
-        height:             ScreenTools.defaultFontPixelHeight * ScreenTools.fontHRatio * 6
+        height:             ScreenTools.defaultFontPixelHeight * 6
         color:              qgcPal.window
         visible:            false
         radius:             ScreenTools.defaultFontPixelHeight * 0.5
@@ -449,7 +453,8 @@ Item {
                 anchors.left:   parent.left
                 readOnly:       true
                 textFormat:     TextEdit.RichText
-                font.weight:    Font.DemiBold
+                font.pointSize: ScreenTools.defaultFontPointSize
+                font.family:    ScreenTools.demiboldFontFamily
                 wrapMode:       TextEdit.WordWrap
                 color:          qgcPal.warningText
             }
@@ -462,11 +467,11 @@ Item {
             anchors.top:        parent.top
             anchors.right:      parent.right
             width:              ScreenTools.defaultFontPixelHeight * 1.5
-            height:             ScreenTools.defaultFontPixelHeight * 1.5
+            height:             width
+            sourceSize.height:  height
             source:             "/res/XDelete.svg"
             fillMode:           Image.PreserveAspectFit
             color:              qgcPal.warningText
-
             MouseArea {
                 anchors.fill:   parent
                 onClicked: {
@@ -482,6 +487,7 @@ Item {
             anchors.right:      parent.right
             width:              ScreenTools.defaultFontPixelHeight * 1.5
             height:             ScreenTools.defaultFontPixelHeight * 1.5
+            sourceSize.height:  height
             source:             "/res/ArrowDown.svg"
             fillMode:           Image.PreserveAspectFit
             visible:            criticalMessageText.lineCount > 5

@@ -44,8 +44,8 @@ QGCView {
     QGCPalette { id: palette; colorGroupEnabled: enabled }
 
     property real _margins:         ScreenTools.defaultFontPixelHeight
-    property real _middleRowWidth:  ScreenTools.defaultFontPixelWidth * 22
-    property real _editFieldWidth:  ScreenTools.defaultFontPixelWidth * 18
+    property real _middleRowWidth:  ScreenTools.defaultFontPixelWidth * 20
+    property real _editFieldWidth:  ScreenTools.defaultFontPixelWidth * 14
 
     property Fact _fenceAction:     controller.getParameterFact(-1, "GF_ACTION")
     property Fact _fenceRadius:     controller.getParameterFact(-1, "GF_MAX_HOR_DIST")
@@ -55,7 +55,7 @@ QGCView {
     property Fact _rcLossAction:    controller.getParameterFact(-1, "NAV_RCL_ACT")
     property Fact _dlLossAction:    controller.getParameterFact(-1, "NAV_DLL_ACT")
     property Fact _disarmLandDelay: controller.getParameterFact(-1, "COM_DISARM_LAND")
-    property Fact _landSpeedMC: controller.getParameterFact(-1, "MPC_LAND_SPEED", false)
+    property Fact _landSpeedMC:     controller.getParameterFact(-1, "MPC_LAND_SPEED", false)
 
     QGCViewPanel {
         id:             panel
@@ -75,7 +75,7 @@ QGCView {
                 Item { width: 1; height: _margins * 0.5; }
                 QGCLabel {
                     text:                               qsTr("Low Battery Failsafe Trigger")
-                    font.weight:                        Font.DemiBold
+                    font.family:                        ScreenTools.demiboldFontFamily
                 }
                 Rectangle {
                     color:                              palette.windowShade
@@ -89,6 +89,7 @@ QGCView {
                         Image {
                             height:                     ScreenTools.defaultFontPixelWidth * 6
                             width:                      ScreenTools.defaultFontPixelWidth * 20
+                            sourceSize.width:           width
                             mipmap:                     true
                             fillMode:                   Image.PreserveAspectFit
                             source:                     qgcPal.globalTheme === QGCPalette.Light ? "/qmlimages/LowBatteryLight.svg" : "/qmlimages/LowBattery.svg"
@@ -146,7 +147,7 @@ QGCView {
                 */
                 QGCLabel {
                     text:                               qsTr("RC Loss Failsafe Trigger")
-                    font.weight:                        Font.DemiBold
+                    font.family:                        ScreenTools.demiboldFontFamily
                 }
                 Rectangle {
                     color:                              palette.windowShade
@@ -160,6 +161,7 @@ QGCView {
                         Image {
                             height:                     ScreenTools.defaultFontPixelWidth * 6
                             width:                      ScreenTools.defaultFontPixelWidth * 20
+                            sourceSize.width:           width
                             mipmap:                     true
                             fillMode:                   Image.PreserveAspectFit
                             source:                     qgcPal.globalTheme === QGCPalette.Light ? "/qmlimages/RCLossLight.svg" : "/qmlimages/RCLoss.svg"
@@ -203,7 +205,7 @@ QGCView {
                 */
                 QGCLabel {
                     text:                               qsTr("Data Link Loss Failsafe Trigger")
-                    font.weight:                        Font.DemiBold
+                    font.family:                        ScreenTools.demiboldFontFamily
                 }
                 Rectangle {
                     color:                              palette.windowShade
@@ -217,6 +219,7 @@ QGCView {
                         Image {
                             height:                     ScreenTools.defaultFontPixelWidth * 6
                             width:                      ScreenTools.defaultFontPixelWidth * 20
+                            sourceSize.width:           width
                             mipmap:                     true
                             fillMode:                   Image.PreserveAspectFit
                             source:                     qgcPal.globalTheme === QGCPalette.Light ? "/qmlimages/DatalinkLossLight.svg" : "/qmlimages/DatalinkLoss.svg"
@@ -260,7 +263,7 @@ QGCView {
                 */
                 QGCLabel {
                     text:                               qsTr("Geofence Failsafe Trigger")
-                    font.weight:                        Font.DemiBold
+                    font.family:                        ScreenTools.demiboldFontFamily
                 }
                 Rectangle {
                     color:                              palette.windowShade
@@ -274,6 +277,7 @@ QGCView {
                         Image {
                             height:                     ScreenTools.defaultFontPixelWidth * 8
                             width:                      ScreenTools.defaultFontPixelWidth * 20
+                            sourceSize.width:           width
                             mipmap:                     true
                             fillMode:                   Image.PreserveAspectFit
                             source:                     qgcPal.globalTheme === QGCPalette.Light ? "/qmlimages/GeoFenceLight.svg" : "/qmlimages/GeoFence.svg"
@@ -340,7 +344,7 @@ QGCView {
                 QGCLabel {
                     id:                                 rtlLabel
                     text:                               qsTr("Return Home Settings")
-                    font.weight:                        Font.DemiBold
+                    font.family:                        ScreenTools.demiboldFontFamily
                 }
                 Rectangle {
                     id:                                 rtlSettings
@@ -357,6 +361,7 @@ QGCView {
                             color:                      palette.text
                             height:                     ScreenTools.defaultFontPixelWidth * 10
                             width:                      ScreenTools.defaultFontPixelWidth * 20
+                            sourceSize.width:           width
                             mipmap:                     true
                             fillMode:                   Image.PreserveAspectFit
                             source:                     controller.fixedWing ? "/qmlimages/ReturnToHomeAltitude.svg" : "/qmlimages/ReturnToHomeAltitudeCopter.svg"
@@ -453,7 +458,7 @@ QGCView {
                 */
                 QGCLabel {
                     text:                               qsTr("Land Mode Settings")
-                    font.weight:                        Font.DemiBold
+                    font.family:                        ScreenTools.demiboldFontFamily
                 }
                 Rectangle {
                     color:                              palette.windowShade
@@ -469,8 +474,9 @@ QGCView {
                         }
                         QGCColoredImage {
                             color:                      palette.text
-                            height:                     ScreenTools.defaultFontPixelWidth * 10
+                            height:                     ScreenTools.defaultFontPixelWidth * 13
                             width:                      ScreenTools.defaultFontPixelWidth * 20
+                            sourceSize.width:           width
                             mipmap:                     true
                             fillMode:                   Image.PreserveAspectFit
                             source:                     controller.fixedWing ? "/qmlimages/LandMode.svg" : "/qmlimages/LandModeCopter.svg"

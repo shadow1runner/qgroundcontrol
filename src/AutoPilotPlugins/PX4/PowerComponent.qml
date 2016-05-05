@@ -123,7 +123,7 @@ QGCView {
 
                 QGCLabel {
                     text: qsTr("Battery")
-                    font.weight: Font.DemiBold
+                    font.family: ScreenTools.demiboldFontFamily
                 }
 
                 Rectangle {
@@ -201,6 +201,7 @@ QGCView {
                         x:                      voltageCol.firstColumnWidth + textEditWidth + (ScreenTools.defaultFontPixelWidth * 3)
                         width:                  height * 0.75
                         height:                 voltageCol.height
+                        sourceSize.height:      height
                         fillMode:               Image.PreserveAspectFit
                         smooth:                 true
                         color:                  palette.text
@@ -236,7 +237,7 @@ QGCView {
 
                 QGCLabel {
                     text:           qsTr("ESC PWM Minimum and Maximum Calibration")
-                    font.weight:    Font.DemiBold
+                    font.family:    ScreenTools.demiboldFontFamily
                 }
 
                 Rectangle {
@@ -276,7 +277,7 @@ QGCView {
 
                 QGCLabel {
                     text:           qsTr("UAVCAN Bus Configuration")
-                    font.weight:    Font.DemiBold
+                    font.family:    ScreenTools.demiboldFontFamily
                     visible:        showUAVCAN.checked
                 }
 
@@ -306,7 +307,7 @@ QGCView {
 
                 QGCLabel {
                     text:           qsTr("UAVCAN Motor Index and Direction Assignment")
-                    font.weight:    Font.DemiBold
+                    font.family:    ScreenTools.demiboldFontFamily
                     visible:        showUAVCAN.checked
                 }
 
@@ -358,7 +359,7 @@ QGCView {
 
                 QGCLabel {
                     text:           qsTr("Advanced Power Settings")
-                    font.weight:    Font.DemiBold
+                    font.family:    ScreenTools.demiboldFontFamily
                     visible:        showAdvanced.checked
                 }
 
