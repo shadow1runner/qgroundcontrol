@@ -221,6 +221,7 @@ cv::Mat CollisionAvoidanceDataProvider::renderBadFrame(
    std::vector<std::string> lines;
    std::stringstream ss;
    ss << "#" << _frameCount << ": BAD"; lines.push_back(ss.str()); ss.str(std::string());
+   ss << "No FoE"; lines.push_back(ss.str()); ss.str(std::string());
    ss << "(foe: (" << foeMeasured->getFoE().x << ", " << foeMeasured->getFoE().y << ") - "  << std::setprecision(3) << foeMeasured->getInlierProportion()*100 << "%)"; lines.push_back(ss.str()); ss.str(std::string());
 
    return DrawHelper::renderText(combined, lines);
