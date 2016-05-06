@@ -699,7 +699,6 @@ QGCView {
                         buttonImage:    "/qmlimages/ZoomMinus.svg"
                         z:              QGroundControl.zOrderWidgets
                         lightBorders:   _lightWidgetBorders
-
                         onClicked: {
                             if(editorMap)
                                 editorMap.zoomLevel -= 0.5

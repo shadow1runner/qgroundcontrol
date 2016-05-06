@@ -83,57 +83,57 @@ Rectangle {
             QGCLabel { text: qsTr("Gradient:") }
             QGCLabel { text: _gradientText }
 
-        QGCLabel { text: qsTr("Azimuth:") }
-        QGCLabel { text: _azimuthText }
-    }
+            QGCLabel { text: qsTr("Azimuth:") }
+            QGCLabel { text: _azimuthText }
+        }
 
-    QGCFlickable {
-        anchors.leftMargin:     _margins
-        anchors.rightMargin:    _margins
-        anchors.left:           valueGrid.right
-        anchors.right:          parent.right
-        anchors.top:            parent.top
-        anchors.bottom:         parent.bottom
-        contentWidth:           graphRow.width
-        clip:                   true
+        QGCFlickable {
+            anchors.leftMargin:     _margins
+            anchors.rightMargin:    _margins
+            anchors.top:            parent.top
+            anchors.bottom:         parent.bottom
+            width:                  parent.width - valueGrid.width - (_margins * 2)
+            contentWidth:           graphRow.width
+            visible:                _expanded
+            clip:                   true
 
-        Row {
-            id:             graphRow
-            anchors.top:    parent.top
-            anchors.bottom: parent.bottom
-            spacing:        ScreenTools.smallFontPixelWidth
+            Row {
+                id:                 graphRow
+                anchors.top:        parent.top
+                anchors.bottom:     parent.bottom
+                //anchors.margins:    ScreenTools.defaultFontPixelWidth * ScreenTools.smallFontPointRatio
+                spacing:            ScreenTools.defaultFontPixelWidth * ScreenTools.smallFontPointRatio
 
-            Repeater {
-                model: missionItems
+                Repeater {
+                    model: missionItems
 
-                Item {
-                    height:     graphRow.height
-                    width:      ScreenTools.smallFontPixelWidth * 2
-                    visible:    object.specifiesCoordinate && !object.isStandaloneCoordinate
+                    Item {
+                        height:     graphRow.height
+                        width:      indicator.width
+                        visible:    object.specifiesCoordinate && !object.isStandaloneCoordinate
 
+                        property real availableHeight:  height - indicator.height
+                        property bool graphAbsolute:    true
 
-                    property real availableHeight: height - ScreenTools.smallFontPixelHeight - indicator.height
+                        MissionItemIndexLabel {
+                            id:                         indicator
+                            anchors.horizontalCenter:   parent.horizontalCenter
+                            y:                          availableHeight - (availableHeight * object.altPercent)
+                            small:                      true
+                            isCurrentItem:              object.isCurrentItem
+                            label:                      object.abbreviation
+                            visible:                    object.relativeAltitude ? true : (object.homePosition || graphAbsolute)
+                        }
 
-                    property bool graphAbsolute:    true
-
-                    MissionItemIndexLabel {
-                        id:                         indicator
-                        anchors.horizontalCenter:   parent.horizontalCenter
-                        y:                          availableHeight - (availableHeight * object.altPercent)
-                        small:                      true
-                        isCurrentItem:              object.isCurrentItem
-                        label:                      object.abbreviation
-                        visible:                    object.relativeAltitude ? true : (object.homePosition || graphAbsolute)
-                    }
-
-                    /*
-                      Taking these off for now since there really isn't room for the numbers
-                    QGCLabel {
-                        anchors.bottom:             parent.bottom
-                        anchors.horizontalCenter:   parent.horizontalCenter
-                        font.pixelSize:             ScreenTools.smallFontPixelSize
-                        text:                       (object.relativeAltitude ? "" : "=") + object.coordinate.altitude.toFixed(0)
-                    }
+                        /*
+                          Taking these off for now since there really isn't room for the numbers
+                        QGCLabel {
+                            anchors.bottom:             parent.bottom
+                            anchors.horizontalCenter:   parent.horizontalCenter
+                            font.pointSize:             ScreenTools.smallFontPointSize
+                            text:                       (object.relativeAltitude ? "" : "=") + object.coordinate.altitude.toFixed(0)
+                        }
+                        */
                     }
                 }
             }
