@@ -83,7 +83,7 @@ Rectangle {
                 QGCComboBox {
                     id:                 fileNameDeviceCombo
                     anchors.margins:    ScreenTools.defaultFontPixelWidth
-                    width:              ScreenTools.defaultFontPixelWidth * 20
+                    width:              ScreenTools.defaultFontPixelWidth * 40
                     model:              fileNameDeviceModel
                     currentIndex:       _controller.useRecordedVideoInsteadOfDevice ? 1 : 0
 
@@ -110,7 +110,7 @@ Rectangle {
                 QGCTextField {
                     id:     fileNameField
                     text:   _controller.fileName
-                    width:  ScreenTools.defaultFontPixelWidth * 60
+                    width:  ScreenTools.defaultFontPixelWidth * 160
                     anchors.verticalCenter: parent.verticalCenter
                     onEditingFinished: {
                         _controller.fileName = fileNameField.text
@@ -210,7 +210,7 @@ Rectangle {
                 QGCTextField {
                     id:     subsampleAmountField
                     text:   _controller.subsampleAmount.toString()
-                    width:  ScreenTools.defaultFontPixelWidth * 6
+                    width:  ScreenTools.defaultFontPixelWidth * 16
                     inputMethodHints:       Qt.ImhFormattedNumbersOnly
                     anchors.verticalCenter: parent.verticalCenter
                     onEditingFinished: {
@@ -234,7 +234,7 @@ Rectangle {
                 QGCTextField {
                     id:     particlesField
                     text:   _controller.particles.toString()
-                    width:  ScreenTools.defaultFontPixelWidth * 6
+                    width:  ScreenTools.defaultFontPixelWidth * 16
                     inputMethodHints:       Qt.ImhFormattedNumbersOnly
                     anchors.verticalCenter: parent.verticalCenter
                     onEditingFinished: {
@@ -258,7 +258,7 @@ Rectangle {
                 QGCTextField {
                     id:     windowSizeField
                     text:   _controller.windowSize.toString()
-                    width:  ScreenTools.defaultFontPixelWidth * 6
+                    width:  ScreenTools.defaultFontPixelWidth * 16
                     inputMethodHints:       Qt.ImhFormattedNumbersOnly
                     anchors.verticalCenter: parent.verticalCenter
                     onEditingFinished: {
@@ -290,7 +290,7 @@ Rectangle {
                 QGCTextField {
                     id:     inlierProportionThresholdField
                     text:   _controller.inlierProportionThreshold.toString()
-                    width:  ScreenTools.defaultFontPixelWidth * 6
+                    width:  ScreenTools.defaultFontPixelWidth * 16
                     inputMethodHints:       Qt.ImhFormattedNumbersOnly
                     anchors.verticalCenter: parent.verticalCenter
                     enabled: _controller.inlierProportionThresholdEnabled
@@ -315,7 +315,7 @@ Rectangle {
                 QGCTextField {
                     id:     divergencePatchSizeField
                     text:   _controller.divergencePatchSize.toString()
-                    width:  ScreenTools.defaultFontPixelWidth * 6
+                    width:  ScreenTools.defaultFontPixelWidth * 16
                     inputMethodHints:       Qt.ImhFormattedNumbersOnly
                     anchors.verticalCenter: parent.verticalCenter
                     onEditingFinished: {
@@ -339,7 +339,7 @@ Rectangle {
                 QGCTextField {
                     id:     divergenceThresholdField
                     text:   _controller.divergenceThreshold.toString()
-                    width:  ScreenTools.defaultFontPixelWidth * 6
+                    width:  ScreenTools.defaultFontPixelWidth * 16
                     inputMethodHints:       Qt.ImhFormattedNumbersOnly
                     anchors.verticalCenter: parent.verticalCenter
                     onEditingFinished: {
@@ -377,7 +377,7 @@ Rectangle {
                 QGCTextField {
                     id:     ocamModelPathField
                     text:   _controller.ocamModelPath.toString()
-                    width:  ScreenTools.defaultFontPixelWidth * 60
+                    width:  ScreenTools.defaultFontPixelWidth * 160
                     anchors.verticalCenter: parent.verticalCenter
                     enabled: _controller.undistortFrames
                     onEditingFinished: {
@@ -437,7 +437,7 @@ Rectangle {
                 QGCTextField {
                     id:     opticalFlowVectorVisualizationFactorField
                     text:   _controller.opticalFlowVectorVisualizationFactor.toString()
-                    width:  ScreenTools.defaultFontPixelWidth * 2
+                    width:  ScreenTools.defaultFontPixelWidth * 12
                     inputMethodHints:       Qt.ImhFormattedNumbersOnly
                     anchors.verticalCenter: parent.verticalCenter
                     onEditingFinished: {
@@ -537,7 +537,7 @@ Rectangle {
                 QGCTextField {
                     id:     rawFramesPath
                     text:   _controller.rawFramesPath
-                    width:  ScreenTools.defaultFontPixelWidth * 60
+                    width:  ScreenTools.defaultFontPixelWidth * 75  
                     anchors.verticalCenter: parent.verticalCenter
                     enabled:    _controller.writeToOutputEnabled && _controller.writeRawFrames
                     onEditingFinished: {
@@ -572,7 +572,7 @@ Rectangle {
                 QGCTextField {
                     id:     badFramePath
                     text:   _controller.badFramesPath
-                    width:  ScreenTools.defaultFontPixelWidth * 60
+                    width:  ScreenTools.defaultFontPixelWidth * 75  
                     anchors.verticalCenter: parent.verticalCenter
                     enabled:    _controller.writeToOutputEnabled && _controller.writeBadFrames
                     onEditingFinished: {
@@ -607,7 +607,7 @@ Rectangle {
                 QGCTextField {
                     id:     goodFramesPath
                     text:   _controller.goodFramesPath
-                    width:  ScreenTools.defaultFontPixelWidth * 60
+                    width:  ScreenTools.defaultFontPixelWidth * 75  
                     anchors.verticalCenter: parent.verticalCenter
                     enabled:    _controller.writeToOutputEnabled && _controller.writeGoodFrames
                     onEditingFinished: {
@@ -642,7 +642,7 @@ Rectangle {
                 QGCTextField {
                     id:     histogramFramesPath
                     text:   _controller.histogramFramesPath
-                    width:  ScreenTools.defaultFontPixelWidth * 60
+                    width:  ScreenTools.defaultFontPixelWidth * 75  
                     anchors.verticalCenter: parent.verticalCenter
                     enabled:    _controller.writeToOutputEnabled && _controller.writeHistogramFrames
                     onEditingFinished: {
@@ -677,7 +677,7 @@ Rectangle {
                 QGCTextField {
                     id:     opticalFlowFramesPath
                     text:   _controller.opticalFlowFramesPath
-                    width:  ScreenTools.defaultFontPixelWidth * 60
+                    width:  ScreenTools.defaultFontPixelWidth * 75  
                     anchors.verticalCenter: parent.verticalCenter
                     enabled:    _controller.writeToOutputEnabled && _controller.writeOpticalFlowFrames
                     onEditingFinished: {
@@ -712,7 +712,7 @@ Rectangle {
                 QGCTextField {
                     id:     uiFramesPath
                     text:   _controller.uiFramesPath
-                    width:  ScreenTools.defaultFontPixelWidth * 60
+                    width:  ScreenTools.defaultFontPixelWidth * 75  
                     anchors.verticalCenter: parent.verticalCenter
                     enabled:    _controller.writeToOutputEnabled && _controller.writeUiFrames
                     onEditingFinished: {
