@@ -29,7 +29,7 @@ CheckBox {
                 id:             text
                 text:           control.text
                 antialiasing:   true
-                font.pointSize: ScreenTools.defaultFontPointSize
+                font.pixelSize: ScreenTools.defaultFontPixelSize
                 font.family:    ScreenTools.normalFontFamily
                 color:          control.__qgcPal.text
                 anchors.verticalCenter: parent.verticalCenter

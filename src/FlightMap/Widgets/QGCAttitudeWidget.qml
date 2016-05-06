@@ -58,33 +58,31 @@ Item {
         //----------------------------------------------------
         //-- Artificial Horizon
         QGCArtificialHorizon {
-            rollAngle:          _rollAngle
-            pitchAngle:         _pitchAngle
-            anchors.fill:       parent
+            rollAngle:      _rollAngle
+            pitchAngle:     _pitchAngle
+            anchors.fill:   parent
         }
         //----------------------------------------------------
         //-- Pointer
         Image {
-            id:                 pointer
-            source:             "/qmlimages/attitudePointer.svg"
-            mipmap:             true
-            fillMode:           Image.PreserveAspectFit
-            anchors.fill:       parent
-            sourceSize.height:  parent.height
+            id:         pointer
+            source:     "/qmlimages/attitudePointer.svg"
+            mipmap:     true
+            fillMode:   Image.PreserveAspectFit
+            anchors.fill: parent
         }
         //----------------------------------------------------
         //-- Instrument Dial
         Image {
-            id:                 instrumentDial
-            source:             "/qmlimages/attitudeDial.svg"
-            mipmap:             true
-            fillMode:           Image.PreserveAspectFit
-            anchors.fill:       parent
-            sourceSize.height:  parent.height
+            id:         instrumentDial
+            source:     "/qmlimages/attitudeDial.svg"
+            mipmap:     true
+            fillMode:   Image.PreserveAspectFit
+            anchors.fill: parent
             transform: Rotation {
-                origin.x:       root.width  / 2
-                origin.y:       root.height / 2
-                angle:          -_rollAngle
+                origin.x: root.width  / 2
+                origin.y: root.height / 2
+                angle: -_rollAngle
             }
         }
         //----------------------------------------------------
@@ -106,7 +104,6 @@ Item {
             source:             "/qmlimages/crossHair.svg"
             mipmap:             true
             width:              size * 0.75
-            sourceSize.width:   width
             fillMode:           Image.PreserveAspectFit
         }
     }

@@ -74,7 +74,7 @@ Rectangle {
             spacing:            ScreenTools.defaultFontPixelHeight / 2
             QGCLabel {
                 text:   qsTr("Comm Link Settings")
-                font.pointSize: ScreenTools.mediumFontPointSize
+                font.pixelSize: ScreenTools.mediumFontPixelSize
             }
             Rectangle {
                 height: 1
@@ -214,7 +214,7 @@ Rectangle {
                     spacing:            ScreenTools.defaultFontPixelHeight / 2
                     QGCLabel {
                         text:   linkConfig ? qsTr("Edit Link Configuration Settings (WIP)") : qsTr("Create New Link Configuration (WIP)")
-                        font.pointSize: ScreenTools.mediumFontPointSize
+                        font.pixelSize: ScreenTools.mediumFontPixelSize
                     }
                     Rectangle {
                         height: 1

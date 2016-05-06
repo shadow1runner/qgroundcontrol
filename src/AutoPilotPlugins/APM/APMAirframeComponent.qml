@@ -119,7 +119,7 @@ QGCView {
                 anchors.left:           parent.left
                 anchors.right:          applyButton.right
                 text:                   qsTr("Please select your airframe type")
-                font.pointSize:         ScreenTools.mediumFontPointSize
+                font.pixelSize:         ScreenTools.mediumFontPixelSize
                 wrapMode:               Text.WordWrap
             }
 

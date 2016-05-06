@@ -29,6 +29,7 @@ FactPanel {
 
     Column {
         anchors.fill:       parent
+        anchors.margins:    8
         VehicleSummaryRow {
             labelText: qsTr("Firmware Version:")
             valueText: esp8266.version

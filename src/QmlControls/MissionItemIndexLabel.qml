@@ -19,7 +19,7 @@ Rectangle {
     border.color:   "white"
     color:          isCurrentItem ? "green" : qgcPal.mapButtonHighlight
 
-    property real _width: small ? ScreenTools.defaultFontPixelHeight * ScreenTools.smallFontPointRatio * 1.75 : ScreenTools.defaultFontPixelHeight * 1.75
+    property real _width: small ? ScreenTools.smallFontPixelSize * 1.5 : ScreenTools.mediumFontPixelSize * 1.5
 
     QGCPalette { id: qgcPal }
 
@@ -29,7 +29,6 @@ Rectangle {
         horizontalAlignment:    Text.AlignHCenter
         verticalAlignment:      Text.AlignVCenter
         color:                  "white"
-        font.pointSize:         small ? ScreenTools.smallFontPointSize : ScreenTools.defaultFontPointSize
     }
 
     MouseArea {

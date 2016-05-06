@@ -41,9 +41,8 @@ Item {
     property alias animateHideDialog: __animateHideDialog
 
     readonly property int  __animationDuration: 100
-    readonly property real __closeButtonSize:   ScreenTools.defaultFontPixelHeight * 1.5
-    readonly property real _margins:            ScreenTools.defaultFontPixelHeight * 0.5
-    readonly property real _buttonHeight:       ScreenTools.isTinyScreen ? ScreenTools.defaultFontPixelHeight * 3 : ScreenTools.defaultFontPixelHeight * 2
+    readonly property real __closeButtonSize:   ScreenTools.defaultFontPixelHeight * 2
+    readonly property real _margins:            ScreenTools.defaultFontPixelHeight / 2
 
     QGCPalette { id: qgcPal }
 
@@ -156,7 +155,7 @@ Item {
                 anchors.right:          parent.right
                 anchors.topMargin:      _margins
                 anchors.top:            parent.top
-                spacing:                ScreenTools.defaultFontPixelHeight * 0.5
+                spacing:                 ScreenTools.defaultFontPixelHeight
 
                 QGCLabel {
                     text:           qsTr("Preferences")
@@ -164,7 +163,6 @@ Item {
                 }
 
                 QGCButton {
-                    height:         _buttonHeight
                     anchors.left:   parent.left
                     anchors.right:  parent.right
                     text:           qsTr("General")
@@ -178,7 +176,6 @@ Item {
                 }
 
                 QGCButton {
-                    height:         _buttonHeight
                     anchors.left:   parent.left
                     anchors.right:  parent.right
                     text:           qsTr("Comm Links")
@@ -192,7 +189,6 @@ Item {
                 }
 
                 QGCButton {
-                    height:         _buttonHeight
                     anchors.left:   parent.left
                     anchors.right:  parent.right
                     text:           qsTr("Offline Maps")
@@ -206,7 +202,6 @@ Item {
                 }
 
                 QGCButton {
-                    height:         _buttonHeight
                     anchors.left:   parent.left
                     anchors.right:  parent.right
                     text:           qsTr("MavLink")
@@ -220,7 +215,6 @@ Item {
                 }
 
                 QGCButton {
-                    height:         _buttonHeight
                     anchors.left:   parent.left
                     anchors.right:  parent.right
                     text:           qsTr("Console")
@@ -234,7 +228,6 @@ Item {
                 }
 
                 QGCButton {
-                    height:         _buttonHeight
                     anchors.left:   parent.left
                     anchors.right:  parent.right
                     text:           qsTr("Mock Link")
@@ -249,7 +242,6 @@ Item {
                 }
 
                 QGCButton {
-                    height:         _buttonHeight
                     anchors.left:   parent.left
                     anchors.right:  parent.right
                     text:           qsTr("Debug")
@@ -323,7 +315,7 @@ Item {
             height:          __closeButtonSize
             anchors.right:   parent.right
             anchors.top:     parent.top
-            anchors.margins: ScreenTools.defaultFontPixelHeight * 0.5
+            anchors.margins: ScreenTools.defaultFontPixelSize * 0.5
             QGCColoredImage {
                 source:       "/res/XDelete.svg"
                 mipmap:       true
@@ -331,7 +323,6 @@ Item {
                 color:        qgcPal.text
                 width:        parent.width  * 0.75
                 height:       parent.height * 0.75
-                sourceSize.height: height
                 anchors.centerIn: parent
             }
             MouseArea {

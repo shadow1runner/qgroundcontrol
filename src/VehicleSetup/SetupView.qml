@@ -151,7 +151,7 @@ Rectangle {
                 verticalAlignment:      Text.AlignVCenter
                 horizontalAlignment:    Text.AlignHCenter
                 wrapMode:               Text.WordWrap
-                font.pointSize:         ScreenTools.mediumFontPointSize
+                font.pixelSize:         ScreenTools.mediumFontPixelSize
                 text:                   "QGroundControl does not currently support setup of your vehicle type. " +
                                         "If your vehicle is already configured you can still Fly."
 
@@ -172,7 +172,7 @@ Rectangle {
                 verticalAlignment:      Text.AlignVCenter
                 horizontalAlignment:    Text.AlignHCenter
                 wrapMode:               Text.WordWrap
-                font.pointSize:         ScreenTools.largeFontPointSize
+                font.pixelSize:         ScreenTools.largeFontPixelSize
                 text:                   "Connect vehicle to your device and QGroundControl will automatically detect it." +
                                         (ScreenTools.isMobile ? "" : " Click Firmware on the left to upgrade your vehicle.")
 
@@ -192,7 +192,7 @@ Rectangle {
                 verticalAlignment:      Text.AlignVCenter
                 horizontalAlignment:    Text.AlignHCenter
                 wrapMode:               Text.WordWrap
-                font.pointSize:         ScreenTools.mediumFontPointSize
+                font.pixelSize:         ScreenTools.mediumFontPixelSize
                 text:                   "You are currently connected to a vehicle, but that vehicle did not return back the full parameter list. " +
                                         "Because of this the full set of vehicle setup options are not available."
 
@@ -211,7 +211,7 @@ Rectangle {
                 verticalAlignment:      Text.AlignVCenter
                 horizontalAlignment:    Text.AlignHCenter
                 wrapMode:               Text.WordWrap
-                font.pointSize:         ScreenTools.mediumFontPointSize
+                font.pixelSize:         ScreenTools.mediumFontPixelSize
                 text:                   _messagePanelText
             }
         }

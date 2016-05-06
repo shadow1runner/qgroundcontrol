@@ -55,7 +55,6 @@ Item {
         anchors.bottomMargin:   _topBottomMargins
         anchors.top:            parent.top
         anchors.bottom:         parent.bottom
-        sourceSize.height:      parent.height
         fillMode:               Image.PreserveAspectFit
         color:                  checked ? qgcPal.buttonHighlight : qgcPal.buttonText
     }
@@ -64,7 +63,7 @@ Item {
         anchors.left:   parent.left
         anchors.right:  parent.right
         anchors.bottom: parent.bottom
-        height:         _topBottomMargins * 0.25
+        height:         _topBottomMargins / 3
         color:          qgcPal.buttonHighlight
         visible:        checked
     }

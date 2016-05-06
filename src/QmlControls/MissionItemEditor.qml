@@ -62,7 +62,6 @@ Rectangle {
         anchors.verticalCenter: commandPicker.verticalCenter
         width:                  commandPicker.height
         height:                 commandPicker.height
-        sourceSize.height:      height
         source:                 "qrc:/qmlimages/Hamburger.svg"
         visible:                missionItem.isCurrentItem && missionItem.sequenceNumber != 0
 

@@ -55,7 +55,7 @@ Rectangle {
             anchors.top:        parent.top
             QGCLabel {
                 text:   qsTr("MavLink Settings")
-                font.pointSize: ScreenTools.mediumFontPointSize
+                font.pixelSize: ScreenTools.mediumFontPixelSize
             }
             Rectangle {
                 height: 1

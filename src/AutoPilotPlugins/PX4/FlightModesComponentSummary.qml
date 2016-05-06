@@ -22,6 +22,7 @@ FactPanel {
 
     Loader {
         anchors.fill:       parent
+        anchors.margins:    8
         sourceComponent:    _simpleMode ? simple : advanced
     }
 

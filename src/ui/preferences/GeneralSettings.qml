@@ -59,7 +59,7 @@ Rectangle {
 
             QGCLabel {
                 text:   qsTr("General Settings")
-                font.pointSize: ScreenTools.mediumFontPointSize
+                font.pixelSize: ScreenTools.mediumFontPixelSize
             }
             Rectangle {
                 height: 1

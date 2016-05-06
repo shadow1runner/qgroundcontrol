@@ -51,6 +51,8 @@ Item {
 
     function getGadgetWidth() {
         if(ScreenTools.isMobile) {
+            if(ScreenTools.isTinyScreen)
+                return mainWindow.width * 0.2
             return mainWindow.width * 0.15
         }
         var w = mainWindow.width * 0.15
@@ -72,7 +74,7 @@ Item {
             visible:                    _activeVehicle && !_activeVehicle.coordinateValid && _mainIsMap
             z:                          QGroundControl.zOrderTopMost
             color:                      mapPal.text
-            font.pointSize:             ScreenTools.largeFontPointSize
+            font.pixelSize:             ScreenTools.largeFontPixelSize
             text:                       qsTr("No GPS Lock for Vehicle")
         }
 
@@ -81,7 +83,7 @@ Item {
             visible:                    _activeVehicle && !_activeVehicle.coordinateValid
             z:                          QGroundControl.zOrderTopMost
             color:                      mapPal.text
-            font.pointSize:             ScreenTools.largeFontPointSize
+            font.pixelSize:             ScreenTools.largeFontPixelSize
             text:                       _activeVehicle ? _activeVehicle.prearmError : ""
         }
     }
@@ -123,7 +125,7 @@ Item {
         anchors.top:            parent.top
         anchors.right:          altitudeSlider.visible ? altitudeSlider.left : parent.right
         visible:                QGroundControl.virtualTabletJoystick
-        width:                  ScreenTools.isTinyScreen ? getGadgetWidth() * 2 : getGadgetWidth()
+        width:                  getGadgetWidth()
         active:                 _activeVehicle != null
         heading:                _heading
         rollAngle:              _roll
@@ -245,11 +247,12 @@ Item {
         //-- Zoom Map In
         RoundButton {
             id:                 mapZoomPlus
-            visible:            _mainIsMap
+            visible:            _mainIsMap && !ScreenTools.isTinyScreen
             buttonImage:        "/qmlimages/ZoomPlus.svg"
             exclusiveGroup:     _dropButtonsExclusiveGroup
             z:                  QGroundControl.zOrderWidgets
             lightBorders:       _lightWidgetBorders
+
             onClicked: {
                 if(_flightMap)
                     _flightMap.zoomLevel += 0.5
@@ -260,11 +263,12 @@ Item {
         //-- Zoom Map Out
         RoundButton {
             id:                 mapZoomMinus
-            visible:            _mainIsMap
+            visible:            _mainIsMap && !ScreenTools.isTinyScreen
             buttonImage:        "/qmlimages/ZoomMinus.svg"
             exclusiveGroup:     _dropButtonsExclusiveGroup
             z:                  QGroundControl.zOrderWidgets
             lightBorders:       _lightWidgetBorders
+
             onClicked: {
                 if(_flightMap)
                     _flightMap.zoomLevel -= 0.5
@@ -279,7 +283,7 @@ Item {
         anchors.margins:            _barMargin
         anchors.bottom:             parent.bottom
         anchors.horizontalCenter:   parent.horizontalCenter
-        width:                      guidedModeColumn.width  + (_margins * 2)
+        width:                      guidedModeColumn.width + (_margins * 2)
         height:                     guidedModeColumn.height + (_margins * 2)
         radius:                     _margins
         color:                      _lightWidgetBorders ? qgcPal.mapWidgetBorderLight : qgcPal.mapWidgetBorderDark
@@ -324,6 +328,7 @@ Item {
             id:             guidedModeHideTimer
             interval:       7000
             running:        true
+
             onTriggered: {
                 if (ScreenTools.isShortScreen) {
                     _guidedModeBar.state = "Hidden"
@@ -357,9 +362,9 @@ Item {
                 _activeVehicle.guidedModeLand()
                 break;
             case confirmTakeoff:
-                var altitude1 = altitudeSlider.getValue()
-                if (!isNaN(altitude1)) {
-                    _activeVehicle.guidedModeTakeoff(altitude1)
+                var altitude = altitudeSlider.getValue()
+                if (!isNaN(altitude)) {
+                    _activeVehicle.guidedModeTakeoff(altitude)
                 }
                 break;
             case confirmArm:
@@ -372,9 +377,9 @@ Item {
                 _activeVehicle.emergencyStop()
                 break;
             case confirmChangeAlt:
-                var altitude2 = altitudeSlider.getValue()
-                if (!isNaN(altitude2)) {
-                    _activeVehicle.guidedModeChangeAltitude(altitude2)
+                var altitude = altitudeSlider.getValue()
+                if (!isNaN(altitude)) {
+                    _activeVehicle.guidedModeChangeAltitude(altitude)
                 }
                 break;
             case confirmGoTo:
@@ -435,7 +440,7 @@ Item {
                 guidedModeConfirm.confirmText = qsTr("move vehicle")
                 break;
             case confirmRetask:
-                _guidedModeBar.confirmText    = qsTr("active waypoint change")
+                _guidedModeBar.confirmText = qsTr("active waypoint change")
                 break;
             case confirmCollisionAvoidanceStart:
                 guidedModeConfirm.confirmText = "start collision avoidance"

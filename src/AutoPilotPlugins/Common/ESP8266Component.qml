@@ -41,11 +41,11 @@ QGCView {
     QGCPalette { id: palette; colorGroupEnabled: panel.enabled }
 
     property real _margins:         ScreenTools.defaultFontPixelHeight
-    property real _middleRowWidth:  ScreenTools.defaultFontPixelWidth * 18
-    property real _editFieldWidth:  ScreenTools.defaultFontPixelWidth * 16
-    property real _labelWidth:      ScreenTools.defaultFontPixelWidth * 10
-    property real _statusWidth:     ScreenTools.defaultFontPixelWidth * 6
-    property real _smallFont:       ScreenTools.smallFontPointSize
+    property real _middleRowWidth:  ScreenTools.defaultFontPixelWidth * 22
+    property real _editFieldWidth:  ScreenTools.defaultFontPixelWidth * 20
+    property real _labelWidth:      ScreenTools.defaultFontPixelWidth * 12
+    property real _statusWidth:     ScreenTools.defaultFontPixelWidth * 8
+    property real _smallFont:       ScreenTools.smallFontPixelSize
 
     readonly property string    dialogTitle:    qsTr("controller WiFi Bridge")
     property int                stStatus:       XMLHttpRequest.UNSENT
@@ -146,7 +146,6 @@ QGCView {
                             color:                      palette.text
                             width:                      ScreenTools.defaultFontPixelWidth * 12
                             height:                     width * 1.45
-                            sourceSize.height:          width * 1.45
                             mipmap:                     true
                             fillMode:                   Image.PreserveAspectFit
                             source:                     wifiMode ? (wifiMode.value === 0 ? "/qmlimages/APMode.svg" : "/qmlimages/StationMode.svg") : "/qmlimages/APMode.svg"
@@ -320,12 +319,12 @@ QGCView {
                            spacing:                     _margins
                            QGCLabel {
                                text:                    qsTr("Messages Received")
-                               font.pointSize:          _smallFont
+                               font.pixelSize:          _smallFont
                                width:                   _labelWidth
                            }
                            QGCLabel {
                                id:                      vpackets
-                               font.pointSize:          _smallFont
+                               font.pixelSize:          _smallFont
                                width:                   _statusWidth
                                horizontalAlignment:     Text.AlignRight
                            }
@@ -333,13 +332,13 @@ QGCView {
                        Row {
                            spacing:                     _margins
                            QGCLabel {
-                               font.pointSize:          _smallFont
+                               font.pixelSize:          _smallFont
                                text:                    qsTr("Messages Received")
                                width:                   _labelWidth
                            }
                            QGCLabel {
                                id:                      gpackets
-                               font.pointSize:          _smallFont
+                               font.pixelSize:          _smallFont
                                width:                   _statusWidth
                                horizontalAlignment:     Text.AlignRight
                            }
@@ -347,12 +346,12 @@ QGCView {
                        Row {
                            spacing:                     _margins
                            QGCLabel {
-                               font.pointSize:          _smallFont
+                               font.pixelSize:          _smallFont
                                text:                    qsTr("Messages Received")
                                width:                   _labelWidth
                            }
                            QGCLabel {
-                               font.pointSize:          _smallFont
+                               font.pixelSize:          _smallFont
                                text:                    controller.vehicle ? thisThingHasNoNumberLocaleSupport(controller.vehicle.messagesReceived) : 0
                                width:                   _statusWidth
                                horizontalAlignment:     Text.AlignRight
@@ -362,84 +361,84 @@ QGCView {
                            spacing:                     _margins
                            QGCLabel {
                                text:                    qsTr("Messages Lost")
-                               font.pointSize:          _smallFont
+                               font.pixelSize:          _smallFont
                                width:                   _labelWidth
                            }
                            QGCLabel {
                                id:                      vlost
                                width:                   _statusWidth
                                horizontalAlignment:     Text.AlignRight
-                               font.pointSize:          _smallFont
+                               font.pixelSize:          _smallFont
                            }
                        }
                        Row {
                            spacing:                     _margins
                            QGCLabel {
                                text:                    qsTr("Messages Lost")
-                               font.pointSize:          _smallFont
+                               font.pixelSize:          _smallFont
                                width:                   _labelWidth
                            }
                            QGCLabel {
                                id:                      glost
                                width:                   _statusWidth
                                horizontalAlignment:     Text.AlignRight
-                               font.pointSize:          _smallFont
+                               font.pixelSize:          _smallFont
                            }
                        }
                        Row {
                            spacing:                     _margins
                            QGCLabel {
                                text:                    qsTr("Messages Lost")
-                               font.pointSize:          _smallFont
+                               font.pixelSize:          _smallFont
                                width:                   _labelWidth
                            }
                            QGCLabel {
                                text:                    controller.vehicle ? thisThingHasNoNumberLocaleSupport(controller.vehicle.messagesLost) : 0
                                width:                   _statusWidth
                                horizontalAlignment:     Text.AlignRight
-                               font.pointSize:          _smallFont
+                               font.pixelSize:          _smallFont
                            }
                        }
                        Row {
                            spacing:                     _margins
                            QGCLabel {
                                text:                    qsTr("Messages Sent")
-                               font.pointSize:          _smallFont
+                               font.pixelSize:          _smallFont
                                width:                   _labelWidth
                            }
                            QGCLabel {
                                id:                      vsent
                                width:                   _statusWidth
                                horizontalAlignment:     Text.AlignRight
-                               font.pointSize:          _smallFont
+                               font.pixelSize:          _smallFont
                            }
                        }
                        Row {
                            spacing:                     _margins
                            QGCLabel {
                                text:                    qsTr("Messages Sent")
-                               font.pointSize:          _smallFont
+                               font.pixelSize:          _smallFont
                                width:                   _labelWidth
                            }
                            QGCLabel {
                                id:                      gsent
                                width:                   _statusWidth
                                horizontalAlignment:     Text.AlignRight
-                               font.pointSize:          _smallFont
+                               font.pixelSize:          _smallFont
                            }
                        }
                        Row {
                            spacing:                     _margins
                            QGCLabel {
                                text:                    qsTr("Messages Sent")
-                               font.pointSize:          _smallFont
+                               font.pixelSize:          _smallFont
                                width:                   _labelWidth
                            }
                            QGCLabel {
                                text:                    controller.vehicle ? thisThingHasNoNumberLocaleSupport(controller.vehicle.messagesSent) : 0
                                width:                   _statusWidth
                                horizontalAlignment:     Text.AlignRight
-                               font.pointSize:          _smallFont
+                               font.pixelSize:          _smallFont
                            }
                        }
                     }
