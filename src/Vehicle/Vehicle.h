@@ -423,6 +423,9 @@ public:
     /// Reboot vehicle
     Q_INVOKABLE void rebootVehicle();
 
+    /// Clear Messages
+    Q_INVOKABLE void clearMessages();
+    
     /// Starts collision avoidance detection algorithm
     Q_INVOKABLE void startCollisionAvoidance();
 

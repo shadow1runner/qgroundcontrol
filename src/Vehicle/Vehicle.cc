@@ -1007,6 +1007,11 @@ QString Vehicle::formatedMessages()
     return messages;
 }
 
+void Vehicle::clearMessages()
+{
+    qgcApp()->toolbox()->uasMessageHandler()->clearMessages();
+}
+
 void Vehicle::_handletextMessageReceived(UASMessage* message)
 {
     if(message)
