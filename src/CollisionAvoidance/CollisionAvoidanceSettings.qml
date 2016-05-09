@@ -35,7 +35,7 @@ Rectangle {
 
 
             QGCLabel {
-                text:   "Collision Avoidance Settings"
+                text:   qsTr("Collision Avoidance Settings")
                 font.pixelSize: ScreenTools.mediumFontPixelSize
             }
             Rectangle {
@@ -48,9 +48,8 @@ Rectangle {
                 width:  parent.width
             }
 
-
             QGCLabel {
-                text:   "Data Source"
+                text:   qsTr("Data Source")
                 font.pixelSize: ScreenTools.mediumFontPixelSize
             }
             Rectangle {
@@ -66,7 +65,8 @@ Rectangle {
             Row {
                 QGCLabel {
                     id:     useRecordedVideoInsteadOfDeviceLabel
-                    text:   "Collision Avoidance Source:"
+                    text:   qsTr("Collision Avoidance Source:")
+                    anchors.verticalCenter: parent.verticalCenter
                 }
 
                 ListModel {
@@ -78,11 +78,13 @@ Rectangle {
                 Item {
                     height: ScreenTools.defaultFontPixelHeight / 2
                     width:  20
+                    anchors.verticalCenter: parent.verticalCenter
                 }
 
                 QGCComboBox {
                     id:                 fileNameDeviceCombo
                     anchors.margins:    ScreenTools.defaultFontPixelWidth
+                    anchors.verticalCenter: parent.verticalCenter
                     width:              ScreenTools.defaultFontPixelWidth * 40
                     model:              fileNameDeviceModel
                     currentIndex:       _controller.useRecordedVideoInsteadOfDevice ? 1 : 0
@@ -103,7 +105,7 @@ Rectangle {
                 visible: _controller.useRecordedVideoInsteadOfDevice
                 spacing:    ScreenTools.defaultFontPixelWidth
                 QGCLabel {
-                    text:   "File Name:"
+                    text:   qsTr("File Name:")
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 
@@ -128,7 +130,7 @@ Rectangle {
                 visible: !_controller.useRecordedVideoInsteadOfDevice
                 spacing:    ScreenTools.defaultFontPixelWidth
                 QGCLabel {
-                    text:   "Device ID:"
+                    text:   qsTr("Device ID:")
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 QGCTextField {
@@ -151,7 +153,8 @@ Rectangle {
             //-- Rotation
             Row {
                 QGCLabel {
-                    text:   "Rotate incoming frames:"
+                    text:   qsTr("Rotate incoming frames:")
+                    anchors.verticalCenter: parent.verticalCenter
                 }
 
                 ListModel {
@@ -163,14 +166,15 @@ Rectangle {
                 }
 
                 Item {
-                    height: ScreenTools.defaultFontPixelHeight / 2
                     width:  20
+                    anchors.verticalCenter: parent.verticalCenter
                 }
 
                 QGCComboBox {
                     id:                 rotationCombo
                     anchors.margins:    ScreenTools.defaultFontPixelWidth
-                    width:              ScreenTools.defaultFontPixelWidth * 20
+                    anchors.verticalCenter: parent.verticalCenter
+                    width:              ScreenTools.defaultFontPixelWidth * 8
                     model:              rotationModel
                     currentIndex:       _controller.rawFrameRotation
 
@@ -186,7 +190,7 @@ Rectangle {
             }
 
             QGCLabel {
-                text:   "OwnFlow Details"
+                text:   qsTr("OwnFlow Details")
                 font.pixelSize: ScreenTools.mediumFontPixelSize
             }
             Rectangle {
@@ -204,17 +208,54 @@ Rectangle {
             Row {
                 spacing:    ScreenTools.defaultFontPixelWidth
                 QGCLabel {
-                    text:   "Subsample Amount:"
+                    text:   qsTr("Subsample Amount:")
                     anchors.verticalCenter: parent.verticalCenter
                 }
-                QGCTextField {
-                    id:     subsampleAmountField
-                    text:   _controller.subsampleAmount.toString()
-                    width:  ScreenTools.defaultFontPixelWidth * 16
-                    inputMethodHints:       Qt.ImhFormattedNumbersOnly
-                    anchors.verticalCenter: parent.verticalCenter
-                    onEditingFinished: {
-                        _controller.subsampleAmount = parseInt(subsampleAmountField.text)
+
+                Row {
+                    Rectangle {
+                        width:              subsampleAmountField.height
+                        height:             width
+                        color:              qgcPal.button
+                        QGCLabel {
+                            text:           "-"
+                            anchors.centerIn: parent
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if(_controller.subsampleAmount > 1)
+                                    _controller.subsampleAmount = _controller.subsampleAmount - 1
+                            }
+                        }
+                    }
+                    QGCTextField {
+                        id:     subsampleAmountField
+                        text:   _controller.subsampleAmount.toString()
+                        width:              ScreenTools.defaultFontPixelWidth * 12
+                        maximumLength:      1
+                        validator:          IntValidator {bottom: 1; top: 6;}
+                        onEditingFinished: {
+                            var subsampleAmount = parseInt(text)
+                            if(subsampleAmount >= 1 && subsampleAmount <= 6)
+                                _controller.subsampleAmount = subsampleAmount
+                        }
+                    }
+                    Rectangle {
+                        width:              subsampleAmountField.height
+                        height:             width
+                        color:              qgcPal.button
+                        QGCLabel {
+                            text:           "+"
+                            anchors.centerIn: parent
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if(_controller.subsampleAmount < 6)
+                                    _controller.subsampleAmount = _controller.subsampleAmount + 1
+                            }
+                        }
                     }
                 }
             }
@@ -228,7 +269,7 @@ Rectangle {
             Row {
                 spacing:    ScreenTools.defaultFontPixelWidth
                 QGCLabel {
-                    text:   "Particles:"
+                    text:   qsTr("Particles:")
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 QGCTextField {
@@ -252,17 +293,56 @@ Rectangle {
             Row {
                 spacing:    ScreenTools.defaultFontPixelWidth
                 QGCLabel {
-                    text:   "Window Size:"
+                    text:   qsTr("Window Size:")
                     anchors.verticalCenter: parent.verticalCenter
                 }
-                QGCTextField {
-                    id:     windowSizeField
-                    text:   _controller.windowSize.toString()
-                    width:  ScreenTools.defaultFontPixelWidth * 16
-                    inputMethodHints:       Qt.ImhFormattedNumbersOnly
-                    anchors.verticalCenter: parent.verticalCenter
-                    onEditingFinished: {
-                        _controller.windowSize = parseInt(windowSizeField.text)
+                Row {
+                    Rectangle {
+                        width:              windowSizeField.height
+                        height:             width
+                        color:              qgcPal.button
+                        QGCLabel {
+                            text:           "-"
+                            anchors.centerIn: parent
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if(_controller.windowSize > 1)
+                                    _controller.windowSize = _controller.windowSize - 1
+                            }
+                        }
+                    }
+                    QGCTextField {
+                        id:     windowSizeField
+                        text:   _controller.windowSize.toString()
+                        width:  ScreenTools.defaultFontPixelWidth * 12
+                        inputMethodHints:       Qt.ImhFormattedNumbersOnly
+                        anchors.verticalCenter: parent.verticalCenter
+                        showUnits:          true
+                        unitsLabel:         "px"
+                        validator:          IntValidator {bottom: 1; top: 50;}
+                        onEditingFinished: {
+                            var windowSize = parseInt(text)
+                            if(windowSize >= 1 && windowSize <= 50)
+                                _controller.windowSize = windowSize
+                        }
+                    }
+                    Rectangle {
+                        width:              windowSizeField.height
+                        height:             width
+                        color:              qgcPal.button
+                        QGCLabel {
+                            text:           "+"
+                            anchors.centerIn: parent
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if(_controller.windowSize < 50)
+                                    _controller.windowSize = _controller.windowSize + 1
+                            }
+                        }
                     }
                 }
             }
@@ -287,15 +367,53 @@ Rectangle {
                     height: ScreenTools.defaultFontPixelHeight / 2
                     width: ScreenTools.defaultFontPixelHeight / 2
                 }
-                QGCTextField {
-                    id:     inlierProportionThresholdField
-                    text:   _controller.inlierProportionThreshold.toString()
-                    width:  ScreenTools.defaultFontPixelWidth * 16
-                    inputMethodHints:       Qt.ImhFormattedNumbersOnly
-                    anchors.verticalCenter: parent.verticalCenter
-                    enabled: _controller.inlierProportionThresholdEnabled
-                    onEditingFinished: {
-                        _controller.inlierProportionThreshold = parseFloat(inlierProportionThresholdField.text)
+                Row {
+                    Rectangle {
+                        width:              inlierProportionThresholdField.height
+                        height:             width
+                        color:              qgcPal.button
+                        QGCLabel {
+                            text:           "-"
+                            anchors.centerIn: parent
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if(_controller.inlierProportionThreshold > 0.001)
+                                    _controller.inlierProportionThreshold = _controller.inlierProportionThreshold - 0.001
+                            }
+                        }
+                    }
+                    QGCTextField {
+                        id:     inlierProportionThresholdField
+                        text:   (_controller.inlierProportionThreshold*1000).toString()
+                        width:  ScreenTools.defaultFontPixelWidth * 12
+                        inputMethodHints:       Qt.ImhFormattedNumbersOnly
+                        anchors.verticalCenter: parent.verticalCenter
+                        showUnits:          true
+                        unitsLabel:         "‰"
+                        validator:          DoubleValidator {bottom: 0.1; top: 50.0; decimals: 2;}
+                        onEditingFinished: {
+                            var inlierProportionThreshold = parseFloat(text)
+                            if(inlierProportionThreshold >= 0.1 && inlierProportionThreshold <= 50.0)
+                                _controller.inlierProportionThreshold = inlierProportionThreshold/1000
+                        }
+                    }
+                    Rectangle {
+                        width:              inlierProportionThresholdField.height
+                        height:             width
+                        color:              qgcPal.button
+                        QGCLabel {
+                            text:           "+"
+                            anchors.centerIn: parent
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if(_controller.inlierProportionThreshold < 0.50)
+                                    _controller.inlierProportionThreshold = _controller.inlierProportionThreshold + 0.001
+                            }
+                        }
                     }
                 }
             }
@@ -309,17 +427,56 @@ Rectangle {
             Row {
                 spacing:    ScreenTools.defaultFontPixelWidth
                 QGCLabel {
-                    text:   "Divergence Patch Size:"
+                    text:   qsTr("Divergence Patch Size:")
                     anchors.verticalCenter: parent.verticalCenter
                 }
-                QGCTextField {
-                    id:     divergencePatchSizeField
-                    text:   _controller.divergencePatchSize.toString()
-                    width:  ScreenTools.defaultFontPixelWidth * 16
-                    inputMethodHints:       Qt.ImhFormattedNumbersOnly
-                    anchors.verticalCenter: parent.verticalCenter
-                    onEditingFinished: {
-                        _controller.divergencePatchSize = parseInt(divergencePatchSizeField.text)
+                Row {
+                    Rectangle {
+                        width:              divergencePatchSizeField.height
+                        height:             width
+                        color:              qgcPal.button
+                        QGCLabel {
+                            text:           "-"
+                            anchors.centerIn: parent
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if(_controller.divergencePatchSize > 1)
+                                    _controller.divergencePatchSize = _controller.divergencePatchSize - 1
+                            }
+                        }
+                    }
+                    QGCTextField {
+                        id:     divergencePatchSizeField
+                        text:   _controller.divergencePatchSize.toString()
+                        width:  ScreenTools.defaultFontPixelWidth * 12
+                        inputMethodHints:       Qt.ImhFormattedNumbersOnly
+                        anchors.verticalCenter: parent.verticalCenter
+                        showUnits:          true
+                        unitsLabel:         "px"
+                        validator:          IntValidator {bottom: 1; top: 50;}
+                        onEditingFinished: {
+                            var divergencePatchSize = parseInt(text)
+                            if(divergencePatchSize >= 1 && divergencePatchSize <= 50)
+                                _controller.divergencePatchSize = divergencePatchSize
+                        }
+                    }
+                    Rectangle {
+                        width:              divergencePatchSizeField.height
+                        height:             width
+                        color:              qgcPal.button
+                        QGCLabel {
+                            text:           "+"
+                            anchors.centerIn: parent
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if(_controller.divergencePatchSize < 50)
+                                    _controller.divergencePatchSize = _controller.divergencePatchSize + 1
+                            }
+                        }
                     }
                 }
             }
@@ -333,17 +490,56 @@ Rectangle {
             Row {
                 spacing:    ScreenTools.defaultFontPixelWidth
                 QGCLabel {
-                    text:   "Divergence Threshold:"
+                    text:   qsTr("Divergence Threshold: (currently unused!)")
                     anchors.verticalCenter: parent.verticalCenter
                 }
-                QGCTextField {
-                    id:     divergenceThresholdField
-                    text:   _controller.divergenceThreshold.toString()
-                    width:  ScreenTools.defaultFontPixelWidth * 16
-                    inputMethodHints:       Qt.ImhFormattedNumbersOnly
-                    anchors.verticalCenter: parent.verticalCenter
-                    onEditingFinished: {
-                        _controller.divergenceThreshold = parseFloat(divergenceThresholdField.text)
+                Row {
+                    Rectangle {
+                        width:              divergenceThresholdField.height
+                        height:             width
+                        color:              qgcPal.button
+                        QGCLabel {
+                            text:           "-"
+                            anchors.centerIn: parent
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if(_controller.divergenceThreshold > 0.001)
+                                    _controller.divergenceThreshold = _controller.divergenceThreshold - 0.001
+                            }
+                        }
+                    }
+                    QGCTextField {
+                        id:     divergenceThresholdField
+                        text:   (_controller.divergenceThreshold*100).toString()
+                        width:  ScreenTools.defaultFontPixelWidth * 12
+                        inputMethodHints:       Qt.ImhFormattedNumbersOnly
+                        anchors.verticalCenter: parent.verticalCenter
+                        showUnits:          true
+                        unitsLabel:         "%"
+                        validator:          DoubleValidator {bottom: 0.1; top: 100.0; decimals: 2;}
+                        onEditingFinished: {
+                            var divergenceThreshold = parseFloat(text)
+                            if(divergenceThreshold >= 0.1 && divergenceThreshold <= 100.0)
+                                _controller.divergenceThreshold = divergenceThreshold/100
+                        }
+                    }
+                    Rectangle {
+                        width:              divergenceThresholdField.height
+                        height:             width
+                        color:              qgcPal.button
+                        QGCLabel {
+                            text:           "+"
+                            anchors.centerIn: parent
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if(_controller.divergenceThreshold < 1)
+                                    _controller.divergenceThreshold = _controller.divergenceThreshold + 0.001
+                            }
+                        }
                     }
                 }
             }
@@ -392,7 +588,7 @@ Rectangle {
             }            
 
             QGCLabel {
-                text:   "UI Settings"
+                text:   qsTr("UI Settings")
                 font.pixelSize: ScreenTools.mediumFontPixelSize
             }
             Rectangle {
@@ -431,7 +627,7 @@ Rectangle {
             Row {
                 spacing:    ScreenTools.defaultFontPixelWidth
                 QGCLabel {
-                    text:   "Optical Flow Visualization - Factor (dx, dy):"
+                    text:   qsTr("Optical Flow Visualization - Factor (dx, dy):")
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 QGCTextField {
@@ -455,7 +651,7 @@ Rectangle {
 
 
             QGCLabel {
-                text:   "Frame Persistence Settings"
+                text:   qsTr("Frame Persistence Settings")
                 font.pixelSize: ScreenTools.mediumFontPixelSize
             }
             Rectangle {
