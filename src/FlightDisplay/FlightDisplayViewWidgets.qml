@@ -424,7 +424,7 @@ Item {
                 guidedModeConfirm.confirmText = qsTr("land")
                 break;
             case confirmHome:
-                guidedModeConfirm.confirmText = qsTr("return to launch")
+                guidedModeConfirm.confirmText = qsTr("return to land")
                 break;
             case confirmChangeAlt:
                 altitudeSlider.visible = true
@@ -455,17 +455,25 @@ Item {
             anchors.left:       parent.left
             spacing:            _margins
 
+            QGCLabel {
+                anchors.horizontalCenter: parent.horizontalCenter
+                color:      qgcPal.button
+                text:       "Click in map to move vehicle"
+                visible:    _activeVehicle && _activeVehicle.guidedMode && _activeVehicle.flying
+            }
+
             Row {
                 spacing: _margins
 
                 QGCButton {
                     text:       (_activeVehicle && _activeVehicle.armed) ? (_activeVehicle.flying ? qsTr("Emergency Stop") : qsTr("Disarm")) :  qsTr("Arm")
+                    visible: (_activeVehicle && _activeVehicle.homePositionAvailable)
                     onClicked:  _guidedModeBar.confirmAction(_activeVehicle.armed ? (_activeVehicle.flying ? _guidedModeBar.confirmEmergencyStop : _guidedModeBar.confirmDisarm) : _guidedModeBar.confirmArm)
                 }
 
                 QGCButton {
                     text:       qsTr("RTL")
-                    visible:    _activeVehicle && _activeVehicle.guidedModeSupported && _activeVehicle.flying
+                    visible:    (_activeVehicle && _activeVehicle.armed) && _activeVehicle.guidedModeSupported && _activeVehicle.flying
                     onClicked:  _guidedModeBar.confirmAction(_guidedModeBar.confirmHome)
                 }
 
@@ -477,7 +485,7 @@ Item {
 
                 QGCButton {
                     text:       qsTr("Pause")
-                    visible:    _activeVehicle && _activeVehicle.pauseVehicleSupported && _activeVehicle.flying
+                    visible:    (_activeVehicle && _activeVehicle.armed) && _activeVehicle.pauseVehicleSupported && _activeVehicle.flying
                     onClicked:  {
                         guidedModeHideTimer.restart()
                         _activeVehicle.pauseVehicle()
@@ -486,7 +494,7 @@ Item {
 
                 QGCButton {
                     text:       qsTr("Change Altitude")
-                    visible:    _activeVehicle && _activeVehicle.guidedModeSupported && _activeVehicle.armed
+                    visible:    (_activeVehicle && _activeVehicle.flying) && _activeVehicle.guidedModeSupported && _activeVehicle.armed
                     onClicked:  _guidedModeBar.confirmAction(_guidedModeBar.confirmChangeAlt)
                 }
 
@@ -496,13 +504,6 @@ Item {
                     onClicked:  _guidedModeBar.confirmAction(_activeVehicle.collisionAvoidanceActive ? _guidedModeBar.confirmCollisionAvoidancePause : _guidedModeBar.confirmCollisionAvoidanceStart)
                 }
             } // Row
-
-            QGCLabel {
-                anchors.horizontalCenter: parent.horizontalCenter
-                color:      qgcPal.button
-                text:       "Click in map to move vehicle"
-                visible:    _activeVehicle && _activeVehicle.guidedMode && _activeVehicle.flying
-            }
         } // Column
     } // Rectangle - Guided mode buttons
 
@@ -596,8 +597,8 @@ Item {
             anchors.left:       parent.left
             anchors.right:      parent.right
             orientation:        Qt.Vertical
-            minimumValue:       0
-            maximumValue:       QGroundControl.metersToAppSettingsDistanceUnits(100)
+            minimumValue:       QGroundControl.metersToAppSettingsDistanceUnits((_activeVehicle && _activeVehicle.flying) ? -15 : 0)
+            maximumValue:       QGroundControl.metersToAppSettingsDistanceUnits((_activeVehicle && _activeVehicle.flying) ? 15 : 60)
         }
     }
 }
