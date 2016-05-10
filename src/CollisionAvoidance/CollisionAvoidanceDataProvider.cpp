@@ -179,10 +179,10 @@ cv::Mat CollisionAvoidanceDataProvider::renderGoodFrame(
    DrawHelper::drawRings(flowOverlay, foeFiltered->getFoE(), cv::Scalar(255, 156, 0));
    canvas.push_back(flowOverlay);
 
-//   auto hsv = DrawHelper::visualiceFlowAsHsv(opticalFlow);
-//   DrawHelper::drawRings(hsv, foeMeasured->getFoE(), color);
-//   DrawHelper::drawRings(hsv, foeFiltered->getFoE(), cv::Scalar(255, 156, 0));
-//   canvas.push_back(hsv);
+   auto hsv = DrawHelper::visualiceFlowAsHsv(opticalFlow);
+   DrawHelper::drawRings(hsv, foeMeasured->getFoE(), color);
+   DrawHelper::drawRings(hsv, foeFiltered->getFoE(), cv::Scalar(255, 156, 0));
+   canvas.push_back(hsv);
 
    auto combined = DrawHelper::makeRowCanvas(canvas, cv::Scalar(64, 64, 64));
 
@@ -215,6 +215,10 @@ cv::Mat CollisionAvoidanceDataProvider::renderBadFrame(
    DrawHelper::drawOpticalFlowMap(opticalFlow, flowOverlay, GREEN);
    DrawHelper::drawRings(flowOverlay, foeMeasured->getFoE(), color);
    canvas.push_back(flowOverlay);
+
+   auto hsv = DrawHelper::visualiceFlowAsHsv(opticalFlow);
+   DrawHelper::drawRings(hsv, foeMeasured->getFoE(), color);
+   canvas.push_back(hsv);
 
    auto combined = DrawHelper::makeRowCanvas(canvas, cv::Scalar(64, 64, 64));
 
