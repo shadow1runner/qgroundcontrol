@@ -54,9 +54,9 @@ public:
    Q_PROPERTY(QString rawFramesPath                 READ getRawFramesPath WRITE setRawFramesPath NOTIFY rawFramesPathChanged);
    Q_PROPERTY(QString uiFramesPath                  READ getUiFramesPath WRITE setUiFramesPath NOTIFY uiFramesPathChanged);
 
-    bool              getUseRecordedVideoInsteadOfDevice() const  { return _settings.UseRecordedVideoInsteadOfDevice; }
-    const QString     getFileName() const                         { return _settings.FileName;                  }
-    int               getDevice() const                           { return _settings.Device;                    }
+    bool              getUseRecordedVideoInsteadOfDevice() const  { return _settings.getUseRecordedVideoInsteadOfDevice(); }
+    const QString     getFileName() const                         { return _settings.getFileName();                  }
+    int               getDevice() const                           { return _settings.getDevice();                    }
     int               getRawFrameRotation() const                 { return _settings.RawFrameRotation;           }
     int               getSubsampleAmount() const                  { return _settings.SubsampleAmount;           }
     int               getParticles() const                        { return _settings.Particles;                 }
@@ -122,9 +122,9 @@ signals:
   void uiFramesPathChanged(QString value);
 
 public slots:
-    void setUseRecordedVideoInsteadOfDevice(bool value)     { _settings.UseRecordedVideoInsteadOfDevice = value; _settings.storeSettings(); emit useRecordedVideoInsteadOfDeviceChanged(value); }
-    void setFileName(QString value)                         { _settings.FileName = value; _settings.storeSettings(); emit fileNameChanged(value); }
-    void setDevice(int value)                               { _settings.Device = value; _settings.storeSettings(); emit deviceChanged(value); }
+    void setUseRecordedVideoInsteadOfDevice(bool value)     { _settings.setUseRecordedVideoInsteadOfDevice(value); _settings.storeSettings(); emit useRecordedVideoInsteadOfDeviceChanged(value); }
+    void setFileName(QString value)                         { _settings.setFileName(value); _settings.storeSettings(); emit fileNameChanged(value); }
+    void setDevice(int value)                               { _settings.setDevice(value); _settings.storeSettings(); emit deviceChanged(value); }
     void setRawFrameRotation(int value)                     { _settings.RawFrameRotation = value; _settings.storeSettings(); emit rawFrameRotationChanged(value); }
     void setSubsampleAmount(int value)                      { _settings.SubsampleAmount = value; _settings.storeSettings(); emit subsampleAmountChanged(value); }
     void setParticles(int value)                            { _settings.Particles = value; _settings.storeSettings(); emit particlesChanged(value); }
