@@ -127,6 +127,7 @@ void OwnFlowWorker::reset()
     pause();
     QThread::msleep(100);
     _frameGrabber->reset();
+    QMetaObject::invokeMethod(&_ownFlow, "reset");
 }
 
 void OwnFlowWorker::_collisionImmanent(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence)

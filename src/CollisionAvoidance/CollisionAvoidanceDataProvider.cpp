@@ -189,8 +189,8 @@ cv::Mat CollisionAvoidanceDataProvider::renderGoodFrame(
    std::vector<std::string> lines;
    std::stringstream ss;
    ss << "#" << _frameCount << ": GOOD; " << std::setprecision(4) << divergence->getDivergence(); lines.push_back(ss.str()); ss.str(std::string());
-   ss << "FoE: (" << foeFiltered->getFoE().x << ", " << foeFiltered->getFoE().y << ") - " <<  std::setprecision(3) << foeFiltered->getInlierProportion()*100 << "%"; lines.push_back(ss.str()); ss.str(std::string());
-   ss << "(foe: (" << foeMeasured->getFoE().x << ", " << foeMeasured->getFoE().y << ") - "  << std::setprecision(3) << foeMeasured->getInlierProportion()*100 << "%)"; lines.push_back(ss.str()); ss.str(std::string());
+   ss << "FoE: (" << foeFiltered->getFoE().x << ", " << foeFiltered->getFoE().y << ") @ " <<  std::setprecision(3) << foeFiltered->getInlierProportion()*100 << "%"; lines.push_back(ss.str()); ss.str(std::string());
+   ss << "(foe: (" << foeMeasured->getFoE().x << ", " << foeMeasured->getFoE().y << ") @ "  << std::setprecision(3) << foeMeasured->getInlierProportion()*100 << "%)"; lines.push_back(ss.str()); ss.str(std::string());
 
    return DrawHelper::renderText(combined, lines);
 }  
