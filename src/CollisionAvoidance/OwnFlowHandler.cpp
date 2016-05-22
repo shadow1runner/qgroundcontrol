@@ -61,3 +61,8 @@ void OwnFlowHandler::stop()
     _ownFlowWorkerThread.quit();
     _ownFlowWorkerThread.wait();
 }
+
+void OwnFlowHandler::reset()
+{
+    _ownFlowWorker->reset();
+}

@@ -432,6 +432,9 @@ public:
     /// Pauses collision avoidance detection algorithm
     Q_INVOKABLE void pauseCollisionAvoidance();
 
+    /// Resets collision avoidance
+    Q_INVOKABLE void resetCollisionAvoidance();
+
     bool guidedModeSupported(void) const;
     bool pauseVehicleSupported(void) const;
 

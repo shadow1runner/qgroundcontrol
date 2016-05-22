@@ -33,6 +33,7 @@ public:
     void start();
     void pause();
     void stop();
+    void reset();
     
     // Overrides from QGCTool
     virtual void setToolbox(QGCToolbox* toolbox);

@@ -4,12 +4,14 @@
 
 #include "QGCToolbox.h"
 
+#include <QThread>
+
 OwnFlowWorker::OwnFlowWorker(CollisionAvoidanceSettings& settings, QGCToolbox* toolbox)
     : QObject(NULL)
 	, _settings(settings)
     , _collisionAvoidanceDataProvider(toolbox->collisionAvoidanceDataProvider())
     , _isPaused(false)
-    , _frameGrabber(new hw::BufferedFrameGrabber(settings, 1, [](cv::Mat input) {return input;}))
+    , _frameGrabber(new hw::BufferedFrameGrabber(settings, 1, [](cv::Mat input) {return input;}, this))
     , _converter(settings)
     , _ownFlow(settings)
     , _grapher(&_ownFlow, toolbox)
@@ -91,12 +93,12 @@ void OwnFlowWorker::start()
         _converter.convertImage(currentFrame);
 	}
 
-   _isPaused = true;
-   emit isPausedChanged(_isPaused);
+    reset();
 }
 
 void OwnFlowWorker::pause() 
 {	
+    qDebug() << "Pausing OwnFlowWorker on Thread" << QThread::currentThreadId();
     // there might be multiple writers, still aquiring a lock in front of each frame is not really necessary as long as the value gets set in the end (and thus the worker stops/pauses)
     _isPaused = true;
     emit isPausedChanged(_isPaused);
@@ -117,6 +119,14 @@ void OwnFlowWorker::stop()
 
     _ioThread.quit();
     _ioThread.wait();
+}
+
+void OwnFlowWorker::reset()
+{
+    qDebug() << "Resetting OwnFlowWorker on Thread" << QThread::currentThreadId();
+    pause();
+    QThread::msleep(100);
+    _frameGrabber->reset();
 }
 
 void OwnFlowWorker::_collisionImmanent(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence)

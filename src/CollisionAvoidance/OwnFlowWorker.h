@@ -41,6 +41,7 @@ public slots:
 	void start();
     void pause();
 	void stop();
+    void reset();
 
 private slots:
     void _collisionImmanent(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence);

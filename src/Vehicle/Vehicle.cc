@@ -1704,6 +1704,11 @@ void Vehicle::pauseCollisionAvoidance()
     _ownFlowHandler->pause();
 }
 
+void Vehicle::resetCollisionAvoidance() 
+{
+    _ownFlowHandler->reset();
+}
+
 void Vehicle::doCommandLong(int component, MAV_CMD command, float param1, float param2, float param3, float param4, float param5, float param6, float param7)
 {
     mavlink_message_t       msg;

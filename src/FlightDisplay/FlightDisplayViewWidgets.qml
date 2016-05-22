@@ -342,6 +342,7 @@ Item {
         readonly property int confirmRetask:        9
         readonly property int confirmCollisionAvoidanceStart:       42
         readonly property int confirmCollisionAvoidancePause:       43
+        readonly property int confirmCollisionAvoidanceReset:       44
 
         property int    confirmActionCode
         property real   _showMargin:    _margins
@@ -389,6 +390,8 @@ Item {
             case confirmCollisionAvoidancePause:
                 _activeVehicle.pauseCollisionAvoidance()
                 break;
+            case confirmCollisionAvoidanceReset:
+                _activeVehicle.resetCollisionAvoidance()
             default:
                 console.warn(qsTr("Internal error: unknown confirmActionCode"), confirmActionCode)
             }
@@ -438,10 +441,13 @@ Item {
                 _guidedModeBar.confirmText    = qsTr("active waypoint change")
                 break;
             case confirmCollisionAvoidanceStart:
-                guidedModeConfirm.confirmText = "start collision avoidance"
+                guidedModeConfirm.confirmText = qsTr("start collision avoidance")
                 break;
             case confirmCollisionAvoidancePause:
-                guidedModeConfirm.confirmText = "pause collision avoidance"
+                guidedModeConfirm.confirmText = qsTr("pause collision avoidance")
+                break;
+            case confirmCollisionAvoidanceReset:
+                guidedModeConfirm.confirmText = qsTr("reset collision avoidance")
                 break;
             }
             guidedModeBar.visible = false
@@ -499,9 +505,14 @@ Item {
                 }
 
                 QGCButton {
-                    text:       (_activeVehicle && _activeVehicle.guidedModeSupported && _activeVehicle.collisionAvoidanceActive) ? "Pause CA" : "Start CA"
+                    text:       (_activeVehicle && _activeVehicle.guidedModeSupported && _activeVehicle.collisionAvoidanceActive) ? qsTr("Pause CA") : qsTr("Start CA")
                     // visible:    _activeVehicle && _activeVehicle.guidedModeSupported && _activeVehicle.armed
                     onClicked:  _guidedModeBar.confirmAction(_activeVehicle.collisionAvoidanceActive ? _guidedModeBar.confirmCollisionAvoidancePause : _guidedModeBar.confirmCollisionAvoidanceStart)
+                }
+
+                QGCButton {
+                    text:       qsTr("Reset CA")
+                    onClicked:  _guidedModeBar.confirmAction(_guidedModeBar.confirmCollisionAvoidanceReset)
                 }
             } // Row
         } // Column
