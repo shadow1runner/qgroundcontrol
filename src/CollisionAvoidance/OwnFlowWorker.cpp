@@ -32,8 +32,8 @@ OwnFlowWorker::OwnFlowWorker(CollisionAvoidanceSettings& settings, QGCToolbox* t
             ,Qt::BlockingQueuedConnection
            );
 
-    connect(&_ownFlow, &hw::OwnFlow::foeChanged,
-             _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::foeReady);
+    connect(&_ownFlow, &hw::OwnFlow::collisionLevelRatingReady,
+             _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::collisionLevelRatingReady);
 
     connect(&_ownFlow, &hw::OwnFlow::frameSkipped,
              _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::badFrame);
@@ -48,8 +48,8 @@ OwnFlowWorker::OwnFlowWorker(CollisionAvoidanceSettings& settings, QGCToolbox* t
     connect(_frameGrabber, &hw::BufferedFrameGrabber::newRawFrame,
             &_framePersister, &FramePersister::rawFrameReady);
 
-    connect(&_ownFlow, &hw::OwnFlow::foeChanged,
-            &_framePersister, &FramePersister::foeFrameReady);
+    connect(&_ownFlow, &hw::OwnFlow::collisionLevelRatingReady,
+            &_framePersister, &FramePersister::collisionLevelRatingReady);
 
     connect(&_ownFlow, &hw::OwnFlow::frameSkipped,
             &_framePersister, &FramePersister::badFrameReady);

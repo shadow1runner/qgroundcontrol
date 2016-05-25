@@ -32,9 +32,23 @@
         },
         {
             "name":             "divergence",
-            "shortDescription": "Divergence",
+            "shortDescription": "Divergence (Last)",
             "type":             "double",
             "decimalPlaces":    3,
+            "units":            "-"
+        },
+        {
+            "name":             "avgDivergence",
+            "shortDescription": "Divergence (AVG)",
+            "type":             "double",
+            "decimalPlaces":    3,
+            "units":            "-"
+        },
+        {
+            "name":             "collisionLevel",
+            "shortDescription": "CollisionLevel",
+            "type":             "uint32",
+            "decimalPlaces":    1,
             "units":            "-"
         },
         {

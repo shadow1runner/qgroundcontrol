@@ -242,7 +242,7 @@ Vehicle::Vehicle(LinkInterface*             link,
             this, &Vehicle::_handleCollisionAvoidanceBadFrame
             );
 
-    connect(ownFlow, &hw::OwnFlow::foeChanged,
+    connect(ownFlow, &hw::OwnFlow::collisionLevelRatingReady,
             this, &Vehicle::_handleCollisionAvoidance
             );
 
@@ -564,19 +564,24 @@ void Vehicle::_handleCollisionAvoidancePausedChange(bool isPaused)
 }
 
 void Vehicle::_handleCollisionAvoidance(
-    const cv::Mat& frame,
-    std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered,
-    std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured,
-    std::shared_ptr<hw::Divergence> divergence)
+    const cv::Mat& frame, 
+    std::shared_ptr<cv::Point2i> foeFiltered, 
+    std::shared_ptr<hw::FocusOfExpansionDto> foe,
+    const hw::CollisionLevel collisionLevel,
+    double lastDivergence,
+    double avgDivergence
+    )
 {
     Q_UNUSED(frame);
-    
-    _collisionAvoidanceFactGroup.foeEkfx()->setRawValue(foeFiltered->getFoE().x);
-    _collisionAvoidanceFactGroup.foeEkfy()->setRawValue(foeFiltered->getFoE().y);
-    _collisionAvoidanceFactGroup.foeRawx()->setRawValue(foeMeasured->getFoE().x);
-    _collisionAvoidanceFactGroup.foeRawy()->setRawValue(foeMeasured->getFoE().y);
-    _collisionAvoidanceFactGroup.divergence()->setRawValue(divergence->getDivergence());
-    _collisionAvoidanceFactGroup.inlierRatio()->setRawValue(foeFiltered->getInlierProportion()*1000);
+
+    _collisionAvoidanceFactGroup.foeEkfx()->setRawValue(foeFiltered->x);
+    _collisionAvoidanceFactGroup.foeEkfy()->setRawValue(foeFiltered->y);
+    _collisionAvoidanceFactGroup.foeRawx()->setRawValue(foe->getFoE().x);
+    _collisionAvoidanceFactGroup.foeRawy()->setRawValue(foe->getFoE().y);
+    _collisionAvoidanceFactGroup.inlierRatio()->setRawValue(foe->getInlierProportion()*1000);
+    _collisionAvoidanceFactGroup.collisionLevel()->setRawValue(collisionLevel);
+    _collisionAvoidanceFactGroup.avgDivergence()->setRawValue(avgDivergence);
+    _collisionAvoidanceFactGroup.divergence()->setRawValue(lastDivergence);
 }
 
 void Vehicle::_handleCollisionAvoidanceBadFrame(
@@ -1731,6 +1736,17 @@ void Vehicle::pauseCollisionAvoidance()
 void Vehicle::resetCollisionAvoidance() 
 {
     _ownFlowHandler->reset();
+    
+    _collisionAvoidanceFactGroup.foeEkfx()->setRawValue(0);
+    _collisionAvoidanceFactGroup.foeEkfy()->setRawValue(0);
+    _collisionAvoidanceFactGroup.foeRawx()->setRawValue(0);
+    _collisionAvoidanceFactGroup.foeRawy()->setRawValue(0);
+    _collisionAvoidanceFactGroup.inlierRatio()->setRawValue(0.0);
+    _collisionAvoidanceFactGroup.collisionLevel()->setRawValue((int)hw::CollisionLevel::low);
+    _collisionAvoidanceFactGroup.avgDivergence()->setRawValue(0.0);
+    _collisionAvoidanceFactGroup.divergence()->setRawValue(0.0);
+    _collisionAvoidanceFactGroup.fps()->setRawValue(0.0);
+    _collisionAvoidanceFactGroup.skipRatio()->setRawValue(0.0);
 }
 
 void Vehicle::doCommandLong(int component, MAV_CMD command, float param1, float param2, float param3, float param4, float param5, float param6, float param7)
@@ -2007,6 +2023,8 @@ const char* VehicleCollisionAvoidanceFactGroup::_foeEkfyFactName = "foeEkfy";
 const char* VehicleCollisionAvoidanceFactGroup::_foeRawxFactName = "foeRawx";
 const char* VehicleCollisionAvoidanceFactGroup::_foeRawyFactName = "foeRawy";
 const char* VehicleCollisionAvoidanceFactGroup::_divergenceFactName = "divergence";
+const char* VehicleCollisionAvoidanceFactGroup::_avgDivergenceFactName = "avgDivergence";
+const char* VehicleCollisionAvoidanceFactGroup::_collisionLevelFactName = "collisionLevel";
 const char* VehicleCollisionAvoidanceFactGroup::_inlierRatioFactName = "inlierRatio";
 const char* VehicleCollisionAvoidanceFactGroup::_fpsFactName = "fps";
 const char* VehicleCollisionAvoidanceFactGroup::_skipRatioFactName = "skipRatio";
@@ -2014,26 +2032,32 @@ const char* VehicleCollisionAvoidanceFactGroup::_skipRatioFactName = "skipRatio"
 VehicleCollisionAvoidanceFactGroup::VehicleCollisionAvoidanceFactGroup(QObject* parent)
     : FactGroup(0, ":/json/Vehicle/CollisionAvoidanceFact.json", parent)
     , _vehicle(NULL)
-    , _foeEkfxFact     (0, _foeEkfxFactName,     FactMetaData::valueTypeUint32)
-    , _foeEkfyFact     (0, _foeEkfyFactName,     FactMetaData::valueTypeUint32)
-    , _foeRawxFact     (0, _foeRawxFactName,     FactMetaData::valueTypeUint32)
-    , _foeRawyFact     (0, _foeRawyFactName,     FactMetaData::valueTypeUint32)
-    , _divergenceFact  (0, _divergenceFactName,  FactMetaData::valueTypeDouble)
-    , _inlierRatioFact (0, _inlierRatioFactName, FactMetaData::valueTypeDouble)
-    , _fpsFact         (0, _fpsFactName,         FactMetaData::valueTypeDouble)
-    , _skipRatioFact   (0, _skipRatioFactName,   FactMetaData::valueTypeDouble)
+    , _foeEkfxFact        (0, _foeEkfxFactName,       FactMetaData::valueTypeUint32)
+    , _foeEkfyFact        (0, _foeEkfyFactName,       FactMetaData::valueTypeUint32)
+    , _foeRawxFact        (0, _foeRawxFactName,       FactMetaData::valueTypeUint32)
+    , _foeRawyFact        (0, _foeRawyFactName,       FactMetaData::valueTypeUint32)
+    , _divergenceFact     (0, _divergenceFactName,    FactMetaData::valueTypeDouble)
+    , _avgDivergenceFact  (0, _avgDivergenceFactName, FactMetaData::valueTypeDouble)
+    , _collisionLevelFact (0, _collisionLevelFactName,FactMetaData::valueTypeUint32)
+    , _inlierRatioFact    (0, _inlierRatioFactName,   FactMetaData::valueTypeDouble)
+    , _fpsFact            (0, _fpsFactName,           FactMetaData::valueTypeDouble)
+    , _skipRatioFact      (0, _skipRatioFactName,     FactMetaData::valueTypeDouble)
 {
     _addFact(&_foeEkfxFact,     _foeEkfxFactName);
     _addFact(&_foeEkfyFact,     _foeEkfyFactName);
     _addFact(&_foeRawxFact,     _foeRawxFactName);
     _addFact(&_foeRawyFact,     _foeRawyFactName);
     _addFact(&_divergenceFact,  _divergenceFactName);
+    _addFact(&_avgDivergenceFact,  _avgDivergenceFactName);
+    _addFact(&_collisionLevelFact, _collisionLevelFactName);
     _addFact(&_inlierRatioFact, _inlierRatioFactName);
     _addFact(&_fpsFact, _fpsFactName);
     _addFact(&_skipRatioFact, _skipRatioFactName);
 
     // Start out as not available "--.--"
     _divergenceFact.setRawValue(std::numeric_limits<float>::quiet_NaN());
+    _avgDivergenceFact.setRawValue(std::numeric_limits<float>::quiet_NaN());
+    _collisionLevelFact.setRawValue(0);
     _inlierRatioFact.setRawValue(std::numeric_limits<float>::quiet_NaN());
     _fpsFact.setRawValue(0.0);
     _skipRatioFact.setRawValue(0.0);

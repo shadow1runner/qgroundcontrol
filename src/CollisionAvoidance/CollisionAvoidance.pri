@@ -6,6 +6,7 @@ HEADERS += \
     $$PWD/opticalflow/config.h \
     $$PWD/opticalflow/Converter.h \
     $$PWD/opticalflow/Divergence.h \
+    $$PWD/opticalflow/DivergenceHistory.h \
     $$PWD/opticalflow/FocusOfExpansionCalculator.h \
     $$PWD/opticalflow/FocusOfExpansionDto.h \
     $$PWD/opticalflow/FramePersister.h \
@@ -24,6 +25,8 @@ HEADERS += \
     $$PWD/opticalflow/OwnFlow.h \
     $$PWD/opticalflow/RandomCollider.h \
     $$PWD/opticalflow/CollisionAvoidanceSettings.h \
+    $$PWD/opticalflow/CollisionDetector.h \
+    $$PWD/opticalflow/CollisionLevel.h \
     $$PWD/CollisionAvoidanceController.h \
     $$PWD/OwnFlowHandler.h \
     $$PWD/CollisionAvoidanceDataProvider.h \
@@ -36,6 +39,7 @@ SOURCES += \
     $$PWD/opticalflow/BufferedFrameGrabber.cpp \
     $$PWD/opticalflow/Converter.cpp \
     $$PWD/opticalflow/Divergence.cpp \
+    $$PWD/opticalflow/DivergenceHistory.cpp \
     $$PWD/opticalflow/FocusOfExpansionCalculator.cpp \
     $$PWD/opticalflow/FocusOfExpansionDto.cpp \
     $$PWD/opticalflow/FramePersister.cpp \
@@ -47,6 +51,7 @@ SOURCES += \
     # $$PWD/opticalflow/main.cpp \
     $$PWD/opticalflow/OwnFlow.cpp \
     $$PWD/opticalflow/RandomCollider.cpp \
+    $$PWD/opticalflow/CollisionDetector.cpp \
     $$PWD/CollisionAvoidanceController.cpp \
     $$PWD/OwnFlowHandler.cpp \
     $$PWD/CollisionAvoidanceDataProvider.cpp \

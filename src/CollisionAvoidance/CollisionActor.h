@@ -26,7 +26,7 @@ public:
 
 private slots:
     void _activeVehicleChanged(Vehicle* activeVehicle);
-    void _collisionImmanent(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence);
+    void _collisionImmanent(const cv::Mat& frame, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, const hw::CollisionLevel collisionLevel);
 
 private:
 	CollisionAvoidanceSettings& _settings;

@@ -30,7 +30,7 @@ OwnFlowGrapher::OwnFlowGrapher(hw::OwnFlow* const ownFlow, QGCToolbox* toolbox, 
 	, _ownFlow(ownFlow)
 {
 	// connect to signals emitted by `OwnFlow` - used for emitting valueChanged signals (and thus for graphing)
-    connect(_ownFlow, &hw::OwnFlow::foeChanged,
+    connect(_ownFlow, &hw::OwnFlow::collisionLevelRatingReady,
             this, &OwnFlowGrapher::_handleCollisionAvoidance
             );
 
@@ -48,19 +48,23 @@ OwnFlowGrapher::OwnFlowGrapher(hw::OwnFlow* const ownFlow, QGCToolbox* toolbox, 
 }
 
 void OwnFlowGrapher::_handleCollisionAvoidance(
-    const cv::Mat& frame,
-    std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered,
-    std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured,
-    std::shared_ptr<hw::Divergence> divergence)
+    const cv::Mat& frame, 
+    std::shared_ptr<cv::Point2i> foeFiltered, 
+    std::shared_ptr<hw::FocusOfExpansionDto> foe,
+    const hw::CollisionLevel collisionLevel,
+    double lastDivergence,
+    double avgDivergence)
 {
     Q_UNUSED(frame);
     
-    emit valueChanged(getUASID(),"foeEkfx","px",QVariant(foeFiltered->getFoE().x), getUnixTime());
-    emit valueChanged(getUASID(),"foeEkfy","px",QVariant(foeFiltered->getFoE().y), getUnixTime());
-    emit valueChanged(getUASID(),"foeRawx","px",QVariant(foeMeasured->getFoE().x), getUnixTime());
-    emit valueChanged(getUASID(),"foeRawy","px",QVariant(foeMeasured->getFoE().y), getUnixTime());
-    emit valueChanged(getUASID(),"divergence","-",QVariant(divergence->getDivergence()), getUnixTime());
-    emit valueChanged(getUASID(),"inlierRatio","‰",QVariant(foeFiltered->getInlierProportion()*1000), getUnixTime());
+    emit valueChanged(getUASID(),"foeEkfx","px",QVariant(foeFiltered->x), getUnixTime());
+    emit valueChanged(getUASID(),"foeEkfy","px",QVariant(foeFiltered->y), getUnixTime());
+    emit valueChanged(getUASID(),"foeRawx","px",QVariant(foe->getFoE().x), getUnixTime());
+    emit valueChanged(getUASID(),"foeRawy","px",QVariant(foe->getFoE().y), getUnixTime());
+    emit valueChanged(getUASID(),"collisionLevel","-",QVariant(collisionLevel), getUnixTime());
+    emit valueChanged(getUASID(),"divergence","-",QVariant(lastDivergence), getUnixTime());
+    emit valueChanged(getUASID(),"avgDivergence","-",QVariant(avgDivergence), getUnixTime());
+    emit valueChanged(getUASID(),"inlierRatio","‰",QVariant(foe->getInlierProportion()*1000), getUnixTime());
 }
 
 void OwnFlowGrapher::_handleCollisionAvoidanceBadFrame(

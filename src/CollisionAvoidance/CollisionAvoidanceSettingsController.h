@@ -33,6 +33,7 @@ public:
    Q_PROPERTY(double inlierProportionThreshold      READ getInlierProportionThreshold WRITE setInlierProportionThreshold NOTIFY inlierProportionThresholdChanged);
    Q_PROPERTY(int divergencePatchSize               READ getDivergencePatchSize WRITE setDivergencePatchSize NOTIFY divergencePatchSizeChanged);
    Q_PROPERTY(double divergenceThreshold            READ getDivergenceThreshold WRITE setDivergenceThreshold NOTIFY divergenceThresholdChanged);
+   Q_PROPERTY(int divergenceHistoryBufferSize       READ getDivergenceHistoryBufferSize WRITE setDivergenceHistoryBufferSize NOTIFY divergenceHistoryBufferSizeChanged);
    Q_PROPERTY(bool undistortFrames                  READ getUndistortFrames WRITE setUndistortFrames NOTIFY undistortFramesChanged);
    Q_PROPERTY(QString ocamModelPath                 READ getOcamModelPath WRITE setOcamModelPath NOTIFY ocamModelPathChanged);
 
@@ -65,6 +66,7 @@ public:
     double            getInlierProportionThreshold() const        { return _settings.InlierProportionThreshold; }
     int               getDivergencePatchSize() const              { return _settings.DivergencePatchSize;       }
     double            getDivergenceThreshold() const              { return _settings.DivergenceThreshold;       }
+    int               getDivergenceHistoryBufferSize() const      { return _settings.DivergenceHistoryBufferSize;       }
 
     bool              getUndistortFrames() const { return _settings.UndistortFrames; }
     const QString     getOcamModelPath() const   { return _settings.OcamModelPath; }
@@ -99,6 +101,7 @@ signals:
   void inlierProportionThresholdChanged(double value);
   void divergencePatchSizeChanged(int value);
   void divergenceThresholdChanged(double value);
+  void divergenceHistoryBufferSizeChanged(int value);
 
   void undistortFramesChanged(bool value);
   void ocamModelPathChanged(QString value);
@@ -133,6 +136,7 @@ public slots:
     void setInlierProportionThreshold(double value)         { _settings.InlierProportionThreshold = value; _settings.storeSettings(); emit inlierProportionThresholdChanged(value); }
     void setDivergencePatchSize(int value)                  { _settings.DivergencePatchSize = value; _settings.storeSettings(); emit divergencePatchSizeChanged(value); }
     void setDivergenceThreshold(double value)               { _settings.DivergenceThreshold = value; _settings.storeSettings();emit divergenceThresholdChanged(value); }
+    void setDivergenceHistoryBufferSize(int value)          { _settings.DivergenceHistoryBufferSize = value; _settings.storeSettings(); emit divergenceHistoryBufferSizeChanged(value); }
     void setUndistortFrames(bool value)  { _settings.UndistortFrames = value; _settings.storeSettings(); emit undistortFramesChanged(value); }
     void setOcamModelPath(QString value) { _settings.OcamModelPath = value; _settings.storeSettings(); emit ocamModelPathChanged(value); }
 

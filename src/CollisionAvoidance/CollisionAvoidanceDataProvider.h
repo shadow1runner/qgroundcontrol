@@ -20,6 +20,7 @@
 #include "OwnFlow.h"
 #include "FocusOfExpansionDto.h"
 #include "CollisionAvoidanceSettings.h"
+#include "CollisionLevel.h"
 
 class Vehicle;
 class CollisionAvoidanceSettings;
@@ -37,10 +38,10 @@ public:
 signals:
     void uiFrameReady(const cv::Mat& frame);    
 
-    void uiFrameDetailsReady(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence);
+    void uiFrameDetailsReady(const cv::Mat& frame, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, const hw::CollisionLevel collisionLevel, double lastDivergence, double avgDivergence);
 
 public slots:
-    void foeReady(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence);
+    void collisionLevelRatingReady(const cv::Mat& frame, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, const hw::CollisionLevel collisionLevel, double lastDivergence, double avgDivergence);
 
     void badFrame(const cv::Mat& badFrame, unsigned long long skipFrameCount, unsigned long long totalFrameCount, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured);
 
@@ -58,7 +59,7 @@ private:
     CollisionAvoidanceSettings& _settings;
 
     QImage  cvMatToQImage(const cv::Mat& mat);
-    cv::Mat renderGoodFrame(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence);
+    cv::Mat renderGoodFrame(const cv::Mat& frame, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, const hw::CollisionLevel collisionLevel, double lastDivergence, double avgDivergence);
     cv::Mat renderBadFrame(const cv::Mat& badFrame, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured);
     void saveCurrentImageToFile(bool isBadFrame=false);
     void saveRawFrameToFile(const cv::Mat& frame);

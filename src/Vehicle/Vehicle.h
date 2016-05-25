@@ -47,6 +47,7 @@
 #include "FocusOfExpansionDto.h"
 #include "Divergence.h"
 #include "AvgWatch.h"
+#include "CollisionLevel.h"
 
 class UAS;
 class UASInterface;
@@ -247,6 +248,8 @@ public:
     Q_PROPERTY(Fact* foeRawx     READ foeRawx      CONSTANT)
     Q_PROPERTY(Fact* foeRawy     READ foeRawy      CONSTANT)
     Q_PROPERTY(Fact* divergence  READ divergence   CONSTANT)
+    Q_PROPERTY(Fact* avgDivergence  READ avgDivergence   CONSTANT)
+    Q_PROPERTY(Fact* collisionLevel  READ collisionLevel   CONSTANT)
     Q_PROPERTY(Fact* inlierRatio READ inlierRatio  CONSTANT)
     Q_PROPERTY(Fact* fps         READ fps          CONSTANT)
     Q_PROPERTY(Fact* skipRatio   READ skipRatio    CONSTANT)
@@ -256,6 +259,8 @@ public:
     Fact* foeRawx(void)     { return &_foeRawxFact; }
     Fact* foeRawy(void)     { return &_foeRawyFact; }
     Fact* divergence(void)  { return &_divergenceFact; }
+    Fact* avgDivergence(void)  { return &_avgDivergenceFact; }
+    Fact* collisionLevel(void) { return &_collisionLevelFact; }
     Fact* inlierRatio(void) { return &_inlierRatioFact; }
     Fact* fps(void)         { return &_fpsFact; }
     Fact* skipRatio(void)   { return &_skipRatioFact; }
@@ -267,6 +272,9 @@ public:
     static const char* _foeRawxFactName;
     static const char* _foeRawyFactName;
     static const char* _divergenceFactName;
+    static const char* _avgDivergenceFactName;
+    static const char* _vehicleCollisionAvoidanceFactName;
+    static const char* _collisionLevelFactName;
     static const char* _inlierRatioFactName;
     static const char* _fpsFactName;
     static const char* _skipRatioFactName;
@@ -278,6 +286,8 @@ private:
     Fact        _foeRawxFact;
     Fact        _foeRawyFact;
     Fact        _divergenceFact;
+    Fact        _avgDivergenceFact;
+    Fact        _collisionLevelFact;
     Fact        _inlierRatioFact;
     Fact        _fpsFact;
     Fact        _skipRatioFact;
@@ -710,7 +720,7 @@ private slots:
     void _connectionLostTimeout(void);
     void _prearmErrorTimeout(void);
 
-    void _handleCollisionAvoidance(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence);
+    void _handleCollisionAvoidance(const cv::Mat& frame, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, const hw::CollisionLevel collisionLevel, double lastDivergence, double avgDivergence);
     void _handleCollisionAvoidanceBadFrame(const cv::Mat& badFrame, unsigned long long skipFrameCount, unsigned long long totalFrameCount, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured);
     void _handleCollisionAvoidancePausedChange(bool isPaused);
     void _handleCollisionAvoidanceFrameTimings(std::shared_ptr<AvgWatch> allWatch, std::shared_ptr<AvgWatch> colliderWatch, std::shared_ptr<AvgWatch> divWatch, std::shared_ptr<AvgWatch> foeWatch, std::shared_ptr<AvgWatch> kalmanWatch, std::shared_ptr<AvgWatch> opticalFlowWatch);

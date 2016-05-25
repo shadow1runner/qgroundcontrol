@@ -490,7 +490,7 @@ Rectangle {
             Row {
                 spacing:    ScreenTools.defaultFontPixelWidth
                 QGCLabel {
-                    text:   qsTr("Divergence Threshold: (currently unused!)")
+                    text:   qsTr("Divergence Threshold:")
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 Row {
@@ -538,6 +538,63 @@ Rectangle {
                             onClicked: {
                                 if(_controller.divergenceThreshold < 1)
                                     _controller.divergenceThreshold = _controller.divergenceThreshold + 0.001
+                            }
+                        }
+                    }
+                }
+            }
+            //-----------------------------------------------------------------
+            //-- DivergenceHistoryBufferSize
+            Row {
+                spacing:    ScreenTools.defaultFontPixelWidth
+                QGCLabel {
+                    text:   qsTr("DivergenceHistoryBufferSize: (requires restart)")
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                Row {
+                    Rectangle {
+                        width:              divergenceThresholdField.height
+                        height:             width
+                        color:              qgcPal.button
+                        QGCLabel {
+                            text:           "-"
+                            anchors.centerIn: parent
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if(_controller.DivergenceHistoryBufferSize > 1)
+                                    _controller.DivergenceHistoryBufferSize = _controller.DivergenceHistoryBufferSize - 1
+                            }
+                        }
+                    }
+                    QGCTextField {
+                        id:     DivergenceHistoryBufferSizeField
+                        text:   (_controller.DivergenceHistoryBufferSize*100).toString()
+                        width:  ScreenTools.defaultFontPixelWidth * 12
+                        inputMethodHints:       Qt.ImhFormattedNumbersOnly
+                        anchors.verticalCenter: parent.verticalCenter
+                        showUnits:          true
+                        unitsLabel:         "%"
+                        validator:          IntValidator {bottom: 1; }
+                        onEditingFinished: {
+                            var tmp = parseInt(text)
+                            if(DivergenceHistoryBufferSize >= 1)
+                                _controller.DivergenceHistoryBufferSize = tmp
+                        }
+                    }
+                    Rectangle {
+                        width:              DivergenceHistoryBufferSizeField.height
+                        height:             width
+                        color:              qgcPal.button
+                        QGCLabel {
+                            text:           "+"
+                            anchors.centerIn: parent
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                _controller.DivergenceHistoryBufferSize = _controller.DivergenceHistoryBufferSize + 1
                             }
                         }
                     }
