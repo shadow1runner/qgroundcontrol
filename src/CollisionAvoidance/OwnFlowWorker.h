@@ -34,14 +34,15 @@ public:
     OwnFlowWorker(CollisionAvoidanceSettings& settings, QGCToolbox* toolbox);
     ~OwnFlowWorker();
 
+    Q_INVOKABLE void reset();
+
     hw::OwnFlow* ownFlow();
     OwnFlowGrapher* ownFlowGrapher();
 
 public slots:
-	void start();
+    void start();
     void pause();
-	void stop();
-    void reset();
+    void stop();
 
 private slots:
     void _collisionImmanent(const cv::Mat& frame, unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, const hw::CollisionLevel collisionLevel);
@@ -63,7 +64,7 @@ private:
     FramePersister _framePersister;
 
     QThread _ownFlowThread;
-    QThread _converterThread;
+    // QThread _converterThread;
     QThread _grapherThread;
     QThread _ioThread;
 };

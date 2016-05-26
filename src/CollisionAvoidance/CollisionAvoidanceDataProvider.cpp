@@ -42,10 +42,12 @@ along with QGROUNDCONTROL. If not, see <http://www.gnu.org/licenses/>.
 #include <sstream>
 
 CollisionAvoidanceDataProvider::CollisionAvoidanceDataProvider(QGCApplication *app)
-: QGCTool(app)
-, QQuickImageProvider(QQmlImageProviderBase::Image)
-, _activeVehicle(NULL)
-, _settings(CollisionAvoidanceSettings::getInstance())
+  : QGCTool(app)
+  , QQuickImageProvider(QQmlImageProviderBase::Image)
+  , _activeVehicle(NULL)
+  , _settings(CollisionAvoidanceSettings::getInstance())
+  , _badFrameRenderingWatch("Bad UI Frame - Render Time")
+  , _goodFrameRenderingWatch("Good UI Frame - Render Time")
 {
 }
 
@@ -58,7 +60,7 @@ void CollisionAvoidanceDataProvider::setToolbox(QGCToolbox *toolbox)
   QGCTool::setToolbox(toolbox);
   connect(toolbox->multiVehicleManager(), &MultiVehicleManager::activeVehicleChanged, this, &CollisionAvoidanceDataProvider::_activeVehicleChanged);
 
- //-- Dummy temporary image until something comes along
+  //-- Dummy temporary image until something comes along
   _qImage = QImage(320, 240, QImage::Format_RGBA8888);
   _qImage.fill(Qt::black);
   QPainter painter(&_qImage);
@@ -101,12 +103,14 @@ QImage CollisionAvoidanceDataProvider::requestImage(const QString & /* image url
 
 void CollisionAvoidanceDataProvider::_activeVehicleChanged(Vehicle* activeVehicle)
 {
-_activeVehicle = activeVehicle; // might be NULL
+  _activeVehicle = activeVehicle; // might be NULL
 }
 
 void CollisionAvoidanceDataProvider::collisionLevelRatingReady(const cv::Mat& frame, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, const hw::CollisionLevel collisionLevel, double lastDivergence, double avgDivergence)
 {
   Q_UNUSED(divergence);
+  qDebug() << "DP - good: #" << _frameCount << QDateTime::currentDateTimeUtc();
+  _goodFrameRenderingWatch.startTick();
 
   _uiMat = renderGoodFrame(frame, foeFiltered, foe, collisionLevel, lastDivergence, avgDivergence);
   emit uiFrameReady(_uiMat);
@@ -115,12 +119,16 @@ void CollisionAvoidanceDataProvider::collisionLevelRatingReady(const cv::Mat& fr
 
   if(_activeVehicle!=NULL)
     _activeVehicle->increaseCollisionAvoidanceImageIndex();
+  _goodFrameRenderingWatch.stopTick();
+  qDebug() << "DP - good: #" << _frameCount << QString::fromStdString(_goodFrameRenderingWatch.prettyFormat());
 }    
 
 void CollisionAvoidanceDataProvider::badFrame(const cv::Mat& badFrame, unsigned long long skipFrameCount, unsigned long long totalFrameCount, std::shared_ptr<hw::FocusOfExpansionDto> foe)
 {
   Q_UNUSED(skipFrameCount);
   Q_UNUSED(totalFrameCount);
+  qDebug() << "DP - bad: #" << _frameCount << QDateTime::currentDateTimeUtc();
+  _badFrameRenderingWatch.startTick();
 
   if(!_settings.DisplayBadFramesInUi)
     return;
@@ -131,6 +139,8 @@ void CollisionAvoidanceDataProvider::badFrame(const cv::Mat& badFrame, unsigned 
 
   if(_activeVehicle!=NULL)
    _activeVehicle->increaseCollisionAvoidanceImageIndex();
+  _badFrameRenderingWatch.stopTick();
+  qDebug() << "DP - bad: #" << _frameCount << QString::fromStdString(_badFrameRenderingWatch.prettyFormat());
 }
 
 void CollisionAvoidanceDataProvider::opticalFlowReady(const cv::Mat& opticalFlow)

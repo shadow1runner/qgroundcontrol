@@ -21,6 +21,7 @@
 #include "FocusOfExpansionDto.h"
 #include "CollisionAvoidanceSettings.h"
 #include "CollisionLevel.h"
+#include "helper/AvgWatch.h"
 
 class Vehicle;
 class CollisionAvoidanceSettings;
@@ -57,6 +58,8 @@ private:
 
     Vehicle* _activeVehicle;
     CollisionAvoidanceSettings& _settings;
+    AvgWatch _badFrameRenderingWatch;
+    AvgWatch _goodFrameRenderingWatch;
 
     QImage  cvMatToQImage(const cv::Mat& mat);
     cv::Mat renderGoodFrame(const cv::Mat& frame, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, const hw::CollisionLevel collisionLevel, double lastDivergence, double avgDivergence);
@@ -75,8 +78,7 @@ private:
     cv::Mat heatMap;
     const cv::Scalar GREEN = cv::Scalar(0, 255, 0);
     const cv::Scalar GOOD_FRAME_COLOR = cv::Scalar(255, 0, 0);
-    const cv::Scalar BAD_FRAME_COLOR = cv::Scalar(0, 0, 255);
-    
+    const cv::Scalar BAD_FRAME_COLOR = cv::Scalar(0, 0, 255);    
 };
 
 #endif // COLLISIONAVOIDANCE_COLLISIONAVOIDANCEDataPROVIDER_H

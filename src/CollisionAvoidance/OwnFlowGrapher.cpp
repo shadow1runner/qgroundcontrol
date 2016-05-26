@@ -9,6 +9,7 @@
 
 #include <QObject>
 #include <QThread>
+#include <QDateTime>
 
 #include "QGCToolbox.h"
 #include "UAS.h"
@@ -56,6 +57,7 @@ void OwnFlowGrapher::_handleCollisionAvoidance(
     double avgDivergence)
 {
     Q_UNUSED(frame);
+    static int count = 1; qDebug() << "GP: #" << count++ << QDateTime::currentDateTimeUtc();
     
     emit valueChanged(getUASID(),"foeEkfx","px",QVariant(foeFiltered->x), getUnixTime());
     emit valueChanged(getUASID(),"foeEkfy","px",QVariant(foeFiltered->y), getUnixTime());

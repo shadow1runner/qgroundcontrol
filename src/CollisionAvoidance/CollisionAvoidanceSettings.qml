@@ -569,7 +569,7 @@ Rectangle {
                         }
                     }
                     QGCTextField {
-                        id:     DivergenceHistoryBufferSizeField
+                        id:     divergenceHistoryBufferSizeField
                         text:   (_controller.DivergenceHistoryBufferSize*100).toString()
                         width:  ScreenTools.defaultFontPixelWidth * 12
                         inputMethodHints:       Qt.ImhFormattedNumbersOnly
@@ -584,7 +584,7 @@ Rectangle {
                         }
                     }
                     Rectangle {
-                        width:              DivergenceHistoryBufferSizeField.height
+                        width:              divergenceHistoryBufferSizeField.height
                         height:             width
                         color:              qgcPal.button
                         QGCLabel {
