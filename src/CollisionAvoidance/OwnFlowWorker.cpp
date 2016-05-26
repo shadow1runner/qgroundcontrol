@@ -130,12 +130,13 @@ void OwnFlowWorker::reset()
     QMetaObject::invokeMethod(&_ownFlow, "reset");
 }
 
-void OwnFlowWorker::_collisionImmanent(const cv::Mat& frame, std::shared_ptr<hw::FocusOfExpansionDto> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured, std::shared_ptr<hw::Divergence> divergence)
+void OwnFlowWorker::_collisionImmanent(const cv::Mat& frame, unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, const hw::CollisionLevel collisionLevel)
 {
     Q_UNUSED(frame);
+    Q_UNUSED(frameNumber);
     Q_UNUSED(foeFiltered);
-    Q_UNUSED(foeMeasured);
-    Q_UNUSED(divergence);
+    Q_UNUSED(foe);
+    Q_UNUSED(collisionLevel);
 
     pause();
 }

@@ -20,7 +20,7 @@ void CollisionActor::_activeVehicleChanged(Vehicle* activeVehicle)
     _activeVehicle = activeVehicle; // might be NULL
 }
 
-void CollisionActor::_collisionImmanent(const cv::Mat& frame, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, const hw::CollisionLevel collisionLevel)
+void CollisionActor::_collisionImmanent(const cv::Mat& frame, unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, const hw::CollisionLevel collisionLevel)
 {
     Q_UNUSED(frame);
     Q_UNUSED(foeFiltered);
@@ -33,6 +33,6 @@ void CollisionActor::_collisionImmanent(const cv::Mat& frame, std::shared_ptr<cv
         return;
     }
 
-    qgcApp()->showMessage(QStringLiteral("Pausing vehicle - Collision is immanent"));
+    qgcApp()->showMessage(QString("Pausing vehicle - Collision is immanent starting from Frame #") + QString::number(frameNumber));
     _activeVehicle->pauseVehicle();
 }
