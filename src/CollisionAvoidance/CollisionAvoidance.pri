@@ -54,6 +54,7 @@ SOURCES += \
     $$PWD/opticalflow/RandomCollider.cpp \
     $$PWD/opticalflow/CollisionDetector.cpp \
     $$PWD/opticalflow/UiFramePreparer.cpp \
+    $$PWD/opticalflow/CollisionLevel.cpp \
     $$PWD/CollisionAvoidanceController.cpp \
     $$PWD/OwnFlowHandler.cpp \
     $$PWD/CollisionAvoidanceDataProvider.cpp \
