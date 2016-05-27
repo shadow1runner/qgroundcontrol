@@ -48,16 +48,10 @@ OwnFlowGrapher::OwnFlowGrapher(hw::OwnFlow* const ownFlow, QGCToolbox* toolbox, 
 	        );
 }
 
-void OwnFlowGrapher::_handleCollisionAvoidance(
-    const cv::Mat& frame, 
-    std::shared_ptr<cv::Point2i> foeFiltered, 
-    std::shared_ptr<hw::FocusOfExpansionDto> foe,
-    const hw::CollisionLevel collisionLevel,
-    double lastDivergence,
-    double avgDivergence)
+void OwnFlowGrapher::_handleCollisionAvoidance(const cv::Mat& frame, unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, const hw::CollisionLevel collisionLevel, double lastDivergence, double avgDivergence)
 {
     Q_UNUSED(frame);
-    static int count = 1; qDebug() << "GP: #" << count++ << QDateTime::currentDateTimeUtc();
+    Q_UNUSED(frameNumber);
     
     emit valueChanged(getUASID(),"foeEkfx","px",QVariant(foeFiltered->x), getUnixTime());
     emit valueChanged(getUASID(),"foeEkfy","px",QVariant(foeFiltered->y), getUnixTime());

@@ -26,6 +26,7 @@ HEADERS += \
     $$PWD/opticalflow/RandomCollider.h \
     $$PWD/opticalflow/CollisionAvoidanceSettings.h \
     $$PWD/opticalflow/CollisionDetector.h \
+    $$PWD/opticalflow/UiFramePreparer.h \
     $$PWD/opticalflow/CollisionLevel.h \
     $$PWD/CollisionAvoidanceController.h \
     $$PWD/OwnFlowHandler.h \
@@ -52,6 +53,7 @@ SOURCES += \
     $$PWD/opticalflow/OwnFlow.cpp \
     $$PWD/opticalflow/RandomCollider.cpp \
     $$PWD/opticalflow/CollisionDetector.cpp \
+    $$PWD/opticalflow/UiFramePreparer.cpp \
     $$PWD/CollisionAvoidanceController.cpp \
     $$PWD/OwnFlowHandler.cpp \
     $$PWD/CollisionAvoidanceDataProvider.cpp \

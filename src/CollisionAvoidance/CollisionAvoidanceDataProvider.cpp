@@ -37,6 +37,7 @@ along with QGROUNDCONTROL. If not, see <http://www.gnu.org/licenses/>.
 
 #include <QPainter>
 #include <QFont>
+#include <QDateTime>
 
 #include <string>
 #include <sstream>
@@ -45,23 +46,10 @@ CollisionAvoidanceDataProvider::CollisionAvoidanceDataProvider(QGCApplication *a
   : QGCTool(app)
   , QQuickImageProvider(QQmlImageProviderBase::Image)
   , _activeVehicle(NULL)
-  , _settings(CollisionAvoidanceSettings::getInstance())
-  , _badFrameRenderingWatch("Bad UI Frame - Render Time")
-  , _goodFrameRenderingWatch("Good UI Frame - Render Time")
+  , _qImage(320, 240, QImage::Format_RGBA8888)
+  , _sw("QML Refresh Rate")
 {
-}
-
-CollisionAvoidanceDataProvider::~CollisionAvoidanceDataProvider()
-{
-}
-
-void CollisionAvoidanceDataProvider::setToolbox(QGCToolbox *toolbox)
-{
-  QGCTool::setToolbox(toolbox);
-  connect(toolbox->multiVehicleManager(), &MultiVehicleManager::activeVehicleChanged, this, &CollisionAvoidanceDataProvider::_activeVehicleChanged);
-
-  //-- Dummy temporary image until something comes along
-  _qImage = QImage(320, 240, QImage::Format_RGBA8888);
+    //-- Dummy temporary image until something comes along
   _qImage.fill(Qt::black);
   QPainter painter(&_qImage);
   QFont f = painter.font();
@@ -69,6 +57,12 @@ void CollisionAvoidanceDataProvider::setToolbox(QGCToolbox *toolbox)
   painter.setFont(f);
   painter.setPen(Qt::white);
   painter.drawText(QRectF(0, 0, 320, 240), Qt::AlignCenter, "Idle");
+}
+
+void CollisionAvoidanceDataProvider::setToolbox(QGCToolbox *toolbox)
+{
+  QGCTool::setToolbox(toolbox);
+  connect(toolbox->multiVehicleManager(), &MultiVehicleManager::activeVehicleChanged, this, &CollisionAvoidanceDataProvider::_activeVehicleChanged);
 }
 
 QImage CollisionAvoidanceDataProvider::requestImage(const QString & /* image url with vehicle id*/, QSize *, const QSize &)
@@ -98,6 +92,11 @@ QImage CollisionAvoidanceDataProvider::requestImage(const QString & /* image url
   For now, we don't even look at the URL. This will have to be fixed if we're to support multiple
   vehicles transmitting flow images.
 */
+  if(_sw.isRunning()) {
+    _sw.stopTick();
+    qDebug() << "DP" << QString::fromStdString(_sw.prettyFormat()); 
+   _sw.startTick();
+  }
   return _qImage;
 }
 
@@ -106,136 +105,12 @@ void CollisionAvoidanceDataProvider::_activeVehicleChanged(Vehicle* activeVehicl
   _activeVehicle = activeVehicle; // might be NULL
 }
 
-void CollisionAvoidanceDataProvider::collisionLevelRatingReady(const cv::Mat& frame, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, const hw::CollisionLevel collisionLevel, double lastDivergence, double avgDivergence)
+void CollisionAvoidanceDataProvider::qtUiFrameReady(const QImage& qImage)
 {
-  Q_UNUSED(divergence);
-  qDebug() << "DP - good: #" << _frameCount << QDateTime::currentDateTimeUtc();
-  _goodFrameRenderingWatch.startTick();
-
-  _uiMat = renderGoodFrame(frame, foeFiltered, foe, collisionLevel, lastDivergence, avgDivergence);
-  emit uiFrameReady(_uiMat);
-  emit uiFrameDetailsReady(_uiMat, foeFiltered, foe, collisionLevel, lastDivergence, avgDivergence);
-  _qImage = cvMatToQImage(_uiMat);
-
-  if(_activeVehicle!=NULL)
+  static int count = 0;
+  qDebug() << "DP: # of UI frames ready: " << ++count;
+  if(_activeVehicle!=NULL) {
+    _qImage = qImage;
     _activeVehicle->increaseCollisionAvoidanceImageIndex();
-  _goodFrameRenderingWatch.stopTick();
-  qDebug() << "DP - good: #" << _frameCount << QString::fromStdString(_goodFrameRenderingWatch.prettyFormat());
-}    
-
-void CollisionAvoidanceDataProvider::badFrame(const cv::Mat& badFrame, unsigned long long skipFrameCount, unsigned long long totalFrameCount, std::shared_ptr<hw::FocusOfExpansionDto> foe)
-{
-  Q_UNUSED(skipFrameCount);
-  Q_UNUSED(totalFrameCount);
-  qDebug() << "DP - bad: #" << _frameCount << QDateTime::currentDateTimeUtc();
-  _badFrameRenderingWatch.startTick();
-
-  if(!_settings.DisplayBadFramesInUi)
-    return;
-
-  _uiMat = renderBadFrame(badFrame, foe);
-  emit uiFrameReady(_uiMat);
-  _qImage = cvMatToQImage(_uiMat);
-
-  if(_activeVehicle!=NULL)
-   _activeVehicle->increaseCollisionAvoidanceImageIndex();
-  _badFrameRenderingWatch.stopTick();
-  qDebug() << "DP - bad: #" << _frameCount << QString::fromStdString(_badFrameRenderingWatch.prettyFormat());
-}
-
-void CollisionAvoidanceDataProvider::opticalFlowReady(const cv::Mat& opticalFlow)
-{
-  this->opticalFlow = opticalFlow;
-}
-
-void CollisionAvoidanceDataProvider::histogramReady(const cv::Mat& histogram)
-{
-  heatMap = HeatMap::createHeatMap(histogram);
-}
-
-QImage CollisionAvoidanceDataProvider::cvMatToQImage(const cv::Mat& mat) {
-  ++_frameCount;
-  cv::Mat tmp;
-  // http://stackoverflow.com/a/12312326/2559632
-  cvtColor(mat, tmp, CV_BGR2RGB);
-  // cv::Mat tmpMat;
-  // resize(mat, tmpMat, cv::Size(0,0), 2, 2, cv::INTER_LINEAR);
-  return QImage((uchar*)tmp.data, tmp.cols, tmp.rows, tmp.step, QImage::Format_RGB888);
-}
-
-cv::Mat CollisionAvoidanceDataProvider::renderGoodFrame(const cv::Mat& frame, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, const hw::CollisionLevel collisionLevel, double lastDivergence, double avgDivergence)
-{
-  std::vector<cv::Mat> canvas;
-
-  cv::Scalar color = GOOD_FRAME_COLOR;
-
-  DrawHelper::drawRings(heatMap, foe->getFoE(), color);
-  DrawHelper::drawRings(heatMap, *foeFiltered, collisionLevel);
-  canvas.push_back(heatMap);
-
-  cv::Mat bgr;
-  cv::cvtColor(frame, bgr, cv::COLOR_GRAY2BGR);
-  DrawHelper::drawRings(bgr, foe->getFoE(), color);
-  DrawHelper::drawRings(bgr, *foeFiltered, collisionLevel);
-  canvas.push_back(bgr);
-
-  cv::Mat flowOverlay;
-  cv::cvtColor(frame, flowOverlay, cv::COLOR_GRAY2BGR);
-  DrawHelper::drawOpticalFlowMap(opticalFlow, flowOverlay, GREEN, 16, _settings.OpticalFlowVectorVisualizationFactor, _settings.OpticalFlowVectorVisualizationFactor);
-  DrawHelper::drawRings(flowOverlay, foe->getFoE(), color);
-  DrawHelper::drawRings(flowOverlay, *foeFiltered, collisionLevel);
-  canvas.push_back(flowOverlay);
-
-  auto hsv = DrawHelper::visualiceFlowAsHsv(opticalFlow);
-  DrawHelper::drawRings(hsv, foe->getFoE(), color);
-  DrawHelper::drawRings(hsv, *foeFiltered, collisionLevel);
-  canvas.push_back(hsv);
-
-  auto combined = DrawHelper::makeRowCanvas(canvas, cv::Scalar(64, 64, 64));
-
-  std::vector<std::string> lines;
-  std::stringstream ss;
-  ss << "#" << _frameCount << ": GOOD; "; lines.push_back(ss.str()); ss.str(std::string());
-  ss << "Filtered FoE: (" << foeFiltered->x << ", " << foeFiltered->y << ")"; lines.push_back(ss.str()); ss.str(std::string());
-  ss << "FOE: (" << foe->getFoE().x << ", " << foe->getFoE().y << ") @ "  << std::setprecision(3) << foe->getInlierProportion()*100 << "%"; lines.push_back(ss.str()); ss.str(std::string());
-  ss << "Div: " << std::setprecision(4) << lastDivergence; lines.push_back(ss.str()); ss.str(std::string());
-  ss << "Avg Div: " << std::setprecision(4)<< avgDivergence; lines.push_back(ss.str()); ss.str(std::string());
-
-  return DrawHelper::renderText(combined, lines);
-}  
-
-cv::Mat CollisionAvoidanceDataProvider::renderBadFrame(
-  const cv::Mat& frame,
-  std::shared_ptr<hw::FocusOfExpansionDto> foe)
-{
-  std::vector<cv::Mat> canvas;
-  cv::Scalar color = BAD_FRAME_COLOR;
-
-  DrawHelper::drawRings(heatMap, foe->getFoE(), color);
-  canvas.push_back(heatMap);
-
-  cv::Mat bgr;
-  cv::cvtColor(frame, bgr, cv::COLOR_GRAY2BGR);
-  DrawHelper::drawRings(bgr, foe->getFoE(), color);
-  canvas.push_back(bgr);
-
-  cv::Mat flowOverlay;
-  cv::cvtColor(frame, flowOverlay, cv::COLOR_GRAY2BGR);
-  DrawHelper::drawOpticalFlowMap(opticalFlow, flowOverlay, GREEN);
-  DrawHelper::drawRings(flowOverlay, foe->getFoE(), color);
-  canvas.push_back(flowOverlay);
-
-  auto hsv = DrawHelper::visualiceFlowAsHsv(opticalFlow);
-  DrawHelper::drawRings(hsv, foe->getFoE(), color);
-  canvas.push_back(hsv);
-
-  auto combined = DrawHelper::makeRowCanvas(canvas, cv::Scalar(64, 64, 64));
-
-  std::vector<std::string> lines;
-  std::stringstream ss;
-  ss << "#" << _frameCount << ": BAD"; lines.push_back(ss.str()); ss.str(std::string());
-  ss << "No FoE"; lines.push_back(ss.str()); ss.str(std::string());
-  ss << "(foe: (" << foe->getFoE().x << ", " << foe->getFoE().y << ") - "  << std::setprecision(3) << foe->getInlierProportion()*100 << "%)"; lines.push_back(ss.str()); ss.str(std::string());
-
-  return DrawHelper::renderText(combined, lines);
+  }
 }

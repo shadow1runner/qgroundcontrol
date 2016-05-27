@@ -563,16 +563,10 @@ void Vehicle::_handleCollisionAvoidancePausedChange(bool isPaused)
     emit collisionAvoidanceActiveChanged(_collisionAvoidanceActive);
 }
 
-void Vehicle::_handleCollisionAvoidance(
-    const cv::Mat& frame, 
-    std::shared_ptr<cv::Point2i> foeFiltered, 
-    std::shared_ptr<hw::FocusOfExpansionDto> foe,
-    const hw::CollisionLevel collisionLevel,
-    double lastDivergence,
-    double avgDivergence
-    )
+void Vehicle::_handleCollisionAvoidance(const cv::Mat& frame, unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, const hw::CollisionLevel collisionLevel, double lastDivergence, double avgDivergence)
 {
     Q_UNUSED(frame);
+    Q_UNUSED(frameNumber);
 
     _collisionAvoidanceFactGroup.foeEkfx()->setRawValue(foeFiltered->x);
     _collisionAvoidanceFactGroup.foeEkfy()->setRawValue(foeFiltered->y);

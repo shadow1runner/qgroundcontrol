@@ -24,6 +24,7 @@
 #include "AvgWatch.h"
 #include "OwnFlowGrapher.h"
 #include "FramePersister.h"
+#include "UiFramePreparer.h"
 
 class QGCToolbox;
 
@@ -62,11 +63,13 @@ private:
     hw::OwnFlow _ownFlow;
     OwnFlowGrapher _grapher;
     FramePersister _framePersister;
+    hw::UiFramePreparer _uiFramePreparer;
 
     QThread _ownFlowThread;
     // QThread _converterThread;
     QThread _grapherThread;
     QThread _ioThread;
+    QThread _uiFramePreparerThread;
 };
 
 #endif // OWNFLOWWORKER_H

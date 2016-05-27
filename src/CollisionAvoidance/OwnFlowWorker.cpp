@@ -21,11 +21,13 @@ OwnFlowWorker::OwnFlowWorker(CollisionAvoidanceSettings& settings, QGCToolbox* t
     _ownFlowThread.setObjectName("OwnFlow");
     _grapherThread.setObjectName("OwnFlowGrapher");
     _ioThread.setObjectName("OwnFlow I/O");
+    _uiFramePreparerThread.setObjectName("OwnFlow UI Frame Preparer");
 
     // _converter.moveToThread(&_converterThread);
     _ownFlow.moveToThread(&_ownFlowThread);
     _grapher.moveToThread(&_grapherThread);
     _framePersister.moveToThread(&_ioThread);
+    _uiFramePreparer.moveToThread(&_uiFramePreparerThread);
 
     // converter -> ownflow
     connect(&_converter, &hw::Converter::imageConverted,
@@ -33,18 +35,18 @@ OwnFlowWorker::OwnFlowWorker(CollisionAvoidanceSettings& settings, QGCToolbox* t
             ,Qt::BlockingQueuedConnection
            );
 
-    // ownflow -> dependencies: UI
+    // ownflow -> dependencies: UI Frame Preparer
     connect(&_ownFlow, &hw::OwnFlow::collisionLevelRatingReady,
-             _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::collisionLevelRatingReady);
+            &_uiFramePreparer, &hw::UiFramePreparer::collisionLevelRatingReady);
 
     connect(&_ownFlow, &hw::OwnFlow::frameSkipped,
-             _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::badFrame);
+            &_uiFramePreparer, &hw::UiFramePreparer::badFrame);
 
     connect(&_ownFlow, &hw::OwnFlow::opticalFlowChanged,
-             _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::opticalFlowReady);
+            &_uiFramePreparer, &hw::UiFramePreparer::opticalFlowReady);
     
     connect(&_ownFlow, &hw::OwnFlow::histogramChanged,
-             _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::histogramReady);
+            &_uiFramePreparer, &hw::UiFramePreparer::histogramReady);
 
     // ownflow -> dependencies: I/O connections, frame persistence
     connect(_frameGrabber, &hw::BufferedFrameGrabber::newRawFrame,
@@ -63,8 +65,12 @@ OwnFlowWorker::OwnFlowWorker(CollisionAvoidanceSettings& settings, QGCToolbox* t
             &_framePersister, &FramePersister::histogramReady);
     
     // UI -> I/O
-    connect(_collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::uiFrameReady,
+    connect(&_uiFramePreparer, &hw::UiFramePreparer::uiFrameReady,
             &_framePersister, &FramePersister::uiFrameReady);
+    
+    // UI Frame Preparer -> UI Thread
+    connect(&_uiFramePreparer, &hw::UiFramePreparer::qtUiFrameReady,
+             _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::qtUiFrameReady);
 }
 
 OwnFlowWorker::~OwnFlowWorker() {
@@ -87,6 +93,7 @@ void OwnFlowWorker::start()
     // _converterThread.start();
     _grapherThread.start();
     _ownFlowThread.start();
+    _uiFramePreparerThread.start();
 
     _isPaused = false;
     emit isPausedChanged(_isPaused);
@@ -122,6 +129,9 @@ void OwnFlowWorker::stop()
 
     _ioThread.quit();
     _ioThread.wait();
+
+    _uiFramePreparerThread.quit();
+    _uiFramePreparerThread.wait();
 }
 
 void OwnFlowWorker::reset()
