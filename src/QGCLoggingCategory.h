@@ -68,7 +68,7 @@ public:
     void setFilterRulesFromSettings(const QString& commandLineLoggingOptions);
 
 private:
-    QGCLoggingCategoryRegister(void) { }
+    QGCLoggingCategoryRegister(void) : QObject(NULL) { }
     
     QStringList _registeredCategories;
     QString     _commandLineLoggingOptions;
