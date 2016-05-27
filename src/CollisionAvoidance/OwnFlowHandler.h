@@ -31,7 +31,7 @@ public:
     ~OwnFlowHandler();
 
     void start();
-    void pause();
+    Q_INVOKABLE void pause();
     void stop();
     void reset();
     
@@ -40,6 +40,9 @@ public:
 
     OwnFlowWorker* ownFlowWorker();
     CollisionActor* collisionActor();
+
+private slots:
+    void _collisionImmanent(const cv::Mat& frame, unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, const hw::CollisionLevel collisionLevel);
 
 private:
 	CollisionAvoidanceSettings& _settings;

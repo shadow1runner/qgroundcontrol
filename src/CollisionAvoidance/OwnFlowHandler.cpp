@@ -6,6 +6,7 @@
 #include "QGCToolbox.h"
 #include "QtHelper.h"
 #include "CollisionActor.h"
+#include "OwnFlow.h"
 
 
 OwnFlowHandler::OwnFlowHandler(QGCApplication* app)
@@ -32,6 +33,10 @@ void OwnFlowHandler::setToolbox(QGCToolbox* toolbox)
     _ownFlowWorkerThread.start();
 
     _collisionActor = new CollisionActor(_settings, toolbox);
+
+    connect(_ownFlowWorker->ownFlow(), &hw::OwnFlow::collisionImmanent,
+             this, &OwnFlowHandler::_collisionImmanent);
+            // Qt::BlockingQueuedConnection);
 }
 
 OwnFlowWorker* OwnFlowHandler::ownFlowWorker() 
@@ -65,4 +70,16 @@ void OwnFlowHandler::stop()
 void OwnFlowHandler::reset()
 {
     _ownFlowWorker->reset();
+}
+
+void OwnFlowHandler::_collisionImmanent(const cv::Mat& frame, unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, const hw::CollisionLevel collisionLevel)
+{
+    Q_UNUSED(frame);
+    Q_UNUSED(frameNumber);
+    Q_UNUSED(foeFiltered);
+    Q_UNUSED(foe);
+    Q_UNUSED(collisionLevel);
+
+    qDebug() << "Pausing OwnFlowWorker because of received `collisionImmanent` event";
+    QMetaObject::invokeMethod(_ownFlowWorker, "pause");
 }

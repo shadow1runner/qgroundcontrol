@@ -17,13 +17,13 @@ OwnFlowWorker::OwnFlowWorker(CollisionAvoidanceSettings& settings, QGCToolbox* t
     , _grapher(&_ownFlow, toolbox)
     , _framePersister(settings)
 { 
-    // _converterThread.setObjectName("OwnFlowConverter");
+    _converterThread.setObjectName("OwnFlowConverter");
     _ownFlowThread.setObjectName("OwnFlow");
     _grapherThread.setObjectName("OwnFlowGrapher");
     _ioThread.setObjectName("OwnFlow I/O");
     _uiFramePreparerThread.setObjectName("OwnFlow UI Frame Preparer");
 
-    // _converter.moveToThread(&_converterThread);
+    _converter.moveToThread(&_converterThread);
     _ownFlow.moveToThread(&_ownFlowThread);
     _grapher.moveToThread(&_grapherThread);
     _framePersister.moveToThread(&_ioThread);
@@ -48,7 +48,7 @@ OwnFlowWorker::OwnFlowWorker(CollisionAvoidanceSettings& settings, QGCToolbox* t
     connect(&_ownFlow, &hw::OwnFlow::histogramChanged,
             &_uiFramePreparer, &hw::UiFramePreparer::histogramReady);
 
-    // ownflow -> dependencies: I/O connections, frame persistence
+    // ownflow -> dependencies: I/O connections, frame persistence, collision
     connect(_frameGrabber, &hw::BufferedFrameGrabber::newRawFrame,
             &_framePersister, &FramePersister::rawFrameReady);
 
@@ -90,7 +90,7 @@ void OwnFlowWorker::start()
     qDebug() << "Starting OwnFlowWorker on Thread" << QThread::currentThreadId();
 
     _ioThread.start();
-    // _converterThread.start();
+    _converterThread.start();
     _grapherThread.start();
     _ownFlowThread.start();
     _uiFramePreparerThread.start();
@@ -100,10 +100,11 @@ void OwnFlowWorker::start()
 
     while(!_isPaused && _frameGrabber->has_next()) {
         auto currentFrame = _frameGrabber->next();
-        _converter.convertImage(currentFrame);
+        QMetaObject::invokeMethod(&_converter, "convertImage", Qt::BlockingQueuedConnection, Q_ARG(cv::Mat, currentFrame));
+        // _converter.convertImage(currentFrame);
 	}
 
-    reset();
+//    reset();
 }
 
 void OwnFlowWorker::pause() 
@@ -118,8 +119,8 @@ void OwnFlowWorker::stop()
 {
     pause();
 
-    // _converterThread.quit();
-    // _converterThread.wait();
+    _converterThread.quit();
+    _converterThread.wait();
 
     _ownFlowThread.quit();
     _ownFlowThread.wait();
@@ -141,16 +142,4 @@ void OwnFlowWorker::reset()
     QThread::msleep(100);
     _frameGrabber->reset();
     QMetaObject::invokeMethod(&_ownFlow, "reset");
-}
-
-void OwnFlowWorker::_collisionImmanent(const cv::Mat& frame, unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, const hw::CollisionLevel collisionLevel)
-{
-    Q_UNUSED(frame);
-    Q_UNUSED(frameNumber);
-    Q_UNUSED(foeFiltered);
-    Q_UNUSED(foe);
-    Q_UNUSED(collisionLevel);
-
-    qDebug() << "Pausing because of received `collisionImmanent` event";
-    pause();
 }
