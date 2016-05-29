@@ -33,6 +33,9 @@
 
 #include <QStandardPaths>
 #include <QRegularExpression>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 
 struct FirmwareToUrlElement_t {
     FirmwareUpgradeController::AutoPilotStackType_t    stackType;
@@ -75,6 +78,7 @@ FirmwareUpgradeController::FirmwareUpgradeController(void)
     connect(&_eraseTimer, &QTimer::timeout, this, &FirmwareUpgradeController::_eraseProgressTick);
 
     _initFirmwareHash();
+    _determinePX4StableVersion();
 }
 
 FirmwareUpgradeController::~FirmwareUpgradeController()
@@ -826,4 +830,70 @@ FirmwareUpgradeController::FirmwareVehicleType_t FirmwareUpgradeController::vehi
     }
 
     return _apmVehicleTypeFromCurrentVersionList[index];
+}
+
+void FirmwareUpgradeController::_determinePX4StableVersion(void)
+{
+    QGCFileDownload* downloader = new QGCFileDownload(this);
+    connect(downloader, &QGCFileDownload::downloadFinished, this, &FirmwareUpgradeController::_px4ReleasesGithubDownloadFinished);
+    connect(downloader, &QGCFileDownload::error, this, &FirmwareUpgradeController::_px4ReleasesGithubDownloadError);
+    downloader->download(QStringLiteral("https://api.github.com/repos/PX4/Firmware/releases"));
+}
+
+void FirmwareUpgradeController::_px4ReleasesGithubDownloadFinished(QString remoteFile, QString localFile)
+{
+    Q_UNUSED(remoteFile);
+
+    QFile jsonFile(localFile);
+    if (!jsonFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qCWarning(FirmwareUpgradeLog) << "Unable to open github px4 releases json file" << localFile << jsonFile.errorString();
+        return;
+    }
+    QByteArray bytes = jsonFile.readAll();
+    jsonFile.close();
+
+    QJsonParseError jsonParseError;
+    QJsonDocument doc = QJsonDocument::fromJson(bytes, &jsonParseError);
+    if (jsonParseError.error != QJsonParseError::NoError) {
+        qCWarning(FirmwareUpgradeLog) <<  "Unable to open px4 releases json document" << localFile << jsonParseError.errorString();
+        return;
+    }
+
+    // Json should be an array of release objects
+    if (!doc.isArray()) {
+        qCWarning(FirmwareUpgradeLog) <<  "px4 releases json document is not an array" << localFile;
+        return;
+    }
+    QJsonArray releases = doc.array();
+
+    // The first release marked prerelease=false is stable
+    // The first release marked prerelease=true is beta
+    bool foundStable = false;
+    bool foundBeta = false;
+    for (int i=0; i<releases.count() && (!foundStable || !foundBeta); i++) {
+        QJsonObject release = releases[i].toObject();
+        if (!foundStable && !release["prerelease"].toBool()) {
+            _px4StableVersion = release["name"].toString();
+            emit px4StableVersionChanged(_px4StableVersion);
+            qCDebug(FirmwareUpgradeLog()) << "Found px4 stable version" << _px4StableVersion;
+            foundStable = true;
+        } else if (!foundBeta && release["prerelease"].toBool()) {
+            _px4BetaVersion = release["name"].toString();
+            emit px4StableVersionChanged(_px4BetaVersion);
+            qCDebug(FirmwareUpgradeLog()) << "Found px4 beta version" << _px4BetaVersion;
+            foundBeta = true;
+        }
+    }
+
+    if (!foundStable) {
+        qCDebug(FirmwareUpgradeLog()) << "Unable to find px4 stable version" << localFile;
+    }
+    if (!foundBeta) {
+        qCDebug(FirmwareUpgradeLog()) << "Unable to find px4 beta version" << localFile;
+    }
+}
+
+void FirmwareUpgradeController::_px4ReleasesGithubDownloadError(QString errorMsg)
+{
+    qCWarning(FirmwareUpgradeLog) << "PX4 releases github download failed" << errorMsg;
 }

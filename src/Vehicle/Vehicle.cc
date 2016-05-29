@@ -218,7 +218,7 @@ Vehicle::Vehicle(LinkInterface*             link,
     connect(_parameterLoader, &ParameterLoader::parameterListProgress, _autopilotPlugin, &AutoPilotPlugin::parameterListProgress);
 
     // Ask the vehicle for firmware version info
-    doCommandLong(MAV_COMP_ID_ALL, MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES, 1 /* request firmware version */);
+    doCommandLong(defaultComponentId(), MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES, 1 /* request firmware version */);
 
     _firmwarePlugin->initializeVehicle(this);
 
@@ -1277,7 +1277,7 @@ bool Vehicle::flightModeSetAvailable(void)
 
 QStringList Vehicle::flightModes(void)
 {
-    return _firmwarePlugin->flightModes();
+    return _firmwarePlugin->flightModes(this);
 }
 
 QString Vehicle::flightMode(void) const
@@ -1523,6 +1523,22 @@ bool Vehicle::multiRotor(void) const
     case MAV_TYPE_HEXAROTOR:
     case MAV_TYPE_OCTOROTOR:
     case MAV_TYPE_TRICOPTER:
+        return true;
+    default:
+        return false;
+    }
+}
+
+bool Vehicle::vtol(void) const
+{
+    switch (vehicleType()) {
+    case MAV_TYPE_VTOL_DUOROTOR:
+    case MAV_TYPE_VTOL_QUADROTOR:
+    case MAV_TYPE_VTOL_TILTROTOR:
+    case MAV_TYPE_VTOL_RESERVED2:
+    case MAV_TYPE_VTOL_RESERVED3:
+    case MAV_TYPE_VTOL_RESERVED4:
+    case MAV_TYPE_VTOL_RESERVED5:
         return true;
     default:
         return false;
@@ -1807,10 +1823,14 @@ QString Vehicle::firmwareVersionTypeString(void) const
     }
 }
 
-
 void Vehicle::rebootVehicle()
 {
     doCommandLong(id(), MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+}
+
+int Vehicle::defaultComponentId(void)
+{
+    return _parameterLoader->defaultComponenentId();
 }
 
 const char* VehicleGPSFactGroup::_hdopFactName =                "hdop";

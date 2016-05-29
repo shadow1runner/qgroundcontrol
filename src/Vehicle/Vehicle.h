@@ -353,6 +353,7 @@ public:
     Q_PROPERTY(uint                 messagesLost            READ messagesLost                           NOTIFY messagesLostChanged)
     Q_PROPERTY(bool                 fixedWing               READ fixedWing                              CONSTANT)
     Q_PROPERTY(bool                 multiRotor              READ multiRotor                             CONSTANT)
+    Q_PROPERTY(bool                 vtol                    READ vtol                                   CONSTANT)
     Q_PROPERTY(bool                 autoDisconnect          MEMBER _autoDisconnect                      NOTIFY autoDisconnectChanged)
     Q_PROPERTY(QString              prearmError             READ prearmError        WRITE setPrearmError NOTIFY prearmErrorChanged)
     Q_PROPERTY(int                  collisionAvoidanceImageIndex READ collisionAvoidanceImageIndex      NOTIFY collisionAvoidanceImageIndexChanged)
@@ -536,6 +537,7 @@ public:
 
     bool fixedWing(void) const;
     bool multiRotor(void) const;
+    bool vtol(void) const;
 
     void setFlying(bool flying);
     void setGuidedMode(bool guidedMode);
@@ -624,6 +626,8 @@ public:
     QString firmwareVersionTypeString(void) const;
     void setFirmwareVersion(int majorVersion, int minorVersion, int patchVersion, FIRMWARE_VERSION_TYPE versionType = FIRMWARE_VERSION_TYPE_OFFICIAL);
     static const int versionNotSetValue = -1;
+
+    int defaultComponentId(void);
 
 public slots:
     void setLatitude(double latitude);
