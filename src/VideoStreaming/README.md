@@ -33,6 +33,7 @@ Use apt-get to install GStreamer 1.0
 ```
 sudo apt-get install gstreamer1.0*
 sudo apt-get install libgstreamer1.0*
+sudo apt-get install libgstreamer-plugins-base1.0*
 ```
 
 The build system is setup to use pkgconfig and it will find the necessary headers and libraries automatically.
