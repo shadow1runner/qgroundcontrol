@@ -544,11 +544,69 @@ Rectangle {
                 }
             }
             //-----------------------------------------------------------------
+            //-- avgDivergenceThreshold
+            Row {
+                spacing:    ScreenTools.defaultFontPixelWidth
+                QGCLabel {
+                    text:   qsTr("AVG Divergence Threshold:")
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                Row {
+                    Rectangle {
+                        width:              avgDivergenceThresholdField.height
+                        height:             width
+                        color:              qgcPal.button
+                        QGCLabel {
+                            text:           "-"
+                            anchors.centerIn: parent
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if(_controller.avgDivergenceThreshold > 0.001)
+                                    _controller.avgDivergenceThreshold = _controller.avgDivergenceThreshold - 0.001
+                            }
+                        }
+                    }
+                    QGCTextField {
+                        id:     avgDivergenceThresholdField
+                        text:   (_controller.avgDivergenceThreshold*100).toString()
+                        width:  ScreenTools.defaultFontPixelWidth * 12
+                        inputMethodHints:       Qt.ImhFormattedNumbersOnly
+                        anchors.verticalCenter: parent.verticalCenter
+                        showUnits:          true
+                        unitsLabel:         "%"
+                        validator:          DoubleValidator {bottom: 0.1; top: 100.0; decimals: 2;}
+                        onEditingFinished: {
+                            var avgDivergenceThreshold = parseFloat(text)
+                            if(avgDivergenceThreshold >= 0.1 && avgDivergenceThreshold <= 100.0)
+                                _controller.avgDivergenceThreshold = avgDivergenceThreshold/100
+                        }
+                    }
+                    Rectangle {
+                        width:              avgDivergenceThresholdField.height
+                        height:             width
+                        color:              qgcPal.button
+                        QGCLabel {
+                            text:           "+"
+                            anchors.centerIn: parent
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if(_controller.avgDivergenceThreshold < 1)
+                                    _controller.avgDivergenceThreshold = _controller.avgDivergenceThreshold + 0.001
+                            }
+                        }
+                    }
+                }
+            }
+            //-----------------------------------------------------------------
             //-- DivergenceHistoryBufferSize
             Row {
                 spacing:    ScreenTools.defaultFontPixelWidth
                 QGCLabel {
-                    text:   qsTr("DivergenceHistoryBufferSize: (requires restart)")
+                    text:   qsTr("DivergenceHistoryBufferSize for AVG Divergence: (requires restart)")
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 Row {
@@ -570,12 +628,10 @@ Rectangle {
                     }
                     QGCTextField {
                         id:     divergenceHistoryBufferSizeField
-                        text:   (_controller.DivergenceHistoryBufferSize*100).toString()
+                        text:   _controller.DivergenceHistoryBufferSize.toString()
                         width:  ScreenTools.defaultFontPixelWidth * 12
                         inputMethodHints:       Qt.ImhFormattedNumbersOnly
                         anchors.verticalCenter: parent.verticalCenter
-                        showUnits:          true
-                        unitsLabel:         "%"
                         validator:          IntValidator {bottom: 1; }
                         onEditingFinished: {
                             var tmp = parseInt(text)
