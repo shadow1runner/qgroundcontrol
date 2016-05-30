@@ -26,9 +26,13 @@
 #include "Divergence.h"
 #include "AvgWatch.h"
 
-OwnFlowGrapher::OwnFlowGrapher(hw::OwnFlow* const ownFlow, QGCToolbox* toolbox, QObject *parent)
+using namespace std;
+using namespace hw;
+
+OwnFlowGrapher::OwnFlowGrapher(hw::OwnFlow* const ownFlow, QGCToolbox* toolbox, const CollisionAvoidanceSettings& settings, QObject *parent)
 	: QObject(parent)
 	, _ownFlow(ownFlow)
+    , _settings(settings)
 {
 	// connect to signals emitted by `OwnFlow` - used for emitting valueChanged signals (and thus for graphing)
     connect(_ownFlow, &hw::OwnFlow::collisionLevelRatingReady,
@@ -46,12 +50,29 @@ OwnFlowGrapher::OwnFlowGrapher(hw::OwnFlow* const ownFlow, QGCToolbox* toolbox, 
 	connect(toolbox->multiVehicleManager(), &MultiVehicleManager::activeVehicleChanged,
 	        this, &OwnFlowGrapher::_activeVehicleChanged
 	        );
+
+    // log file
+    csvFile.open(_settings.CsvFilePath.toStdString(), ofstream::out | ofstream::trunc);
+    if(!csvFile.is_open())
+    {
+        throw new std::invalid_argument(_settings.CsvFilePath.toStdString());
+    }
+
+    writeCsvHeader();
 }
+
+OwnFlowGrapher::~OwnFlowGrapher()
+{
+    csvFile.close();
+}
+
 
 void OwnFlowGrapher::_handleCollisionAvoidance(const cv::Mat& frame, unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, const hw::CollisionLevel collisionLevel, double lastDivergence, double avgDivergence)
 {
     Q_UNUSED(frame);
     Q_UNUSED(frameNumber);
+
+    logGoodFrameToCsv(frameNumber, foeFiltered, foe, collisionLevel, lastDivergence, avgDivergence);
     
     emit valueChanged(getUASID(),"foeEkfx","px",QVariant(foeFiltered->x), getUnixTime());
     emit valueChanged(getUASID(),"foeEkfy","px",QVariant(foeFiltered->y), getUnixTime());
@@ -71,6 +92,8 @@ void OwnFlowGrapher::_handleCollisionAvoidanceBadFrame(
 {
     Q_UNUSED(badFrame);
     Q_UNUSED(foeMeasured);
+
+    logBadFrameToCsv(totalFrameCount, foeMeasured);
 
     emit valueChanged(getUASID(), "skipFrameRatio", "-", QVariant(skipFrameCount/(double)totalFrameCount), getUnixTime());
     emit valueChanged(getUASID(), "skipFrames", "-", QVariant(skipFrameCount), getUnixTime());
@@ -114,4 +137,47 @@ int OwnFlowGrapher::getUASID()
 	return _activeUas!=nullptr ? _activeUas->getUASID() : -1;
 }
 
+void OwnFlowGrapher::writeCsvHeader()
+{
+    csvFile << "#";
+    csvFile << ",CollisionLevel";
+    csvFile << ",CollisionLevel (string)";
+    csvFile << ",Divergence (last)";
+    csvFile << ",Divergence (average over " << _settings.DivergenceHistoryBufferSize << " elements)";
+    csvFile << ",Inlier Proportion"; if(_settings.InlierProportionThresholdEnabled) csvFile << " (bad if < " << _settings.InlierProportionThreshold << ")";
+    csvFile << ",FoE x";
+    csvFile << ",FoE y";
+    csvFile << ",Number of Collision Inliers";
+    csvFile << ",Number of Collision Particles";
+    csvFile << std::endl;
+}
 
+void OwnFlowGrapher::logBadFrameToCsv(unsigned long long frameNumber, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured)
+{
+    csvFile << frameNumber;
+    csvFile << ","; // << static_cast<int>(CollisionLevel);
+    csvFile << ","; // << CollisionHelper::toString(CollisionLevel);
+    csvFile << ","; // << lastDivergence;
+    csvFile << ","; // << avgDivergence;
+    csvFile << "," << foeMeasured->getInlierProportion();
+    csvFile << "," << foeMeasured->getFoE().x;
+    csvFile << "," << foeMeasured->getFoE().y;
+    csvFile << "," << foeMeasured->getNumberOfInliers();
+    csvFile << "," << foeMeasured->getNumberOfParticles();
+    csvFile << std::endl;
+}
+
+void OwnFlowGrapher::logGoodFrameToCsv(unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, const hw::CollisionLevel collisionLevel, double lastDivergence, double avgDivergence)
+{
+    csvFile << frameNumber;
+    csvFile << "," << static_cast<int>(collisionLevel);
+    csvFile << "," << hw::CollisionLevelHelper::toString(collisionLevel);
+    csvFile << "," << lastDivergence;
+    csvFile << "," << avgDivergence;
+    csvFile << "," << foe->getInlierProportion();
+    csvFile << "," << foe->getFoE().x;
+    csvFile << "," << foe->getFoE().y;
+    csvFile << "," << foe->getNumberOfInliers();
+    csvFile << "," << foe->getNumberOfParticles();
+    csvFile << std::endl;
+}

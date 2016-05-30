@@ -1034,6 +1034,36 @@ Rectangle {
                 height: ScreenTools.defaultFontPixelHeight / 2
                 width:  parent.width
             }
+
+            
+            //-----------------------------------------------------------------
+            //-- csvFilePath
+            Row {
+                spacing:    ScreenTools.defaultFontPixelWidth
+                QGCLabel {
+                    text:       "Write CSV log file to:"
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                Item {
+                    height: ScreenTools.defaultFontPixelHeight / 2
+                    width: ScreenTools.defaultFontPixelHeight / 2
+                }
+                QGCTextField {
+                    id:     csvFilePath
+                    text:   _controller.csvFilePath
+                    width:  ScreenTools.defaultFontPixelWidth * 75  
+                    anchors.verticalCenter: parent.verticalCenter
+                    enabled:    _controller.csvFilePath
+                    onEditingFinished: {
+                        _controller.csvFilePath = csvFilePath.text
+                    }
+                }
+            }
+
+            Item {
+                height: ScreenTools.defaultFontPixelHeight / 2
+                width:  parent.width
+            }
         }
     }
 }

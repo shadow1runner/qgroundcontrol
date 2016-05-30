@@ -56,6 +56,8 @@ public:
    Q_PROPERTY(QString rawFramesPath                 READ getRawFramesPath WRITE setRawFramesPath NOTIFY rawFramesPathChanged);
    Q_PROPERTY(QString uiFramesPath                  READ getUiFramesPath WRITE setUiFramesPath NOTIFY uiFramesPathChanged);
 
+   Q_PROPERTY(QString csvFilePath                  READ getCsvFilePath WRITE setCsvFilePath NOTIFY csvFilePathChanged);
+
     bool              getUseRecordedVideoInsteadOfDevice() const  { return _settings.getUseRecordedVideoInsteadOfDevice(); }
     const QString     getFileName() const                         { return _settings.getFileName();                  }
     int               getDevice() const                           { return _settings.getDevice();                    }
@@ -90,6 +92,8 @@ public:
     const QString     getOpticalFlowFramesPath() const            { return _settings.OpticalFlowFramesPath; }
     const QString     getRawFramesPath() const                    { return _settings.RawFramesPath; }
     const QString     getUiFramesPath() const                     { return _settings.UiFramesPath; }
+
+    const QString     getCsvFilePath() const                     { return _settings.CsvFilePath; }
 
 signals:
   void useRecordedVideoInsteadOfDeviceChanged(bool value);
@@ -127,6 +131,8 @@ signals:
   void rawFramesPathChanged(QString value);
   void uiFramesPathChanged(QString value);
 
+  void csvFilePathChanged(QString value);
+
 public slots:
     void setUseRecordedVideoInsteadOfDevice(bool value)     { _settings.setUseRecordedVideoInsteadOfDevice(value); _settings.storeSettings(); emit useRecordedVideoInsteadOfDeviceChanged(value); }
     void setFileName(QString value)                         { _settings.setFileName(value); _settings.storeSettings(); emit fileNameChanged(value); }
@@ -161,6 +167,8 @@ public slots:
     void setOpticalFlowFramesPath(QString value) { _settings.OpticalFlowFramesPath = value; _settings.storeSettings(); emit opticalFlowFramesPathChanged(value);  }
     void setRawFramesPath(QString value)         { _settings.RawFramesPath = value; _settings.storeSettings(); emit rawFramesPathChanged(value);  }
     void setUiFramesPath(QString value)          { _settings.UiFramesPath = value; _settings.storeSettings(); emit uiFramesPathChanged(value);  }
+
+    void setCsvFilePath(QString value)           { _settings.CsvFilePath = value; _settings.storeSettings(); emit csvFilePathChanged(value);  }
 
 private:
     CollisionAvoidanceSettings& _settings;
