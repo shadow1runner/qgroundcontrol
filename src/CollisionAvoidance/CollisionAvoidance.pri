@@ -125,6 +125,6 @@ DISTFILES += \
 
 #-------------------------------------------------------------------------------------
 
-QMAKE_POST_LINK += echo "Copying Collision Avoidance files"
-QMAKE_POST_LINK += && $$QMAKE_COPY_DIR $$BASEDIR/src/CollisionAvoidance/opticalflow/res $$DESTDIR/CollisionAvoidance/res && 
+# QMAKE_POST_LINK += echo "Copying Collision Avoidance files"
+# QMAKE_POST_LINK += && $$QMAKE_COPY_DIR $$BASEDIR/src/CollisionAvoidance/opticalflow/res $$DESTDIR/CollisionAvoidance/res && 
 # && ... more to come (in QGCSetup.pri)
