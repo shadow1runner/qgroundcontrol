@@ -62,6 +62,16 @@ SOURCES += \
     $$PWD/OwnFlowGrapher.cpp \
     $$PWD/CollisionActor.cpp
 
+# Tests
+HEADERS += \
+    $$PWD/CollisionAvoidanceTestBase.h \
+    $$PWD/CollisionAvoidanceTestGoPro.h
+
+SOURCES += \
+    $$PWD/CollisionAvoidanceTestBase.cpp \
+    $$PWD/CollisionAvoidanceTestGoPro.cpp
+
+
 INCLUDEPATH += \
     $$PWD/opticalflow \
     $$PWD/opticalflow/helper \
