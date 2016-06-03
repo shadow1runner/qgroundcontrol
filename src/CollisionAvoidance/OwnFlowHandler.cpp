@@ -72,13 +72,15 @@ void OwnFlowHandler::reset()
     _ownFlowWorker->reset();
 }
 
-void OwnFlowHandler::_collisionImmanent(const cv::Mat& frame, unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, const hw::CollisionLevel collisionLevel)
+void OwnFlowHandler::_collisionImmanent(const cv::Mat& frame, unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, const hw::CollisionLevel collisionLevel, double lastDivergence, double avgDivergence)
 {
     Q_UNUSED(frame);
     Q_UNUSED(frameNumber);
     Q_UNUSED(foeFiltered);
     Q_UNUSED(foe);
     Q_UNUSED(collisionLevel);
+    Q_UNUSED(lastDivergence);
+    Q_UNUSED(avgDivergence);
 
     qDebug() << "Pausing OwnFlowWorker because of received `collisionImmanent` event";
     QMetaObject::invokeMethod(_ownFlowWorker, "pause");

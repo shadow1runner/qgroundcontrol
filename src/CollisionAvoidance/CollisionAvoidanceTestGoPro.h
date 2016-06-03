@@ -11,10 +11,14 @@ public:
     CollisionAvoidanceTestGoPro();
 
 private slots:
-    void init(void);
-    void cleanup(void);
+    void init();
+    void cleanup();
 
-    void go2(void);	
+    void go2();	
+    void go3();	
+    void go4();
+    void go5();
+    void go6();
 };
 
 #endif
