@@ -108,7 +108,6 @@ void CollisionAvoidanceDataProvider::_activeVehicleChanged(Vehicle* activeVehicl
 void CollisionAvoidanceDataProvider::qtUiFrameReady(const QImage& qImage)
 {
   static int count = 0;
-  qDebug() << "DP: # of UI frames ready: " << ++count;
   if(_activeVehicle!=NULL) {
     _qImage = qImage;
     _activeVehicle->increaseCollisionAvoidanceImageIndex();

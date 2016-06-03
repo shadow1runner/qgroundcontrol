@@ -14,9 +14,7 @@ private slots:
     void init(void);
     void cleanup(void);
 
-    void first_test(void);
-
-	
+    void go2(void);	
 };
 
 #endif
