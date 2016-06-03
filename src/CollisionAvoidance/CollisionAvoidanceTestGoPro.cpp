@@ -36,7 +36,7 @@ void CollisionAvoidanceTestGoPro::go2()
 
 	CollisionAvoidanceTestSettingsDto dto;
 	dto.shouldTriggerCollisionImmanent = true;
-	dto.lowerFrameNumberBound = 150;
+	dto.lowerFrameNumberBound = 100;
 	dto.upperFrameNumberBound = 215;
 
 	CollisionAvoidanceTestBase::_testCa(settings, qgcApp()->toolbox(), dto);
@@ -76,7 +76,7 @@ void CollisionAvoidanceTestGoPro::go5()
 	CollisionAvoidanceTestSettingsDto dto;
 	dto.shouldTriggerCollisionImmanent = true;
     dto.lowerFrameNumberBound = 500;
-    dto.upperFrameNumberBound = 650; // TODO: re-check this video, it's only somewhat ok, CA is triggered quite early (but both due to HIGH and avgThreshold)
+    dto.upperFrameNumberBound = 700; // TODO: re-check this video, it's only somewhat ok, CA is triggered quite early (but both due to HIGH and avgThreshold)
 
 	CollisionAvoidanceTestBase::_testCa(settings, qgcApp()->toolbox(), dto);
 }
@@ -90,6 +90,19 @@ void CollisionAvoidanceTestGoPro::go6()
 	dto.shouldTriggerCollisionImmanent = true;
     dto.lowerFrameNumberBound = 270;
     dto.upperFrameNumberBound = 290;
+
+	CollisionAvoidanceTestBase::_testCa(settings, qgcApp()->toolbox(), dto);
+}
+
+void CollisionAvoidanceTestGoPro::go7()
+{
+	CollisionAvoidanceSettings& settings = CollisionAvoidanceSettings::getInstance();
+    settings.setFileName("/home/helli/d/m/qgroundcontrol/src/CollisionAvoidance/opticalflow/res/rl/go7.mp4");
+
+	CollisionAvoidanceTestSettingsDto dto;
+	dto.shouldTriggerCollisionImmanent = true;
+    dto.lowerFrameNumberBound = 200;
+    dto.upperFrameNumberBound = 350;
 
 	CollisionAvoidanceTestBase::_testCa(settings, qgcApp()->toolbox(), dto);
 }

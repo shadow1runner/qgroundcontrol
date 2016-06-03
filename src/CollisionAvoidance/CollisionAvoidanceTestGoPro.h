@@ -14,11 +14,12 @@ private slots:
     void init();
     void cleanup();
 
-    void go2();	
-    void go3();	
+    void go2();
+    void go3();
     void go4();
     void go5();
     void go6();
+    void go7();
 };
 
 #endif
