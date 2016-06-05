@@ -144,6 +144,8 @@ void OwnFlowGrapher::writeCsvHeader()
     csvFile << ",CollisionLevel (string)";
     csvFile << ",Divergence (last)";
     csvFile << ",Divergence (average over " << _settings.DivergenceHistoryBufferSize << " elements)";
+    csvFile << ",EKF FoE x";
+    csvFile << ",EKF FoE y";
     csvFile << ",Inlier Proportion"; if(_settings.InlierProportionThresholdEnabled) csvFile << " (bad if < " << _settings.InlierProportionThreshold << ")";
     csvFile << ",FoE x";
     csvFile << ",FoE y";
@@ -159,6 +161,8 @@ void OwnFlowGrapher::logBadFrameToCsv(unsigned long long frameNumber, std::share
     csvFile << ","; // << CollisionHelper::toString(CollisionLevel);
     csvFile << ","; // << lastDivergence;
     csvFile << ","; // << avgDivergence;
+    csvFile << ","; // << foeFiltered->x;
+    csvFile << ","; // << foeFiltered->y;
     csvFile << "," << foeMeasured->getInlierProportion();
     csvFile << "," << foeMeasured->getFoE().x;
     csvFile << "," << foeMeasured->getFoE().y;
@@ -174,6 +178,8 @@ void OwnFlowGrapher::logGoodFrameToCsv(unsigned long long frameNumber, std::shar
     csvFile << "," << hw::CollisionLevelHelper::toString(collisionLevel);
     csvFile << "," << lastDivergence;
     csvFile << "," << avgDivergence;
+    csvFile << "," << foeFiltered->x;
+    csvFile << "," << foeFiltered->y;
     csvFile << "," << foe->getInlierProportion();
     csvFile << "," << foe->getFoE().x;
     csvFile << "," << foe->getFoE().y;
