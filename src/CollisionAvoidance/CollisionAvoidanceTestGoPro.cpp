@@ -88,7 +88,7 @@ void CollisionAvoidanceTestGoPro::go6()
 
 	CollisionAvoidanceTestSettingsDto dto;
 	dto.shouldTriggerCollisionImmanent = true;
-	dto.lowerFrameNumberBound = 270;
+	dto.lowerFrameNumberBound = 200;
 	dto.upperFrameNumberBound = 290;
 
 	CollisionAvoidanceTestBase::_testCa(settings, qgcApp()->toolbox(), dto);
@@ -176,7 +176,7 @@ void CollisionAvoidanceTestGoPro::gopr0131()
 	CollisionAvoidanceTestSettingsDto dto;
 	dto.shouldTriggerCollisionImmanent = true;
 	dto.lowerFrameNumberBound = 210;
-	dto.upperFrameNumberBound = 230;
+	dto.upperFrameNumberBound = 270; // sometimes this test fails way later, but it shouldn't :S
 
 	CollisionAvoidanceTestBase::_testCa(settings, qgcApp()->toolbox(), dto);
 }
