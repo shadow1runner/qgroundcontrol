@@ -66,7 +66,7 @@ Joystick::~Joystick()
     delete _rgAxisValues;
     delete _rgCalibration;
     delete _rgButtonValues;
-    delete _rgButtonActions;
+//    delete _rgButtonActions;
 }
 
 void Joystick::_loadSettings(void)
