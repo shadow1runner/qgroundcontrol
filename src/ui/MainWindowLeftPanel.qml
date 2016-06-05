@@ -194,8 +194,7 @@ Item {
                 QGCButton {
                     anchors.left:   parent.left
                     anchors.right:  parent.right
-                    text:           "CA"
-                    visible:        ScreenTools.isDebug
+                    text:           qsTr("CA")
                     exclusiveGroup: panelActionGroup
                     onClicked: {
                         if(__rightPanel.source != "CollisionAvoidanceSettings.qml") {

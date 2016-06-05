@@ -63,15 +63,18 @@ SOURCES += \
     $$PWD/OwnFlowGrapher.cpp \
     $$PWD/CollisionActor.cpp
 
-# Tests
-HEADERS += \
-    $$PWD/CollisionAvoidanceTestBase.h \
-    $$PWD/CollisionAvoidanceTestGoPro.h
+DebugBuild {
+    # Tests
+    HEADERS += \
+        $$PWD/CollisionAvoidanceTestBase.h \
+        $$PWD/CollisionAvoidanceTestGoPro.h \
+        $$PWD/CollisionAvoidanceTestBoscamNormalLense.h
 
-SOURCES += \
-    $$PWD/CollisionAvoidanceTestBase.cpp \
-    $$PWD/CollisionAvoidanceTestGoPro.cpp
-
+    SOURCES += \
+        $$PWD/CollisionAvoidanceTestBase.cpp \
+        $$PWD/CollisionAvoidanceTestGoPro.cpp \
+        $$PWD/CollisionAvoidanceTestBoscamNormalLense.cpp
+}
 
 INCLUDEPATH += \
     $$PWD/opticalflow \
