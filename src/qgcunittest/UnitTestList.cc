@@ -30,6 +30,7 @@
 #include "FileManagerTest.h"
 #include "TCPLinkTest.h"
 #include "CollisionAvoidanceTestGoPro.h"
+#include "CollisionAvoidanceTestBoscamNormalLense.h"
 
 UT_REGISTER_TEST(FactSystemTestGeneric)
 UT_REGISTER_TEST(FactSystemTestPX4)
@@ -48,6 +49,7 @@ UT_REGISTER_TEST(RadioConfigTest)
 UT_REGISTER_TEST(TCPLinkTest)
 UT_REGISTER_TEST(FileManagerTest)
 UT_REGISTER_TEST(CollisionAvoidanceTestGoPro)
+UT_REGISTER_TEST(CollisionAvoidanceTestBoscamNormalLense)
 
 // List of unit test which are currently disabled.
 // If disabling a new test, include reason in comment.
