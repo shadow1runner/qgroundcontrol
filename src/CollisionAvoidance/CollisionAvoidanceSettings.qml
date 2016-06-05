@@ -606,7 +606,7 @@ Rectangle {
             Row {
                 spacing:    ScreenTools.defaultFontPixelWidth
                 QGCLabel {
-                    text:   qsTr("DivergenceHistoryBufferSize for AVG Divergence: (requires restart)")
+                    text:   qsTr("DivergenceHistoryBufferSize for AVG Divergence (requires restart):")
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 Row {
@@ -621,14 +621,14 @@ Rectangle {
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
-                                if(_controller.DivergenceHistoryBufferSize > 1)
-                                    _controller.DivergenceHistoryBufferSize = _controller.DivergenceHistoryBufferSize - 1
+                                if(_controller.divergenceHistoryBufferSize > 1)
+                                    _controller.divergenceHistoryBufferSize = _controller.divergenceHistoryBufferSize - 1
                             }
                         }
                     }
                     QGCTextField {
                         id:     divergenceHistoryBufferSizeField
-                        text:   _controller.DivergenceHistoryBufferSize.toString()
+                        text:   _controller.divergenceHistoryBufferSize.toString()
                         width:  ScreenTools.defaultFontPixelWidth * 12
                         inputMethodHints:       Qt.ImhFormattedNumbersOnly
                         anchors.verticalCenter: parent.verticalCenter
@@ -636,7 +636,7 @@ Rectangle {
                         onEditingFinished: {
                             var tmp = parseInt(text)
                             if(DivergenceHistoryBufferSize >= 1)
-                                _controller.DivergenceHistoryBufferSize = tmp
+                                _controller.divergenceHistoryBufferSize = tmp
                         }
                     }
                     Rectangle {
@@ -650,7 +650,7 @@ Rectangle {
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
-                                _controller.DivergenceHistoryBufferSize = _controller.DivergenceHistoryBufferSize + 1
+                                _controller.divergenceHistoryBufferSize = _controller.divergenceHistoryBufferSize + 1
                             }
                         }
                     }
