@@ -24,11 +24,23 @@ void CollisionAvoidanceTestBase::_init()
     
 	_connectMockLink(MAV_AUTOPILOT_GENERIC);
 
-    // general settings for all unit tests
+    // general settings for all unit tests - can be overriden in derived classes as necessary
     CollisionAvoidanceSettings& settings = CollisionAvoidanceSettings::getInstance();
     settings.WriteToOutputEnabled = false;
     settings.UndistortFrames = false;
     settings.ClearOldFramesEnabled = false;
+    settings.UndistortFrames = false;
+    settings.InlierProportionThresholdEnabled = true;
+    settings.InlierProportionThreshold = 0.003;
+
+    settings.setUseRecordedVideoInsteadOfDevice(true);
+
+    settings.SubsampleAmount = 5;
+    settings.Particles = 200000;
+
+    settings.DivergencePatchSize = 20;
+    settings.DivergenceThreshold = 0.05;
+    settings.DivergenceHistoryBufferSize = 15;
 }
 
 void CollisionAvoidanceTestBase::_cleanup()
