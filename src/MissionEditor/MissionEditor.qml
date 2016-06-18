@@ -39,7 +39,6 @@ QGCView {
     readonly property real      _horizontalMargin:  ScreenTools.defaultFontPixelWidth  / 2
     readonly property real      _margin:            ScreenTools.defaultFontPixelHeight * 0.5
     readonly property var       _activeVehicle:     QGroundControl.multiVehicleManager.activeVehicle
-    readonly property real      _editFieldWidth:    ScreenTools.defaultFontPixelWidth * 16
     readonly property real      _rightPanelWidth:   Math.min(parent.width / 3, ScreenTools.defaultFontPixelWidth * 30)
     readonly property real      _rightPanelOpacity: 0.8
     readonly property int       _toolButtonCount:   6
@@ -82,6 +81,7 @@ QGCView {
         } else {
             controller.loadMissionFromFilePicker()
             fitViewportToMissionItems()
+            _currentMissionItem = _visualItems.get(0)
         }
     }
 
@@ -186,6 +186,7 @@ QGCView {
             onFilenameReturned: {
                 controller.loadMissionFromFile(filename)
                 fitViewportToMissionItems()
+                _currentMissionItem = _visualItems.get(0)
             }
         }
     }
@@ -285,7 +286,6 @@ QGCView {
                             if (addMissionItemsButton.checked) {
                                 var sequenceNumber = controller.insertSimpleMissionItem(coordinate, controller.visualItems.count)
                                 setCurrentItem(sequenceNumber)
-                                editorListView.positionViewAtIndex(editorListView.count - 1, ListView.Contain)
                             } else {
                                 editorMap.mapClicked(coordinate)
                             }
@@ -428,7 +428,7 @@ QGCView {
                                 model: object.childItems
 
                                 delegate: MissionItemIndexLabel {
-                                    label:          object.sequenceNumber
+                                    label:          object.abbreviation
                                     isCurrentItem:  object.isCurrentItem
                                     z:              2
 
@@ -485,6 +485,7 @@ QGCView {
                         model:          controller.visualItems
                         cacheBuffer:    height * 2
                         clip:           true
+                        highlightMoveDuration: 250
 
                         delegate: MissionItemEditor {
                             missionItem:    object
@@ -500,7 +501,7 @@ QGCView {
                             }
 
                             onInsert: {
-                                var sequenceNumber = controller.insertSimpleMissionItem(editorMap.center, i)
+                                var sequenceNumber = controller.insertSimpleMissionItem(editorMap.center, insertAfterIndex)
                                 setCurrentItem(sequenceNumber)
                             }
 
@@ -511,7 +512,7 @@ QGCView {
 
                                 onIsCurrentItemChanged: {
                                     if (object.isCurrentItem) {
-                                        editorListView.positionViewAtIndex(index, ListView.Contain)
+                                        editorListView.currentIndex = index
                                     }
                                 }
                             }
@@ -637,13 +638,14 @@ QGCView {
                                     spacing: ScreenTools.defaultFontPixelWidth
                                     Repeater {
                                         model: QGroundControl.flightMapSettings.mapTypes
+
                                         QGCButton {
                                             checkable:      true
-                                            checked:        editorMap.mapType === text
+                                            checked:        QGroundControl.flightMapSettings.mapType === text
                                             text:           modelData
                                             exclusiveGroup: _mapTypeButtonsExclusiveGroup
                                             onClicked: {
-                                                editorMap.mapType = text
+                                                QGroundControl.flightMapSettings.mapType = text
                                                 checked = true
                                                 mapTypeButton.hideDropDown()
                                             }
@@ -680,6 +682,15 @@ QGCView {
                             checked = false
                         }
                     }
+                }
+
+                MapScale {
+                    anchors.margins:    ScreenTools.defaultFontPixelHeight * (0.66)
+                    anchors.bottom:     waypointValuesDisplay.visible ? waypointValuesDisplay.top : parent.bottom
+                    anchors.left:       parent.left
+                    z:                  QGroundControl.zOrderWidgets
+                    mapControl:         editorMap
+                    visible:            !ScreenTools.isTinyScreen
                 }
 
                 MissionItemStatus {

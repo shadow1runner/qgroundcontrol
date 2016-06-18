@@ -25,7 +25,7 @@ SettingsFact* QGroundControlQmlGlobal::_speedUnitsFact =                        
 FactMetaData* QGroundControlQmlGlobal::_speedUnitsMetaData =                    NULL;
 
 const char* QGroundControlQmlGlobal::_virtualTabletJoystickKey  = "VirtualTabletJoystick";
-const char* QGroundControlQmlGlobal::_baseFontPointSizeKey      = "BaseFontPointSize";
+const char* QGroundControlQmlGlobal::_baseFontPointSizeKey      = "BaseDeviceFontPointSize";
 
 QGroundControlQmlGlobal::QGroundControlQmlGlobal(QGCApplication* app)
     : QGCTool(app)
@@ -231,7 +231,7 @@ Fact* QGroundControlQmlGlobal::offlineEditingFirmwareType(void)
         _offlineEditingFirmwareTypeFact = new SettingsFact(QString(), "OfflineEditingFirmwareType", FactMetaData::valueTypeUint32, (uint32_t)MAV_AUTOPILOT_ARDUPILOTMEGA);
         _offlineEditingFirmwareTypeMetaData = new FactMetaData(FactMetaData::valueTypeUint32);
 
-        enumStrings << "ArduPilot Flight Stack" << "PX4 Flight Stack" << "Mavlink Generic Flight Stack";
+        enumStrings << "ArduPilot Firmware" << "PX4 Firmware" << "Mavlink Generic Firmware";
         enumValues << QVariant::fromValue((uint32_t)MAV_AUTOPILOT_ARDUPILOTMEGA) << QVariant::fromValue((uint32_t)MAV_AUTOPILOT_PX4) << QVariant::fromValue((uint32_t)MAV_AUTOPILOT_GENERIC);
 
         _offlineEditingFirmwareTypeMetaData->setEnumInfo(enumStrings, enumValues);
@@ -270,7 +270,7 @@ Fact* QGroundControlQmlGlobal::speedUnits(void)
         _speedUnitsFact = new SettingsFact(QString(), "SpeedUnits", FactMetaData::valueTypeUint32, SpeedUnitsMetersPerSecond);
         _speedUnitsMetaData = new FactMetaData(FactMetaData::valueTypeUint32);
 
-        enumStrings << "Feet per second" << "Meters per second" << "Miles per hour" << "Kilometers per hour" << "Knots";
+        enumStrings << "Feet/second" << "Meters/second" << "Miles/hour" << "Kilometers/hour" << "Knots";
         enumValues << QVariant::fromValue((uint32_t)SpeedUnitsFeetPerSecond) << QVariant::fromValue((uint32_t)SpeedUnitsMetersPerSecond) << QVariant::fromValue((uint32_t)SpeedUnitsMilesPerHour) << QVariant::fromValue((uint32_t)SpeedUnitsKilometersPerHour) << QVariant::fromValue((uint32_t)SpeedUnitsKnots);
 
         _speedUnitsMetaData->setEnumInfo(enumStrings, enumValues);

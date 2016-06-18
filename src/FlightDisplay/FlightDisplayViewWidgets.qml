@@ -27,9 +27,11 @@ Item {
 
     property alias guidedModeBar: _guidedModeBar
 
-    property var    _activeVehicle:         QGroundControl.multiVehicleManager.activeVehicle
-    property bool   _isSatellite:           _mainIsMap ? (_flightMap ? _flightMap.isSatelliteMap : true) : true
-    property bool   _lightWidgetBorders:    _mainIsMap ? (_flightMap ? _flightMap.isSatelliteMap : true) : true
+    property var    _activeVehicle:             QGroundControl.multiVehicleManager.activeVehicle
+    property bool   _isSatellite:               _mainIsMap ? (_flightMap ? _flightMap.isSatelliteMap : true) : true
+    property bool   _lightWidgetBorders:        _mainIsMap ? (_flightMap ? _flightMap.isSatelliteMap : true) : true
+    property bool   _useAlternateInstruments:   QGroundControl.virtualTabletJoystick || ScreenTools.isTinyScreen
+
 
     readonly property real _margins: ScreenTools.defaultFontPixelHeight / 2
 
@@ -38,7 +40,7 @@ Item {
 
     function getGadgetWidth() {
         if(ScreenTools.isMobile) {
-            return mainWindow.width * 0.15
+            return ScreenTools.isTinyScreen ? mainWindow.width * 0.2 : mainWindow.width * 0.15
         }
         var w = mainWindow.width * 0.15
         return Math.min(w, 200)
@@ -69,7 +71,7 @@ Item {
 
         QGCLabel {
             anchors.horizontalCenter:   parent.horizontalCenter
-            visible:                    _activeVehicle && !_activeVehicle.coordinateValid
+            visible:                    _activeVehicle && _activeVehicle.prearmError
             z:                          QGroundControl.zOrderTopMost
             color:                      mapPal.text
             font.pointSize:             ScreenTools.largeFontPointSize
@@ -94,7 +96,7 @@ Item {
         anchors.margins:        ScreenTools.defaultFontPixelHeight / 2
         anchors.right:          altitudeSlider.visible ? altitudeSlider.left : parent.right
         anchors.verticalCenter: parent.verticalCenter
-        visible:                !QGroundControl.virtualTabletJoystick
+        visible:                !_useAlternateInstruments
         size:                   getGadgetWidth()
         active:                 _activeVehicle != null
         heading:                _heading
@@ -113,8 +115,8 @@ Item {
         anchors.margins:        ScreenTools.defaultFontPixelHeight / 2
         anchors.top:            parent.top
         anchors.right:          altitudeSlider.visible ? altitudeSlider.left : parent.right
-        visible:                QGroundControl.virtualTabletJoystick
-        width:                  ScreenTools.isTinyScreen ? getGadgetWidth() * 2 : getGadgetWidth()
+        visible:                _useAlternateInstruments
+        width:                  ScreenTools.isTinyScreen ? getGadgetWidth() * 1.5 : getGadgetWidth()
         active:                 _activeVehicle != null
         heading:                _heading
         rollAngle:              _roll
@@ -126,14 +128,14 @@ Item {
     }
 
     ValuesWidget {
-        anchors.topMargin:  ScreenTools.defaultFontPixelHeight
-        anchors.top:        instrumentGadgetAlternate.bottom
-        anchors.left:       instrumentGadgetAlternate.left
-        width:              getGadgetWidth()
-        qgcView:            parent.parent.qgcView
-        textColor:          _isSatellite ? "white" : "black"
-        visible:            QGroundControl.virtualTabletJoystick
-        maxHeight:          multiTouchItem.y - y
+        anchors.topMargin:          ScreenTools.defaultFontPixelHeight
+        anchors.top:                instrumentGadgetAlternate.bottom
+        anchors.horizontalCenter:   instrumentGadgetAlternate.horizontalCenter
+        width:                      getGadgetWidth()
+        qgcView:                    parent.parent.qgcView
+        textColor:                  _isSatellite ? "white" : "black"
+        visible:                    _useAlternateInstruments
+        maxHeight:                  virtualJoystickMultiTouch.visible ? virtualJoystickMultiTouch.y - y : parent.height - anchors.margins - y
     }
 
     //-- Vertical Tool Buttons
@@ -209,12 +211,13 @@ Item {
 
                             QGCButton {
                                 checkable:      true
-                                checked:        _flightMap ? _flightMap.mapType === text : false
-                                text:               modelData
+                                checked:        QGroundControl.flightMapSettings.mapType === text
+                                text:           modelData
                                 width:          clearButton.width
                                 exclusiveGroup: _mapTypeButtonsExclusiveGroup
+
                                 onClicked: {
-                                    _flightMap.mapType = text
+                                    QGroundControl.flightMapSettings.mapType = text
                                     checked = true
                                     _dropButtonsExclusiveGroup.current = null
                                 }
@@ -238,7 +241,7 @@ Item {
         //-- Zoom Map In
         RoundButton {
             id:                 mapZoomPlus
-            visible:            _mainIsMap
+            visible:            !ScreenTools.isTinyScreen && _mainIsMap
             buttonImage:        "/qmlimages/ZoomPlus.svg"
             exclusiveGroup:     _dropButtonsExclusiveGroup
             z:                  QGroundControl.zOrderWidgets
@@ -253,7 +256,7 @@ Item {
         //-- Zoom Map Out
         RoundButton {
             id:                 mapZoomMinus
-            visible:            _mainIsMap
+            visible:            !ScreenTools.isTinyScreen && _mainIsMap
             buttonImage:        "/qmlimages/ZoomMinus.svg"
             exclusiveGroup:     _dropButtonsExclusiveGroup
             z:                  QGroundControl.zOrderWidgets
@@ -280,6 +283,8 @@ Item {
         opacity:                    0.9
         z:                          QGroundControl.zOrderWidgets
         state:                      "Shown"
+
+        property real _fontPointSize: ScreenTools.isMobile ? ScreenTools.largeFontPointSize : ScreenTools.defaultFontPointSize
 
         states: [
             State {
@@ -456,33 +461,37 @@ Item {
 
             QGCLabel {
                 anchors.horizontalCenter: parent.horizontalCenter
-                color:      qgcPal.button
+                color:      _lightWidgetBorders ? qgcPal.mapWidgetBorderDark : qgcPal.mapWidgetBorderLight
                 text:       "Click in map to move vehicle"
                 visible:    _activeVehicle && _activeVehicle.guidedMode && _activeVehicle.flying
             }
 
             Row {
-                spacing: _margins
+                spacing: _margins * 2
 
                 QGCButton {
+                    pointSize:  _guidedModeBar._fontPointSize
                     text:       (_activeVehicle && _activeVehicle.armed) ? (_activeVehicle.flying ? qsTr("Emergency Stop") : qsTr("Disarm")) :  qsTr("Arm")
                     visible:    _activeVehicle
                     onClicked:  _guidedModeBar.confirmAction(_activeVehicle.armed ? (_activeVehicle.flying ? _guidedModeBar.confirmEmergencyStop : _guidedModeBar.confirmDisarm) : _guidedModeBar.confirmArm)
                 }
 
                 QGCButton {
+                    pointSize:  _guidedModeBar._fontPointSize
                     text:       qsTr("RTL")
                     visible:    (_activeVehicle && _activeVehicle.armed) && _activeVehicle.guidedModeSupported && _activeVehicle.flying
                     onClicked:  _guidedModeBar.confirmAction(_guidedModeBar.confirmHome)
                 }
 
                 QGCButton {
+                    pointSize:  _guidedModeBar._fontPointSize
                     text:       (_activeVehicle && _activeVehicle.flying) ?  qsTr("Land"):  qsTr("Takeoff")
                     visible:    _activeVehicle && _activeVehicle.guidedModeSupported && _activeVehicle.armed
                     onClicked:  _guidedModeBar.confirmAction(_activeVehicle.flying ? _guidedModeBar.confirmLand : _guidedModeBar.confirmTakeoff)
                 }
 
                 QGCButton {
+                    pointSize:  _guidedModeBar._fontPointSize
                     text:       qsTr("Pause")
                     visible:    (_activeVehicle && _activeVehicle.armed) && _activeVehicle.pauseVehicleSupported && _activeVehicle.flying
                     onClicked:  {
@@ -492,6 +501,7 @@ Item {
                 }
 
                 QGCButton {
+                    pointSize:  _guidedModeBar._fontPointSize
                     text:       qsTr("Change Altitude")
                     visible:    (_activeVehicle && _activeVehicle.flying) && _activeVehicle.guidedModeSupported && _activeVehicle.armed
                     onClicked:  _guidedModeBar.confirmAction(_guidedModeBar.confirmChangeAlt)
@@ -523,9 +533,10 @@ Item {
         anchors.bottomMargin:       _margins
         anchors.bottom:             parent.bottom
         anchors.horizontalCenter:   parent.horizontalCenter
-        height:                     ScreenTools.defaultFontPixelHeight * 3
+        height:                     _guidedModeBar.height
         visible:                    false
         z:                          QGroundControl.zOrderWidgets
+        fontPointSize:              _guidedModeBar._fontPointSize
 
         onAccept: {
             guidedModeConfirm.visible = false
