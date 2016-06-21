@@ -16,6 +16,12 @@ private slots:
 
     void bottomCrash();
     void fenceCrash();
+    void frontalCrash();
+    void frontalCrash2();
+    void grillFrontalCrash();
+    void sideCrash();
+    void hutFrontalCrash();
+    void movingBackgroundNoCrash();
 };
 
 #endif
