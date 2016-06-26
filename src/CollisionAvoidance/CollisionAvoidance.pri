@@ -68,12 +68,14 @@ DebugBuild {
     HEADERS += \
         $$PWD/CollisionAvoidanceTestBase.h \
         $$PWD/CollisionAvoidanceTestGoPro.h \
-        $$PWD/CollisionAvoidanceTestBoscamNormalLense.h
+        $$PWD/CollisionAvoidanceTestBoscamNormalLense.h \
+        $$PWD/CollisionAvoidanceTestBoscamCheapFisheye.h
 
     SOURCES += \
         $$PWD/CollisionAvoidanceTestBase.cpp \
         $$PWD/CollisionAvoidanceTestGoPro.cpp \
-        $$PWD/CollisionAvoidanceTestBoscamNormalLense.cpp
+        $$PWD/CollisionAvoidanceTestBoscamNormalLense.cpp \
+        $$PWD/CollisionAvoidanceTestBoscamCheapFisheye.cpp
 }
 
 INCLUDEPATH += \
