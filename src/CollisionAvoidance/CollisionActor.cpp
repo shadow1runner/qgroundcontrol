@@ -38,7 +38,7 @@ void CollisionActor::_collisionImmanent(const cv::Mat& frame, unsigned long long
     }
 
     if(_settings.WithholdCollisionAction) {
-        auto tmp = QString("Ignoring Collision, frame ") + QString::number(frameNumber);
+        auto tmp = QString("Collision in frame ") + QString::number(frameNumber) + QString(" ignored.");
         qgcApp()->showMessage(tmp);
         _toolbox->audioOutput()->say(tmp);
     } else {

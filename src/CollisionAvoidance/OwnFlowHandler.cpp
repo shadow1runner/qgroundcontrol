@@ -51,6 +51,8 @@ CollisionActor* OwnFlowHandler::collisionActor()
 
 void OwnFlowHandler::start()
 {
+    reset();
+    QThread::msleep(200);
     // invoke the method in the thread OwnFlowWorker resides in, cf. http://stackoverflow.com/a/13948634/2559632
     QMetaObject::invokeMethod(_ownFlowWorker, "start");
 }

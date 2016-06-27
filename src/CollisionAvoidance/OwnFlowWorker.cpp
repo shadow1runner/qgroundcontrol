@@ -98,7 +98,7 @@ void OwnFlowWorker::start()
     _isPaused = false;
     emit isPausedChanged(_isPaused);
 
-    while(!_isPaused && _frameGrabber->has_next()) {
+    while(!_isPaused && _ownFlow.processesIncomingFrames() && _frameGrabber->has_next()) {
         auto currentFrame = _frameGrabber->next();
         QMetaObject::invokeMethod(&_converter, "convertImage", Qt::BlockingQueuedConnection, Q_ARG(cv::Mat, currentFrame));
         // _converter.convertImage(currentFrame);
