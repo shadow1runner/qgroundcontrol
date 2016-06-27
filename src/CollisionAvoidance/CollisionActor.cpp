@@ -6,13 +6,15 @@
 #include "MultiVehicleManager.h"
 #include "Vehicle.h"
 #include "QGCApplication.h"
+#include "GAudioOutput.h"
 
 CollisionActor::CollisionActor(CollisionAvoidanceSettings& settings, QGCToolbox* toolbox, QObject* parent)
     : QObject(parent)
     , _settings(settings)
+    , _toolbox(toolbox)
 {
-    connect(toolbox->multiVehicleManager(), &MultiVehicleManager::activeVehicleChanged, this, &CollisionActor::_activeVehicleChanged);
-    connect(toolbox->ownFlowHandler()->ownFlowWorker()->ownFlow(), &hw::OwnFlow::collisionImmanent, this, &CollisionActor::_collisionImmanent);
+    connect(_toolbox->multiVehicleManager(), &MultiVehicleManager::activeVehicleChanged, this, &CollisionActor::_activeVehicleChanged);
+    connect(_toolbox->ownFlowHandler()->ownFlowWorker()->ownFlow(), &hw::OwnFlow::collisionImmanent, this, &CollisionActor::_collisionImmanent);
 }
 
 void CollisionActor::_activeVehicleChanged(Vehicle* activeVehicle)
@@ -35,6 +37,14 @@ void CollisionActor::_collisionImmanent(const cv::Mat& frame, unsigned long long
         return;
     }
 
-    qgcApp()->showMessage(QString("Pausing vehicle - Collision is immanent starting from Frame #") + QString::number(frameNumber));
-    _activeVehicle->pauseVehicle();
+    if(_settings.WithholdCollisionAction) {
+        auto tmp = QString("Ignoring Collision, frame ") + QString::number(frameNumber);
+        qgcApp()->showMessage(tmp);
+        _toolbox->audioOutput()->say(tmp);
+    } else {
+        auto tmp = QString("Pausing vehicle - Collision is immanent starting from Frame ") + QString::number(frameNumber);
+        _toolbox->audioOutput()->say(tmp);
+        qgcApp()->showMessage(tmp);
+        _activeVehicle->pauseVehicle();
+    }
 }

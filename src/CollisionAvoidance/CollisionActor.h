@@ -31,6 +31,7 @@ private slots:
 private:
 	CollisionAvoidanceSettings& _settings;
 	Vehicle* _activeVehicle = nullptr;
+    QGCToolbox * const _toolbox;
 };
 
 #endif // COLLISIONACTOR_H

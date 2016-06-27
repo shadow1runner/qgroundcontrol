@@ -696,6 +696,28 @@ Rectangle {
             }
 
             Item {
+                height: ScreenTools.defaultFontPixelHeight / 2
+                width:  parent.width
+            }
+
+            //-- WithholdCollisionAction
+            Row {
+                spacing:    ScreenTools.defaultFontPixelWidth
+                QGCCheckBox {
+                    text:       "Withhold Collision Action (Debug only!)"
+                    anchors.verticalCenter: parent.verticalCenter
+                    checked:    _controller.withholdCollisionAction
+                    onClicked: {
+                        _controller.withholdCollisionAction = checked
+                    }
+                }
+                Item {
+                    height: ScreenTools.defaultFontPixelHeight / 2
+                    width: ScreenTools.defaultFontPixelHeight / 2
+                }
+            }
+
+            Item {
                 height: ScreenTools.defaultFontPixelHeight
                 width:  parent.width
             }            
