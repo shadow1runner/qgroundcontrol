@@ -345,6 +345,9 @@ public:
     Q_PROPERTY(bool                 rover                   READ rover                                                  CONSTANT)
     Q_PROPERTY(bool                 autoDisconnect          MEMBER _autoDisconnect                                      NOTIFY autoDisconnectChanged)
     Q_PROPERTY(QString              prearmError             READ prearmError            WRITE setPrearmError            NOTIFY prearmErrorChanged)
+    Q_PROPERTY(int                  motorCount              READ motorCount                                             CONSTANT)
+    Q_PROPERTY(bool                 coaxialMotors           READ coaxialMotors                                          CONSTANT)
+    Q_PROPERTY(bool                 xConfigMotors           READ xConfigMotors                                          CONSTANT)
     Q_PROPERTY(int                  collisionAvoidanceImageIndex READ collisionAvoidanceImageIndex      NOTIFY collisionAvoidanceImageIndexChanged)
     Q_PROPERTY(bool                 collisionAvoidanceActive     READ collisionAvoidanceActive          NOTIFY collisionAvoidanceActiveChanged)
 
@@ -441,6 +444,12 @@ public:
     /// Resets collision avoidance
     Q_INVOKABLE void resetCollisionAvoidance();
 
+    /// Test motor
+    ///     @param motor Motor number, 1-based
+    ///     @param percent 0-no power, 100-full power
+    ///     @param timeoutSecs Number of seconds for motor to run
+    Q_INVOKABLE void motorTest(int motor, int percent, int timeoutSecs);
+
     bool guidedModeSupported(void) const;
     bool pauseVehicleSupported(void) const;
 
@@ -516,7 +525,6 @@ public:
     QStringList flightModes(void);
     QString flightMode(void) const;
     void setFlightMode(const QString& flightMode);
-
 
     bool hilMode(void);
     void setHilMode(bool hilMode);
@@ -618,6 +626,15 @@ public:
     void setSoloFirmware(bool soloFirmware);
 
     int defaultComponentId(void);
+
+    /// @return -1 = Unknown, Number of motors on vehicle
+    int motorCount(void);
+
+    /// @return true: Motors are coaxial like an X8 config, false: Quadcopter for example
+    bool coaxialMotors(void);
+
+    /// @return true: X confiuration, false: Plus configuration
+    bool xConfigMotors(void);
 
 public slots:
     void setLatitude(double latitude);
@@ -729,6 +746,7 @@ private:
     void _handleRCChannelsRaw(mavlink_message_t& message);
     void _handleBatteryStatus(mavlink_message_t& message);
     void _handleSysStatus(mavlink_message_t& message);
+    void _handleWindCov(mavlink_message_t& message);
     void _handleWind(mavlink_message_t& message);
     void _handleVibration(mavlink_message_t& message);
     void _handleExtendedSysState(mavlink_message_t& message);

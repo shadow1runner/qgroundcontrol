@@ -25,7 +25,8 @@ import QGroundControl.FlightMap     1.0
 Item {
     id: _root
 
-    property alias guidedModeBar: _guidedModeBar
+    property alias  guidedModeBar:  _guidedModeBar
+    property bool   gotoEnabled:    _activeVehicle && _activeVehicle.guidedMode && _activeVehicle.flying
 
     property var    _activeVehicle:             QGroundControl.multiVehicleManager.activeVehicle
     property bool   _isSatellite:               _mainIsMap ? (_flightMap ? _flightMap.isSatelliteMap : true) : true
@@ -395,7 +396,7 @@ Item {
 
         function rejectGuidedModeConfirm() {
             guidedModeConfirm.visible = false
-            guidedModeBar.visible = true
+            _guidedModeBar.visible = true
             altitudeSlider.visible = false
             _flightMap._gotoHereCoordinate = QtPositioning.coordinate()
             guidedModeHideTimer.restart()
@@ -434,7 +435,7 @@ Item {
                 guidedModeConfirm.confirmText = qsTr("move vehicle")
                 break;
             case confirmRetask:
-                _guidedModeBar.confirmText    = qsTr("active waypoint change")
+                guidedModeConfirm.confirmText = qsTr("active waypoint change")
                 break;
             case confirmCollisionAvoidanceStart:
                 guidedModeConfirm.confirmText = qsTr("start collision avoidance")
@@ -443,7 +444,7 @@ Item {
                 guidedModeConfirm.confirmText = qsTr("pause collision avoidance")
                 break;
             }
-            guidedModeBar.visible = false
+            _guidedModeBar.visible = false
             guidedModeConfirm.visible = true
         }
 
@@ -458,7 +459,7 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 color:      _lightWidgetBorders ? qgcPal.mapWidgetBorderDark : qgcPal.mapWidgetBorderLight
                 text:       "Click in map to move vehicle"
-                visible:    _activeVehicle && _activeVehicle.guidedMode && _activeVehicle.flying
+                visible:    gotoEnabled
             }
 
             Row {
@@ -523,14 +524,13 @@ Item {
         anchors.bottomMargin:       _margins
         anchors.bottom:             parent.bottom
         anchors.horizontalCenter:   parent.horizontalCenter
-        height:                     _guidedModeBar.height
         visible:                    false
         z:                          QGroundControl.zOrderWidgets
         fontPointSize:              _guidedModeBar._fontPointSize
 
         onAccept: {
             guidedModeConfirm.visible = false
-            guidedModeBar.visible = true
+            _guidedModeBar.visible = true
             _guidedModeBar.actionConfirmed()
             altitudeSlider.visible = false
             guidedModeHideTimer.restart()
