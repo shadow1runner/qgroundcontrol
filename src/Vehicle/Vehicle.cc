@@ -985,7 +985,7 @@ void Vehicle::_updateAltitude(UASInterface*, double altitudeAMSL, double altitud
 {
     _altitudeAMSLFact.setRawValue(altitudeAMSL);
     _altitudeRelativeFact.setRawValue(altitudeRelative);
-    _climbRateFact.setRawValue(climbRate);
+     _climbRateFact.setRawValue(climbRate);
 }
 
 void Vehicle::_updateNavigationControllerErrors(UASInterface*, double altitudeError, double speedError, double xtrackError) {
