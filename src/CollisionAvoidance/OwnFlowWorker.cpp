@@ -74,6 +74,10 @@ OwnFlowWorker::OwnFlowWorker(CollisionAvoidanceSettings& settings, QGCToolbox* t
     // UI Frame Preparer -> UI Thread
     connect(&_uiFramePreparer, &hw::UiFramePreparer::qtUiFrameReady,
              _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::qtUiFrameReady);
+
+    // ROI -> UI Frame Preparer
+    connect(&_roiBuilder, &RoiBuilder::roiReady,
+            &_uiFramePreparer, &hw::UiFramePreparer::roiReady);
 }
 
 OwnFlowWorker::~OwnFlowWorker() {
