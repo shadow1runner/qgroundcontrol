@@ -34,7 +34,8 @@ HEADERS += \
     $$PWD/OwnFlowWorker.h \
     $$PWD/CollisionAvoidanceSettingsController.h \
     $$PWD/OwnFlowGrapher.h \
-    $$PWD/CollisionActor.h
+    $$PWD/CollisionActor.h \
+    $$PWD/RoiBuilder.h
 
 SOURCES += \
     $$PWD/opticalflow/BufferedFrameGrabber.cpp \
@@ -61,7 +62,8 @@ SOURCES += \
     $$PWD/CollisionAvoidanceDataProvider.cpp \
     $$PWD/OwnFlowWorker.cpp \
     $$PWD/OwnFlowGrapher.cpp \
-    $$PWD/CollisionActor.cpp
+    $$PWD/CollisionActor.cpp \
+    $$PWD/RoiBuilder.cpp
 
 DebugBuild {
     # Tests

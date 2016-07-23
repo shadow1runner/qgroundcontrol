@@ -25,6 +25,7 @@
 #include "OwnFlowGrapher.h"
 #include "FramePersister.h"
 #include "UiFramePreparer.h"
+#include "RoiBuilder.h"
 
 class QGCToolbox;
 
@@ -61,12 +62,14 @@ private:
     OwnFlowGrapher _grapher;
     FramePersister _framePersister;
     hw::UiFramePreparer _uiFramePreparer;
+    RoiBuilder _roiBuilder;
 
     QThread _ownFlowThread;
     QThread _converterThread;
     QThread _grapherThread;
     QThread _ioThread;
     QThread _uiFramePreparerThread;
+    QThread _roiBuilderThread;
 };
 
 #endif // OWNFLOWWORKER_H

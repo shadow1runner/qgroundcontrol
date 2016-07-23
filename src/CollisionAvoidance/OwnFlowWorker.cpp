@@ -16,18 +16,21 @@ OwnFlowWorker::OwnFlowWorker(CollisionAvoidanceSettings& settings, QGCToolbox* t
     , _ownFlow(settings, toolbox)
     , _grapher(&_ownFlow, toolbox, settings)
     , _framePersister(settings)
+    , _roiBuilder(settings, toolbox)
 { 
     _converterThread.setObjectName("OwnFlowConverter");
     _ownFlowThread.setObjectName("OwnFlow");
     _grapherThread.setObjectName("OwnFlowGrapher");
     _ioThread.setObjectName("OwnFlow I/O");
     _uiFramePreparerThread.setObjectName("OwnFlow UI Frame Preparer");
+    _roiBuilderThread.setObjectName("ROI Builder");
 
     _converter.moveToThread(&_converterThread);
     _ownFlow.moveToThread(&_ownFlowThread);
     _grapher.moveToThread(&_grapherThread);
     _framePersister.moveToThread(&_ioThread);
     _uiFramePreparer.moveToThread(&_uiFramePreparerThread);
+    _roiBuilder.moveToThread(&_roiBuilderThread);
 
     // converter -> ownflow
     connect(&_converter, &hw::Converter::imageConverted,
@@ -94,6 +97,7 @@ void OwnFlowWorker::start()
     _grapherThread.start();
     _ownFlowThread.start();
     _uiFramePreparerThread.start();
+    _roiBuilderThread.start();
 
     _isPaused = false;
     emit isPausedChanged(_isPaused);
@@ -133,6 +137,9 @@ void OwnFlowWorker::stop()
 
     _uiFramePreparerThread.quit();
     _uiFramePreparerThread.wait();
+
+    _roiBuilderThread.quit();
+    _roiBuilderThread.wait();
 }
 
 void OwnFlowWorker::reset()
