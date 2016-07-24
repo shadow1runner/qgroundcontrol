@@ -741,7 +741,7 @@ Rectangle {
             Row {
                 spacing:    ScreenTools.defaultFontPixelWidth
                 QGCCheckBox {
-                    text:       "Display bad frames in UI"
+                    text:       "Display all frames in UI (includes skipped ones)"
                     anchors.verticalCenter: parent.verticalCenter
                     checked:    _controller.displayBadFramesInUi
                     onClicked: {
