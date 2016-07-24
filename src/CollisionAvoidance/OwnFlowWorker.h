@@ -57,12 +57,12 @@ private:
 
     hw::BufferedFrameGrabber* _frameGrabber = nullptr;
 
+    hw::UiFramePreparer _uiFramePreparer;
     hw::Converter _converter;
+    RoiBuilder _roiBuilder;
     hw::OwnFlow _ownFlow;
     OwnFlowGrapher _grapher;
     FramePersister _framePersister;
-    hw::UiFramePreparer _uiFramePreparer;
-    RoiBuilder _roiBuilder;
 
     QThread _ownFlowThread;
     QThread _converterThread;

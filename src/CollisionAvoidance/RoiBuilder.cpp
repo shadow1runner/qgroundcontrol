@@ -11,6 +11,8 @@ using namespace std;
 using namespace hw;
 using namespace cv;
 
+#define USE_LENSE_CENTER_INSTEAD_OF_FRAME_CENTER 1
+
 RoiBuilder::RoiBuilder(CollisionAvoidanceSettings& settings, QGCToolbox* toolbox, QObject* parent)
 	: QObject(parent)
 	, _settings(settings)
@@ -21,29 +23,22 @@ RoiBuilder::RoiBuilder(CollisionAvoidanceSettings& settings, QGCToolbox* toolbox
 
 void RoiBuilder::_initializeRoiHelpers() 
 {
-    auto ocamModel = _settings.getOcamModel();
+    auto& ocamModel = _settings.getOcamModel();
     
     auto divisor = pow(2, _settings.SubsampleAmount);
-    _frameSize = cv::Size(ocamModel.width/divisor, ocamModel.height/divisor);
-    _lenseCenter = cv::Point2f(ocamModel.xc/divisor, ocamModel.yc/divisor);
-    _frameCenter = cv::Point2f(_frameSize.width/2, _frameSize.height/2);
-
-    if(_settings.RawFrameRotation%2==1) // 90deg or 270deg rotation -> swap
-    {
-        // swap
-        _frameSize = cv::Size(_frameSize.height, _frameSize.width);
-        _lenseCenter = cv::Point2f(_lenseCenter.y, _lenseCenter.x);
-        _frameCenter = cv::Point2f(_frameCenter.y, _frameCenter.x);
-    }
-
-    // auto p1 = _frameSize.height - _lenseCenter.y;
-    // auto r1 = _frameSize.width - _lenseCenter.x;
+    _frameSize = ocamModel.getFrameSize();
+    _lenseCenter = ocamModel.getLenseCenter();
+    _frameCenter = ocamModel.getFrameCenter();
+    
+#ifdef USE_LENSE_CENTER_INSTEAD_OF_FRAME_CENTER
+    auto p1 = _frameSize.height - _lenseCenter.y;
+    auto r1 = _frameSize.width - _lenseCenter.x;
+#elif
     auto p1 = _frameSize.height - _frameCenter.y;
     auto r1 = _frameSize.width - _frameCenter.x;
+#endif
     _pitchFactor = min(p1, _frameSize.height-p1) / (double)_settings.MaxPitchAngleDegrees;
     _rollFactor  = min(r1, _frameSize.width-r1) / (double)_settings.MaxRollAngleDegrees;
-
-//    qDebug() << "Center: (" << _lenseCenter.x << ", " << _lenseCenter.y << ") size: " << _frameSize.width << "x" << _frameSize.height;
 }
 
 void RoiBuilder::_activeVehicleChanged(Vehicle* activeVehicle)
@@ -102,8 +97,11 @@ void RoiBuilder::_calculateRoi(double rollDegree, double pitchDegree)
 
     // determine new center of roi, dependent on roll and pitch values
     cv::Point2f offset(rollDegree*this->_rollFactor, pitchDegree*_pitchFactor);
-    // cv::Point roiCenter = _lenseCenter + offset; // plus because negative pitch indicates forwards flight
+#ifdef USE_LENSE_CENTER_INSTEAD_OF_FRAME_CENTER
+    cv::Point roiCenter = _lenseCenter + offset; // plus because negative pitch indicates forwards flight
+#elif
     cv::Point roiCenter = _frameCenter + offset; // plus because negative pitch indicates forwards flight
+#endif
 
     // determine ROI as a rect
     cv::Rect roi(roiCenter.x-_settings.RoiWidthPx/2, roiCenter.y-_settings.RoiHeightPx/2, _settings.RoiWidthPx, _settings.RoiHeightPx);

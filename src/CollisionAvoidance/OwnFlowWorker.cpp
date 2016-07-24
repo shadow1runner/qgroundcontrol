@@ -13,10 +13,10 @@ OwnFlowWorker::OwnFlowWorker(CollisionAvoidanceSettings& settings, QGCToolbox* t
     , _isPaused(false)
     , _frameGrabber(new hw::BufferedFrameGrabber(settings, 1, [](cv::Mat input) {return input;}, this))
     , _converter(settings)
-    , _ownFlow(settings, toolbox)
+    , _roiBuilder(settings, toolbox)
+    , _ownFlow(settings, toolbox, &_roiBuilder)
     , _grapher(&_ownFlow, toolbox, settings)
     , _framePersister(settings)
-    , _roiBuilder(settings, toolbox)
 { 
     _converterThread.setObjectName("OwnFlowConverter");
     _ownFlowThread.setObjectName("OwnFlow");
