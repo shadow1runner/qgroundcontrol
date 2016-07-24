@@ -340,8 +340,6 @@ Item {
         readonly property int confirmGoTo:          8
         readonly property int confirmRetask:        9
         readonly property int confirmOrbit:         10
-        readonly property int confirmCollisionAvoidanceStart:       42
-        readonly property int confirmCollisionAvoidancePause:       43
 
         property int    confirmActionCode
         property real   _showMargin:    _margins
@@ -388,12 +386,6 @@ Item {
                 _activeVehicle.guidedModeOrbit()
                 //-- Center on current flight map position and orbit with a 50m radius (velocity/direction controlled by the RC)
                 //_activeVehicle.guidedModeOrbit(QGroundControl.flightMapPosition, 50.0)
-                break;
-            case confirmCollisionAvoidanceStart:
-                _activeVehicle.startCollisionAvoidance()
-                break;
-            case confirmCollisionAvoidancePause:
-                _activeVehicle.pauseCollisionAvoidance()
                 break;
             default:
                 console.warn(qsTr("Internal error: unknown confirmActionCode"), confirmActionCode)
@@ -445,12 +437,6 @@ Item {
                 break;
             case confirmOrbit:
                 guidedModeConfirm.confirmText = qsTr("enter orbit mode")
-                break;
-            case confirmCollisionAvoidanceStart:
-                guidedModeConfirm.confirmText = qsTr("start collision avoidance")
-                break;
-            case confirmCollisionAvoidancePause:
-                guidedModeConfirm.confirmText = qsTr("pause collision avoidance")
                 break;
             }
             _guidedModeBar.visible = false
@@ -522,7 +508,12 @@ Item {
                 QGCButton {
                     text:       (_activeVehicle && _activeVehicle.guidedModeSupported && _activeVehicle.collisionAvoidanceActive) ? qsTr("Pause CA") : qsTr("Start CA")
                     // visible:    _activeVehicle && _activeVehicle.guidedModeSupported && _activeVehicle.armed
-                    onClicked:  _guidedModeBar.confirmAction(_activeVehicle.collisionAvoidanceActive ? _guidedModeBar.confirmCollisionAvoidancePause : _guidedModeBar.confirmCollisionAvoidanceStart)
+                    onClicked:  {
+                        if(_activeVehicle.collisionAvoidanceActive)
+                            _activeVehicle.pauseCollisionAvoidance()
+                        else
+                            _activeVehicle.startCollisionAvoidance()
+                    }
                 }
             } // Row
         } // Column
