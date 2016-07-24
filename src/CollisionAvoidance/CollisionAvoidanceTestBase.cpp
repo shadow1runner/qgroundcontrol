@@ -41,6 +41,8 @@ void CollisionAvoidanceTestBase::_init()
     settings.DivergencePatchSize = 20;
     settings.DivergenceThreshold = 0.05;
     settings.DivergenceHistoryBufferSize = 15;
+
+    settings.RoiEnabled = false;
 }
 
 void CollisionAvoidanceTestBase::_cleanup()
