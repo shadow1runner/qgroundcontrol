@@ -720,7 +720,325 @@ Rectangle {
             Item {
                 height: ScreenTools.defaultFontPixelHeight
                 width:  parent.width
-            }            
+            }
+
+            //-- RoiEnabled
+            Row {
+                spacing:    ScreenTools.defaultFontPixelWidth
+                QGCCheckBox {
+                    text:       "Use region of interest (ROI)"
+                    anchors.verticalCenter: parent.verticalCenter
+                    checked:    _controller.RoiEnabled
+                    onClicked: {
+                        _controller.RoiEnabled = checked
+                    }
+                }
+                Item {
+                    height: ScreenTools.defaultFontPixelHeight / 2
+                    width: ScreenTools.defaultFontPixelHeight / 2
+                }
+            }
+            //-----------------------------------------------------------------
+            //-- RoiWidthPx
+            Row {
+                spacing:    ScreenTools.defaultFontPixelWidth
+                QGCLabel {
+                    text:   qsTr("      Width of ROI (after subsampling):")
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                Row {
+                    enabled:    _controller.RoiEnabled
+                    Rectangle {
+                        width:              roiWidthPxField.height
+                        height:             width
+                        color:              qgcPal.button
+                        QGCLabel {
+                            text:           "-"
+                            anchors.centerIn: parent
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if(_controller.RoiWidthPx > 1)
+                                    _controller.RoiWidthPx = _controller.RoiWidthPx - 1
+                            }
+                        }
+                    }
+                    QGCTextField {
+                        id:     roiWidthPxField
+                        text:   _controller.RoiWidthPx.toString()
+                        width:  ScreenTools.defaultFontPixelWidth * 12
+                        inputMethodHints:       Qt.ImhFormattedNumbersOnly
+                        anchors.verticalCenter: parent.verticalCenter
+                        showUnits:          true
+                        unitsLabel:         "px"
+                        validator:          IntValidator {bottom: 1; top: 500;}
+                        onEditingFinished: {
+                            var RoiWidthPx = parseInt(text)
+                            if(RoiWidthPx >= 1 && RoiWidthPx <= 500)
+                                _controller.RoiWidthPx = RoiWidthPx
+                        }
+                    }
+                    Rectangle {
+                        width:              roiWidthPxField.height
+                        height:             width
+                        color:              qgcPal.button
+                        QGCLabel {
+                            text:           "+"
+                            anchors.centerIn: parent
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if(_controller.RoiWidthPx < 500)
+                                    _controller.RoiWidthPx = _controller.RoiWidthPx + 1
+                            }
+                        }
+                    }
+                }
+            }
+            //-----------------------------------------------------------------
+            //-- RoiHeightPx
+            Row {
+                spacing:    ScreenTools.defaultFontPixelWidth
+                QGCLabel {
+                    text:   qsTr("      Height of ROI (after subsampling):")
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                Row {
+                    enabled:    _controller.RoiEnabled
+                    Rectangle {
+                        width:              roiHeightPxField.height
+                        height:             width
+                        color:              qgcPal.button
+                        QGCLabel {
+                            text:           "-"
+                            anchors.centerIn: parent
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if(_controller.RoiHeightPx > 1)
+                                    _controller.RoiHeightPx = _controller.RoiHeightPx - 1
+                            }
+                        }
+                    }
+                    QGCTextField {
+                        id:     roiHeightPxField
+                        text:   _controller.RoiHeightPx.toString()
+                        width:  ScreenTools.defaultFontPixelWidth * 12
+                        inputMethodHints:       Qt.ImhFormattedNumbersOnly
+                        anchors.verticalCenter: parent.verticalCenter
+                        showUnits:          true
+                        unitsLabel:         "px"
+                        validator:          IntValidator {bottom: 1; top: 500;}
+                        onEditingFinished: {
+                            var RoiHeightPx = parseInt(text)
+                            if(RoiHeightPx >= 1 && RoiHeightPx <= 500)
+                                _controller.RoiHeightPx = RoiHeightPx
+                        }
+                    }
+                    Rectangle {
+                        width:              roiHeightPxField.height
+                        height:             width
+                        color:              qgcPal.button
+                        QGCLabel {
+                            text:           "+"
+                            anchors.centerIn: parent
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if(_controller.RoiHeightPx < 500)
+                                    _controller.RoiHeightPx = _controller.RoiHeightPx + 1
+                            }
+                        }
+                    }
+                }
+            }
+            //-----------------------------------------------------------------
+            //-- MaxRollAngleDegrees
+            Row {
+                spacing:    ScreenTools.defaultFontPixelWidth
+                QGCLabel {
+                    text:   qsTr("      Max Roll Lean Angle of Vehicle:")
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                Row {
+                    enabled:    _controller.RoiEnabled
+                    Rectangle {
+                        width:              maxRollAngleDegreesField.height
+                        height:             width
+                        color:              qgcPal.button
+                        QGCLabel {
+                            text:           "-"
+                            anchors.centerIn: parent
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if(_controller.MaxRollAngleDegrees > -45)
+                                    _controller.MaxRollAngleDegrees = _controller.MaxRollAngleDegrees - 1
+                            }
+                        }
+                    }
+                    QGCTextField {
+                        id:     maxRollAngleDegreesField
+                        text:   _controller.MaxRollAngleDegrees.toString()
+                        width:  ScreenTools.defaultFontPixelWidth * 12
+                        inputMethodHints:       Qt.ImhFormattedNumbersOnly
+                        anchors.verticalCenter: parent.verticalCenter
+                        showUnits:          true
+                        unitsLabel:         "°"
+                        validator:          IntValidator {bottom: -45; top: 45;}
+                        onEditingFinished: {
+                            var MaxRollAngleDegrees = parseInt(text)
+                            if(MaxRollAngleDegrees >= -45 && MaxRollAngleDegrees <= 45)
+                                _controller.MaxRollAngleDegrees = MaxRollAngleDegrees
+                        }
+                    }
+                    Rectangle {
+                        width:              maxRollAngleDegreesField.height
+                        height:             width
+                        color:              qgcPal.button
+                        QGCLabel {
+                            text:           "+"
+                            anchors.centerIn: parent
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if(_controller.MaxRollAngleDegrees < 45)
+                                    _controller.MaxRollAngleDegrees = _controller.MaxRollAngleDegrees + 1
+                            }
+                        }
+                    }
+                }
+            }
+            //-----------------------------------------------------------------
+            //-- MaxPitchAngleDegrees
+            Row {
+                spacing:    ScreenTools.defaultFontPixelWidth
+                QGCLabel {
+                    text:   qsTr("      Max Pitch Lean Angle of Vehicle:")
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                Row {
+                    enabled:    _controller.RoiEnabled
+                    Rectangle {
+                        width:              maxPitchAngleDegreesField.height
+                        height:             width
+                        color:              qgcPal.button
+                        QGCLabel {
+                            text:           "-"
+                            anchors.centerIn: parent
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if(_controller.MaxPitchAngleDegrees > -45)
+                                    _controller.MaxPitchAngleDegrees = _controller.MaxPitchAngleDegrees - 1
+                            }
+                        }
+                    }
+                    QGCTextField {
+                        id:     maxPitchAngleDegreesField
+                        text:   _controller.MaxPitchAngleDegrees.toString()
+                        width:  ScreenTools.defaultFontPixelWidth * 12
+                        inputMethodHints:       Qt.ImhFormattedNumbersOnly
+                        anchors.verticalCenter: parent.verticalCenter
+                        showUnits:          true
+                        unitsLabel:         "°"
+                        validator:          IntValidator {bottom: -45; top: 45;}
+                        onEditingFinished: {
+                            var MaxPitchAngleDegrees = parseInt(text)
+                            if(MaxPitchAngleDegrees >= -45 && MaxPitchAngleDegrees <= 45)
+                                _controller.MaxPitchAngleDegrees = MaxPitchAngleDegrees
+                        }
+                    }
+                    Rectangle {
+                        width:              maxPitchAngleDegreesField.height
+                        height:             width
+                        color:              qgcPal.button
+                        QGCLabel {
+                            text:           "+"
+                            anchors.centerIn: parent
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if(_controller.MaxPitchAngleDegrees < 45)
+                                    _controller.MaxPitchAngleDegrees = _controller.MaxPitchAngleDegrees + 1
+                            }
+                        }
+                    }
+                }
+            }
+
+            //-----------------------------------------------------------------
+            //-- ClimbRateValueThreshold
+            Row {
+                spacing:    ScreenTools.defaultFontPixelWidth
+                QGCLabel {
+                    text:   qsTr("      Climb rate threshold:")
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                Row {
+                    enabled:    _controller.RoiEnabled
+                    Rectangle {
+                        width:              climbRateValueThresholdField.height
+                        height:             width
+                        color:              qgcPal.button
+                        QGCLabel {
+                            text:           "-"
+                            anchors.centerIn: parent
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if(_controller.ClimbRateValueThreshold > 0.11)
+                                    _controller.ClimbRateValueThreshold = _controller.ClimbRateValueThreshold - 0.1
+                            }
+                        }
+                    }
+                    QGCTextField {
+                        id:     climbRateValueThresholdField
+                        text:   _controller.ClimbRateValueThreshold.toString()
+                        width:  ScreenTools.defaultFontPixelWidth * 12
+                        inputMethodHints:       Qt.ImhFormattedNumbersOnly
+                        anchors.verticalCenter: parent.verticalCenter
+                        showUnits:          true
+                        unitsLabel:         "m/s"
+                        validator:          DoubleValidator {bottom: 0.01; top: 50.0; decimals: 2;}
+                        onEditingFinished: {
+                            var ClimbRateValueThreshold = parseFloat(text)
+                            if(ClimbRateValueThreshold >= 0.01 && ClimbRateValueThreshold <= 50.0)
+                                _controller.ClimbRateValueThreshold = ClimbRateValueThreshold
+                        }
+                    }
+                    Rectangle {
+                        width:              climbRateValueThresholdField.height
+                        height:             width
+                        color:              qgcPal.button
+                        QGCLabel {
+                            text:           "+"
+                            anchors.centerIn: parent
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if(_controller.ClimbRateValueThreshold <= 49.9)
+                                    _controller.ClimbRateValueThreshold = _controller.ClimbRateValueThreshold + 0.1
+                            }
+                        }
+                    }
+                }
+            }
+
+            Item {
+                height: ScreenTools.defaultFontPixelHeight / 2
+                width:  parent.width
+            }           
 
             QGCLabel {
                 text:   qsTr("UI Settings")
@@ -888,7 +1206,7 @@ Rectangle {
             Row {
                 spacing:    ScreenTools.defaultFontPixelWidth
                 QGCCheckBox {
-                    text:       "Write bad frames to:"
+                    text:       "Write skipped frames to:"
                     anchors.verticalCenter: parent.verticalCenter
                     checked:    _controller.writeToOutputEnabled && _controller.writeBadFrames
                     enabled:    _controller.writeToOutputEnabled
