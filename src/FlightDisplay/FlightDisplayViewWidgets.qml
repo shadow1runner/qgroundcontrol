@@ -515,6 +515,13 @@ Item {
                             _activeVehicle.startCollisionAvoidance()
                     }
                 }
+
+                QGCButton {
+                    text:       qsTr("Reset CA")
+                    onClicked:  {
+                        _activeVehicle.resetCollisionAvoidance()
+                    }
+                }
             } // Row
         } // Column
     } // Rectangle - Guided mode buttons

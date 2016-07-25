@@ -1012,6 +1012,25 @@ Rectangle {
                 }
             }
 
+            //-- AutoResumeAfterCollision
+            Row {
+                spacing:    ScreenTools.defaultFontPixelWidth
+                enabled:    _controller.withholdCollisionAction
+
+                QGCLabel {
+                    text:           "   "
+                }
+
+                QGCCheckBox {
+                    text:       "Auto resume (=reset+start) after collision"
+                    anchors.verticalCenter: parent.verticalCenter
+                    checked:    _controller.AutoResumeAfterCollision && _controller.withholdCollisionActionw
+                    onClicked: {
+                        _controller.AutoResumeAfterCollision = checked
+                    }
+                }
+            }
+
             Item {
                 height: ScreenTools.defaultFontPixelHeight / 2
                 width:  parent.width

@@ -38,7 +38,9 @@ public:
    Q_PROPERTY(int divergenceHistoryBufferSize       READ getDivergenceHistoryBufferSize WRITE setDivergenceHistoryBufferSize NOTIFY divergenceHistoryBufferSizeChanged);
    Q_PROPERTY(bool undistortFrames                  READ getUndistortFrames WRITE setUndistortFrames NOTIFY undistortFramesChanged);
    Q_PROPERTY(QString ocamModelPath                 READ getOcamModelPath WRITE setOcamModelPath NOTIFY ocamModelPathChanged);
+
    Q_PROPERTY(bool withholdCollisionAction          READ getWithholdCollisionAction WRITE setWithholdCollisionAction NOTIFY withholdCollisionActionChanged);
+   Q_PROPERTY(bool AutoResumeAfterCollision         READ getAutoResumeAfterCollision WRITE setAutoResumeAfterCollision NOTIFY AutoResumeAfterCollisionChanged);
 
    Q_PROPERTY(bool displayBadFramesInUi                   READ getDisplayBadFramesInUi WRITE setDisplayBadFramesInUi NOTIFY displayBadFramesInUiChanged);
    Q_PROPERTY(double opticalFlowVectorVisualizationFactor READ getOpticalFlowVectorVisualizationFactor WRITE setOpticalFlowVectorVisualizationFactor NOTIFY opticalFlowVectorVisualizationFactorChanged);
@@ -85,7 +87,9 @@ public:
 
     bool              getUndistortFrames() const         { return _settings.UndistortFrames; }
     const QString     getOcamModelPath() const           { return _settings.OcamModelPath; }
+
     bool              getWithholdCollisionAction() const { return _settings.WithholdCollisionAction; }
+    bool              getAutoResumeAfterCollision() const { return _settings.AutoResumeAfterCollision; }
 
     bool              getDisplayBadFramesInUi() const { return _settings.DisplayBadFramesInUi; }
     double            getOpticalFlowVectorVisualizationFactor() const { return _settings.OpticalFlowVectorVisualizationFactor; }
@@ -133,7 +137,9 @@ signals:
 
   void undistortFramesChanged(bool value);
   void ocamModelPathChanged(QString value);
+
   void withholdCollisionActionChanged(bool value);
+  void AutoResumeAfterCollisionChanged(bool value);
 
   void displayBadFramesInUiChanged(bool value);
   void opticalFlowVectorVisualizationFactorChanged(double value);
@@ -180,7 +186,9 @@ public slots:
     void setDivergenceHistoryBufferSize(int value)          { _settings.DivergenceHistoryBufferSize = value; _settings.storeSettings(); emit divergenceHistoryBufferSizeChanged(value); }
     void setUndistortFrames(bool value)                     { _settings.UndistortFrames = value; _settings.storeSettings(); emit undistortFramesChanged(value); }
     void setOcamModelPath(QString value)                    { _settings.OcamModelPath = value; _settings.storeSettings(); emit ocamModelPathChanged(value); }
+
     void setWithholdCollisionAction(bool value)             { _settings.WithholdCollisionAction = value; _settings.storeSettings(); emit withholdCollisionActionChanged(value); }
+    void setAutoResumeAfterCollision(bool value)            { _settings.AutoResumeAfterCollision = value; _settings.storeSettings(); emit AutoResumeAfterCollisionChanged(value); }
 
     void setDisplayBadFramesInUi(bool value)   { _settings.DisplayBadFramesInUi = value; _settings.storeSettings(); emit displayBadFramesInUiChanged(value); }
     void setOpticalFlowVectorVisualizationFactor(double value) { _settings.OpticalFlowVectorVisualizationFactor = value; _settings.storeSettings(); emit opticalFlowVectorVisualizationFactorChanged(value); }

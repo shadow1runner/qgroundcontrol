@@ -84,6 +84,11 @@ void OwnFlowHandler::_collisionImmanent(const cv::Mat& frame, unsigned long long
     Q_UNUSED(lastDivergence);
     Q_UNUSED(avgDivergence);
 
-    qDebug() << "Pausing OwnFlowWorker because of received `collisionImmanent` event";
-    QMetaObject::invokeMethod(_ownFlowWorker, "pause");
+    if(_settings.WithholdCollisionAction && _settings.AutoResumeAfterCollision) {
+        qDebug() << "QGC is configured to auto resume after collision -> reset+start collision avoidance";
+        start();
+    } else {
+        qDebug() << "Pausing OwnFlowWorker because of received `collisionImmanent` event";
+        QMetaObject::invokeMethod(_ownFlowWorker, "pause");
+    }
 }
