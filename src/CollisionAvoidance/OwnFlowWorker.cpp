@@ -72,8 +72,11 @@ OwnFlowWorker::OwnFlowWorker(CollisionAvoidanceSettings& settings, QGCToolbox* t
             &_framePersister, &FramePersister::uiFrameReady);
     
     // UI Frame Preparer -> UI Thread
-    connect(&_uiFramePreparer, &hw::UiFramePreparer::qtUiFrameReady,
-             _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::qtUiFrameReady);
+    connect(&_uiFramePreparer, &hw::UiFramePreparer::uiFrameReady,
+             _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::uiFrameReady);
+
+    connect(_frameGrabber, &hw::BufferedFrameGrabber::newRawFrame,
+             _collisionAvoidanceDataProvider, &CollisionAvoidanceDataProvider::rawFrameReady);
 
     // ROI -> UI Frame Preparer
     connect(&_roiBuilder, &RoiBuilder::roiReady,
@@ -152,6 +155,6 @@ void OwnFlowWorker::reset()
     pause();
     QThread::msleep(100);
     _frameGrabber->reset();
-    _framePersister.clearFrameDirectoryIfSettingsEnabled();
+    // _framePersister.clearFrameDirectoryIfSettingsEnabled();
     QMetaObject::invokeMethod(&_ownFlow, "reset");
 }

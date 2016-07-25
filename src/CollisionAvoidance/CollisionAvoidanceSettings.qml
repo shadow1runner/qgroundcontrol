@@ -518,11 +518,16 @@ Rectangle {
             //-- avgDivergenceThreshold
             Row {
                 spacing:    ScreenTools.defaultFontPixelWidth
-                QGCLabel {
-                    text:   qsTr("AVG Divergence Threshold:")
+                QGCCheckBox {
+                    text:       "AVG Divergence Threshold:"
                     anchors.verticalCenter: parent.verticalCenter
+                    checked:    _controller.UseAvgDivergenceThreshold
+                    onClicked: {
+                        _controller.UseAvgDivergenceThreshold = checked
+                    }
                 }
                 Row {
+                    enabled:    _controller.UseAvgDivergenceThreshold
                     Rectangle {
                         width:              avgDivergenceThresholdField.height
                         height:             width
@@ -630,11 +635,6 @@ Rectangle {
 
             //-----------------------------------------------------------------
             //-- undistortFrames
-            Item {
-                height: ScreenTools.defaultFontPixelHeight / 2
-                width:  parent.width
-            }
-
             Row {
                 spacing:    ScreenTools.defaultFontPixelWidth
                 QGCCheckBox {

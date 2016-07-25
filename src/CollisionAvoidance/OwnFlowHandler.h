@@ -2,6 +2,7 @@
 #define COLLISIONAVOIDANCE_OWNFLOWHANDLER_H
 
 #include <string> 
+#include <memory> 
 
 #include <QObject>
 #include <QQmlListProperty>
@@ -42,7 +43,7 @@ public:
     CollisionActor* collisionActor();
 
 private slots:
-    void _collisionImmanent(const cv::Mat& frame, unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, const hw::CollisionLevel collisionLevel, double lastDivergence, double avgDivergence);
+    void _collisionImmanent(const cv::Mat& frame, unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, std::shared_ptr<hw::CollisionDetectorResult> detectorResult, double lastDivergence, double avgDivergence);
 
 private:
 	CollisionAvoidanceSettings& _settings;

@@ -33,6 +33,7 @@ public:
    Q_PROPERTY(double inlierProportionThreshold      READ getInlierProportionThreshold WRITE setInlierProportionThreshold NOTIFY inlierProportionThresholdChanged);
    Q_PROPERTY(int divergencePatchSize               READ getDivergencePatchSize WRITE setDivergencePatchSize NOTIFY divergencePatchSizeChanged);
    Q_PROPERTY(double divergenceThreshold            READ getDivergenceThreshold WRITE setDivergenceThreshold NOTIFY divergenceThresholdChanged);
+   Q_PROPERTY(bool UseAvgDivergenceThreshold        READ getUseAvgDivergenceThreshold WRITE setUseAvgDivergenceThreshold NOTIFY UseAvgDivergenceThresholdChanged);
    Q_PROPERTY(double avgDivergenceThreshold         READ getAvgDivergenceThreshold WRITE setAvgDivergenceThreshold NOTIFY avgDivergenceThresholdChanged);
    Q_PROPERTY(int divergenceHistoryBufferSize       READ getDivergenceHistoryBufferSize WRITE setDivergenceHistoryBufferSize NOTIFY divergenceHistoryBufferSizeChanged);
    Q_PROPERTY(bool undistortFrames                  READ getUndistortFrames WRITE setUndistortFrames NOTIFY undistortFramesChanged);
@@ -78,6 +79,7 @@ public:
     double            getInlierProportionThreshold() const        { return _settings.InlierProportionThreshold; }
     int               getDivergencePatchSize() const              { return _settings.DivergencePatchSize;       }
     double            getDivergenceThreshold() const              { return _settings.DivergenceThreshold;       }
+    bool              getUseAvgDivergenceThreshold() const { return _settings.UseAvgDivergenceThreshold; }
     double            getAvgDivergenceThreshold() const           { return _settings.AvgDivergenceThreshold;       }
     int               getDivergenceHistoryBufferSize() const      { return _settings.DivergenceHistoryBufferSize;       }
 
@@ -125,6 +127,7 @@ signals:
   void inlierProportionThresholdChanged(double value);
   void divergencePatchSizeChanged(int value);
   void divergenceThresholdChanged(double value);
+  void UseAvgDivergenceThresholdChanged(bool value);
   void avgDivergenceThresholdChanged(double value);
   void divergenceHistoryBufferSizeChanged(int value);
 
@@ -172,6 +175,7 @@ public slots:
     void setInlierProportionThreshold(double value)         { _settings.InlierProportionThreshold = value; _settings.storeSettings(); emit inlierProportionThresholdChanged(value); }
     void setDivergencePatchSize(int value)                  { _settings.DivergencePatchSize = value; _settings.storeSettings(); emit divergencePatchSizeChanged(value); }
     void setDivergenceThreshold(double value)               { _settings.DivergenceThreshold = value; _settings.storeSettings();emit divergenceThresholdChanged(value); }
+    void setUseAvgDivergenceThreshold(bool value)           { _settings.UseAvgDivergenceThreshold = value; _settings.storeSettings(); emit UseAvgDivergenceThresholdChanged(value); }
     void setAvgDivergenceThreshold(double value)            { _settings.AvgDivergenceThreshold = value; _settings.storeSettings();emit avgDivergenceThresholdChanged(value); }
     void setDivergenceHistoryBufferSize(int value)          { _settings.DivergenceHistoryBufferSize = value; _settings.storeSettings(); emit divergenceHistoryBufferSizeChanged(value); }
     void setUndistortFrames(bool value)                     { _settings.UndistortFrames = value; _settings.storeSettings(); emit undistortFramesChanged(value); }

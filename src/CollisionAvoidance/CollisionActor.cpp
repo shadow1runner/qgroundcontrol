@@ -22,12 +22,12 @@ void CollisionActor::_activeVehicleChanged(Vehicle* activeVehicle)
     _activeVehicle = activeVehicle; // might be NULL
 }
 
-void CollisionActor::_collisionImmanent(const cv::Mat& frame, unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, const hw::CollisionLevel collisionLevel, double lastDivergence, double avgDivergence)
+void CollisionActor::_collisionImmanent(const cv::Mat& frame, unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, std::shared_ptr<hw::CollisionDetectorResult> detectorResult, double lastDivergence, double avgDivergence)
 {
     Q_UNUSED(frame);
     Q_UNUSED(foeFiltered);
     Q_UNUSED(foe);
-    Q_UNUSED(collisionLevel);
+    Q_UNUSED(detectorResult);
     Q_UNUSED(lastDivergence);
     Q_UNUSED(avgDivergence);
 

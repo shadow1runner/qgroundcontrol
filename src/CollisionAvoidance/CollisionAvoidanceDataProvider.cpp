@@ -46,17 +46,23 @@ CollisionAvoidanceDataProvider::CollisionAvoidanceDataProvider(QGCApplication *a
   : QGCTool(app)
   , QQuickImageProvider(QQmlImageProviderBase::Image)
   , _activeVehicle(NULL)
-  , _qImage(320, 240, QImage::Format_RGBA8888)
+  , _qImage(new QImage(320, 240, QImage::Format_RGBA8888))
+  , _qRawImage(new QImage(320, 240, QImage::Format_RGBA8888))
   , _sw("QML Refresh Rate")
 {
     //-- Dummy temporary image until something comes along
-  _qImage.fill(Qt::black);
-  QPainter painter(&_qImage);
+  _qImage->fill(qRgba(0,0,0,0.75));
+  QPainter painter(_qImage);
   QFont f = painter.font();
   f.setPixelSize(20);
   painter.setFont(f);
   painter.setPen(Qt::white);
   painter.drawText(QRectF(0, 0, 320, 240), Qt::AlignCenter, "Idle");
+}
+
+CollisionAvoidanceDataProvider::~CollisionAvoidanceDataProvider() {
+  delete _qRawImage;
+  delete _qImage;
 }
 
 void CollisionAvoidanceDataProvider::setToolbox(QGCToolbox *toolbox)
@@ -65,7 +71,7 @@ void CollisionAvoidanceDataProvider::setToolbox(QGCToolbox *toolbox)
   connect(toolbox->multiVehicleManager(), &MultiVehicleManager::activeVehicleChanged, this, &CollisionAvoidanceDataProvider::_activeVehicleChanged);
 }
 
-QImage CollisionAvoidanceDataProvider::requestImage(const QString & /* image url with vehicle id*/, QSize *, const QSize &)
+QImage CollisionAvoidanceDataProvider::requestImage(const QString &url, QSize *, const QSize &)
 {
 /*
   The QML side will request an image using a special URL, which we've registered as QGCImages.
@@ -97,7 +103,11 @@ QImage CollisionAvoidanceDataProvider::requestImage(const QString & /* image url
     qDebug() << "DP" << QString::fromStdString(_sw.prettyFormat()); 
    _sw.startTick();
   }
-  return _qImage;
+
+  if(url.startsWith("raw/"))
+    return *_qRawImage;
+  else
+    return *_qImage;
 }
 
 void CollisionAvoidanceDataProvider::_activeVehicleChanged(Vehicle* activeVehicle)
@@ -105,11 +115,35 @@ void CollisionAvoidanceDataProvider::_activeVehicleChanged(Vehicle* activeVehicl
   _activeVehicle = activeVehicle; // might be NULL
 }
 
-void CollisionAvoidanceDataProvider::qtUiFrameReady(const QImage& qImage)
+QImage* CollisionAvoidanceDataProvider::cvMatToQImage(const cv::Mat& mat)
 {
+  cv::Mat tmp;
+  // http://stackoverflow.com/a/12312326/2559632
+  cvtColor(mat, tmp, CV_BGR2RGB);
+  // cv::Mat tmpMat;
+  // resize(mat, tmpMat, cv::Size(0,0), 2, 2, cv::INTER_LINEAR);
+  return new QImage((uchar*)tmp.data, tmp.cols, tmp.rows, tmp.step, QImage::Format_RGB888);
+}
+
+void CollisionAvoidanceDataProvider::uiFrameReady(const cv::Mat& frame, unsigned long long frameNumber)
+{
+  Q_UNUSED(frameNumber);
   static int count = 0;
   if(_activeVehicle!=NULL) {
-    _qImage = qImage;
+    delete _qImage;
+    _qImage = cvMatToQImage(frame);
     _activeVehicle->increaseCollisionAvoidanceImageIndex();
   }
 }
+
+void CollisionAvoidanceDataProvider::rawFrameReady(const cv::Mat& rawImage)
+{
+  static int count = 0;
+  if(_activeVehicle!=NULL) {
+    delete _qRawImage;
+    _qRawImage = cvMatToQImage(rawImage);
+    _activeVehicle->increaseCollisionAvoidanceRawImageIndex();
+  }
+}
+
+

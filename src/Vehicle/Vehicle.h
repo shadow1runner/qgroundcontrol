@@ -34,7 +34,6 @@
 #include "FocusOfExpansionDto.h"
 #include "Divergence.h"
 #include "AvgWatch.h"
-#include "CollisionLevel.h"
 
 class UAS;
 class UASInterface;
@@ -46,6 +45,9 @@ class MissionManager;
 class ParameterLoader;
 class JoystickManager;
 class UASMessage;
+namespace hw {
+    class CollisionDetectorResult;
+}
 
 Q_DECLARE_LOGGING_CATEGORY(VehicleLog)
 
@@ -349,8 +351,9 @@ public:
     Q_PROPERTY(int                  motorCount              READ motorCount                                             CONSTANT)
     Q_PROPERTY(bool                 coaxialMotors           READ coaxialMotors                                          CONSTANT)
     Q_PROPERTY(bool                 xConfigMotors           READ xConfigMotors                                          CONSTANT)
-    Q_PROPERTY(int                  collisionAvoidanceImageIndex READ collisionAvoidanceImageIndex      NOTIFY collisionAvoidanceImageIndexChanged)
-    Q_PROPERTY(bool                 collisionAvoidanceActive     READ collisionAvoidanceActive          NOTIFY collisionAvoidanceActiveChanged)
+    Q_PROPERTY(int                  collisionAvoidanceImageIndex    READ collisionAvoidanceImageIndex    NOTIFY collisionAvoidanceImageIndexChanged)
+    Q_PROPERTY(int                  collisionAvoidanceRawImageIndex READ collisionAvoidanceRawImageIndex NOTIFY collisionAvoidanceRawImageIndexChanged)
+    Q_PROPERTY(bool                 collisionAvoidanceActive        READ collisionAvoidanceActive        NOTIFY collisionAvoidanceActiveChanged)
 
     /// true: Vehicle is flying, false: Vehicle is on ground
     Q_PROPERTY(bool flying      READ flying     WRITE setFlying     NOTIFY flyingChanged)
@@ -559,7 +562,9 @@ public:
     int  flowImageIndex() { return _flowImageIndex; }
 
     int  collisionAvoidanceImageIndex()              { return _collisionAvoidanceImageIndex; }
+    int  collisionAvoidanceRawImageIndex()           { return _collisionAvoidanceRawImageIndex; }
     void increaseCollisionAvoidanceImageIndex (void) { ++_collisionAvoidanceImageIndex; emit collisionAvoidanceImageIndexChanged(); }
+    void increaseCollisionAvoidanceRawImageIndex (void) { ++_collisionAvoidanceRawImageIndex; emit collisionAvoidanceRawImageIndexChanged(); }
     bool collisionAvoidanceActive()                  { return _collisionAvoidanceActive;     }
 
     /// Requests the specified data stream from the vehicle
@@ -676,7 +681,8 @@ signals:
     void prearmErrorChanged(const QString& prearmError);
     void commandLongAck(uint8_t compID, uint16_t command, uint8_t result);
 	void soloFirmwareChanged(bool soloFirmware);
-	void collisionAvoidanceImageIndexChanged();
+    void collisionAvoidanceImageIndexChanged();
+	void collisionAvoidanceRawImageIndexChanged();
     void collisionAvoidanceActiveChanged(bool collisionAvoidanceActive);
 
     void messagesReceivedChanged    ();
@@ -744,7 +750,7 @@ private slots:
     void _connectionLostTimeout(void);
     void _prearmErrorTimeout(void);
 
-    void _handleCollisionAvoidance(const cv::Mat& frame, unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, const hw::CollisionLevel collisionLevel, double lastDivergence, double avgDivergence);
+    void _handleCollisionAvoidance(const cv::Mat& frame, unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, std::shared_ptr<hw::CollisionDetectorResult> detectorResult, double lastDivergence, double avgDivergence);
     void _handleCollisionAvoidanceBadFrame(const cv::Mat& badFrame, unsigned long long skipFrameCount, unsigned long long totalFrameCount, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured);
     void _handleCollisionAvoidancePausedChange(bool isPaused);
     void _handleCollisionAvoidanceFrameTimings(std::shared_ptr<AvgWatch> allWatch, std::shared_ptr<AvgWatch> colliderWatch, std::shared_ptr<AvgWatch> divWatch, std::shared_ptr<AvgWatch> foeWatch, std::shared_ptr<AvgWatch> kalmanWatch, std::shared_ptr<AvgWatch> opticalFlowWatch);
@@ -820,6 +826,7 @@ private:
     bool            _autoDisconnect;    ///< true: Automatically disconnect vehicle when last connection goes away or lost heartbeat
     bool            _flying;
     int             _collisionAvoidanceImageIndex;
+    int             _collisionAvoidanceRawImageIndex;
     bool            _collisionAvoidanceActive;
 
     QString             _prearmError;

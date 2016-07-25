@@ -55,12 +55,11 @@ void CollisionAvoidanceTestBase::_testCa(CollisionAvoidanceSettings& settings, Q
 	OwnFlowWorker worker(settings, toolbox);
     auto* ownFlow = worker.ownFlow();
     connect(ownFlow, &hw::OwnFlow::collisionImmanent,
-            this, [ownFlow, this, &settings, dto] (const cv::Mat& frame, unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, const hw::CollisionLevel collisionLevel, double lastDivergence, double avgDivergence) {
+            this, [ownFlow, this, &settings, dto] (const cv::Mat& frame, unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, std::shared_ptr<hw::CollisionDetectorResult> detectorResult, double lastDivergence, double avgDivergence) {
 
             	Q_UNUSED(frame);
             	Q_UNUSED(foeFiltered);
             	Q_UNUSED(foe);
-                Q_UNUSED(collisionLevel);
 
                 Q_UNUSED(lastDivergence);
             	
@@ -71,7 +70,7 @@ void CollisionAvoidanceTestBase::_testCa(CollisionAvoidanceSettings& settings, Q
                 QVERIFY(frameNumber >= dto.lowerFrameNumberBound);
                 QVERIFY(frameNumber <= dto.upperFrameNumberBound);
 
-                if(avgDivergence>settings.AvgDivergenceThreshold)
+                if(detectorResult->getEvaluationResult()==hw::CollisionDetectorResultEnum::TooHighAvgDivThreshold)
                     qDebug() << "CA was triggered to overcoming avg divergence threshold (but could also have been due to reaching `HIGH` normally";
 				// succeed
 			});

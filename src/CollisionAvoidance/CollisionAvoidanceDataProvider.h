@@ -5,6 +5,8 @@
 #include <QQmlListProperty>
 #include <QQuickImageProvider>
 
+#include <opencv2/core.hpp>
+
 #include "QGCToolbox.h"
 #include "AvgWatch.h"
 
@@ -16,19 +18,24 @@ class CollisionAvoidanceDataProvider : public QGCTool, public QQuickImageProvide
 
 public:
     CollisionAvoidanceDataProvider    (QGCApplication* app);
-    QImage  requestImage              (const QString & id, QSize * size, const QSize & requestedSize);
+    ~CollisionAvoidanceDataProvider();
+    QImage  requestImage              (const QString &url, QSize * size, const QSize & requestedSize);
     void    setToolbox                (QGCToolbox *toolbox);
 
 private slots:
     void _activeVehicleChanged  (Vehicle* activeVehicle);
 public slots:
-    void qtUiFrameReady(const QImage& frame);    
+    void uiFrameReady(const cv::Mat& frame, unsigned long long frameNumber);
+    void rawFrameReady(const cv::Mat& rawImage);
+
     
 private:
     Vehicle* _activeVehicle;
-    QImage _qImage; // the current displayed image 
+    QImage* _qRawImage = NULL; // raw image
+    QImage* _qImage = NULL; // the current displayed image
 	AvgWatch _sw;
     
+	QImage* cvMatToQImage(const cv::Mat& mat);
 };
 
 #endif // COLLISIONAVOIDANCE_COLLISIONAVOIDANCEDataPROVIDER_H

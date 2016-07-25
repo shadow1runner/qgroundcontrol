@@ -67,18 +67,18 @@ OwnFlowGrapher::~OwnFlowGrapher()
 }
 
 
-void OwnFlowGrapher::_handleCollisionAvoidance(const cv::Mat& frame, unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, const hw::CollisionLevel collisionLevel, double lastDivergence, double avgDivergence)
+void OwnFlowGrapher::_handleCollisionAvoidance(const cv::Mat& frame, unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, std::shared_ptr<hw::CollisionDetectorResult> detectorResult, double lastDivergence, double avgDivergence)
 {
     Q_UNUSED(frame);
     Q_UNUSED(frameNumber);
 
-    logGoodFrameToCsv(frameNumber, foeFiltered, foe, collisionLevel, lastDivergence, avgDivergence);
+    logGoodFrameToCsv(frameNumber, foeFiltered, foe, detectorResult, lastDivergence, avgDivergence);
     
     emit valueChanged(getUASID(),"foeEkfx","px",QVariant(foeFiltered->x), getUnixTime());
     emit valueChanged(getUASID(),"foeEkfy","px",QVariant(foeFiltered->y), getUnixTime());
     emit valueChanged(getUASID(),"foeRawx","px",QVariant(foe->getFoE().x), getUnixTime());
     emit valueChanged(getUASID(),"foeRawy","px",QVariant(foe->getFoE().y), getUnixTime());
-    emit valueChanged(getUASID(),"collisionLevel","-",QVariant(collisionLevel), getUnixTime());
+    emit valueChanged(getUASID(),"collisionLevel","-",QVariant(detectorResult->getCollisionLevel()), getUnixTime());
     emit valueChanged(getUASID(),"divergence","-",QVariant(lastDivergence), getUnixTime());
     emit valueChanged(getUASID(),"avgDivergence","-",QVariant(avgDivergence), getUnixTime());
     emit valueChanged(getUASID(),"inlierRatio","‰",QVariant(foe->getInlierProportion()*1000), getUnixTime());
@@ -142,6 +142,7 @@ void OwnFlowGrapher::writeCsvHeader()
     csvFile << "#";
     csvFile << ",CollisionLevel";
     csvFile << ",CollisionLevel (string)";
+    csvFile << ",Detector Evaluation Result";
     csvFile << ",Divergence (last)";
     csvFile << ",Divergence (average over " << _settings.DivergenceHistoryBufferSize << " elements)";
     csvFile << ",EKF FoE x";
@@ -159,6 +160,7 @@ void OwnFlowGrapher::logBadFrameToCsv(unsigned long long frameNumber, std::share
     csvFile << frameNumber;
     csvFile << ","; // << static_cast<int>(CollisionLevel);
     csvFile << ","; // << CollisionHelper::toString(CollisionLevel);
+    csvFile << ","; // << detectorResult->getEvaluationResultText();
     csvFile << ","; // << lastDivergence;
     csvFile << ","; // << avgDivergence;
     csvFile << ","; // << foeFiltered->x;
@@ -171,11 +173,13 @@ void OwnFlowGrapher::logBadFrameToCsv(unsigned long long frameNumber, std::share
     csvFile << std::endl;
 }
 
-void OwnFlowGrapher::logGoodFrameToCsv(unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, const hw::CollisionLevel collisionLevel, double lastDivergence, double avgDivergence)
+void OwnFlowGrapher::logGoodFrameToCsv(unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, std::shared_ptr<hw::CollisionDetectorResult> detectorResult, double lastDivergence, double avgDivergence)
 {
+    auto collisionLevel = detectorResult->getCollisionLevel();
     csvFile << frameNumber;
     csvFile << "," << static_cast<int>(collisionLevel);
     csvFile << "," << hw::CollisionLevelHelper::toString(collisionLevel);
+    csvFile << "," << detectorResult->getEvaluationResultText();
     csvFile << "," << lastDivergence;
     csvFile << "," << avgDivergence;
     csvFile << "," << foeFiltered->x;

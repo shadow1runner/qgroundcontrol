@@ -15,37 +15,47 @@ Item {
     property var _activeVehicle:  QGroundControl.multiVehicleManager.activeVehicle
     QGCPalette { id: qgcPal; colorGroupEnabled: panel.enabled }
     
-//     Rectangle {
-//         id:             noVideo
-//         anchors.fill:   parent
-//         color:          Qt.rgba(0,0,0,0.75)
-// //        visible:        !_controller.hasCollisionAvoidanceStream
-//         QGCLabel {
-//             text:               "NO ANALOG STREAM DATA"
-//             font.weight:        Font.DemiBold
-//             color:              "white"
-//             font.pixelSize:     _mainIsMap ? 12 * ScreenTools.fontHRatio : 20 * ScreenTools.fontHRatio
-//             anchors.centerIn:   parent
-//         }
-//     }
-
     QGCViewPanel {
         id:             panel
         anchors.fill:   parent
 
+
         Rectangle {
-            id: backGround
             color: Qt.rgba(0,0,0,0.75)
             anchors.fill:   parent
             
-            Image {
-                source:     _activeVehicle ? "image://OwnFlow/" + _activeVehicle.id + "/" + _activeVehicle.collisionAvoidanceImageIndex  : ""
-                width:      parent.width * 0.5
-                height:     width * 0.75
-                cache:      false
-                anchors.centerIn: parent
-                fillMode: Image.PreserveAspectFit
+            Flow {
+                id: backGround
+                anchors.margins: 4
+                spacing: 10
+                anchors.fill:   parent
+
+                Image {
+                    id:         raw
+                    source:     _activeVehicle ? "image://OwnFlow/raw/" + _activeVehicle.id + "/" + _activeVehicle.collisionAvoidanceRawImageIndex  : ""
+                    width:      parent.width * 0.33
+                    height:     width * 0.75
+                    cache:      false
+                    anchors.left: parent.left
+                    anchors.leftMargin: 22
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.rightMargin: 30;
+                    fillMode: Image.PreserveAspectFit
+                }
+
+                Image {
+                    source:     _activeVehicle ? "image://OwnFlow/" + _activeVehicle.id + "/" + _activeVehicle.collisionAvoidanceImageIndex  : ""
+                    width:      parent.width * 0.5
+                    height:     width * 0.75
+                    cache:      false
+                    anchors.top: raw.top
+                    anchors.topMargin: 7
+                    anchors.left: raw.right
+                    anchors.leftMargin: 30;
+                    anchors.rightMargin: 30;
+                    fillMode: Image.PreserveAspectFit
+                }
             }
-        }        
+        }
     }
 }

@@ -250,7 +250,7 @@ int main(int argc, char *argv[])
         if (!app->_initForNormalAppBoot()) {
             return -1;
         }
-        exitCode = app->exec();
+         exitCode = app->exec();
     }
 
     delete app;

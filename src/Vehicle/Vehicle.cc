@@ -27,6 +27,7 @@
 #include "OwnFlowWorker.h"
 #include "OwnFlow.h"
 #include "FocusOfExpansionDto.h"
+#include "CollisionDetectorResult.h"
 
 QGC_LOGGING_CATEGORY(VehicleLog, "VehicleLog")
 
@@ -570,7 +571,7 @@ void Vehicle::_handleCollisionAvoidancePausedChange(bool isPaused)
     emit collisionAvoidanceActiveChanged(_collisionAvoidanceActive);
 }
 
-void Vehicle::_handleCollisionAvoidance(const cv::Mat& frame, unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, const hw::CollisionLevel collisionLevel, double lastDivergence, double avgDivergence)
+void Vehicle::_handleCollisionAvoidance(const cv::Mat& frame, unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, std::shared_ptr<hw::CollisionDetectorResult> detectorResult, double lastDivergence, double avgDivergence)
 {
     Q_UNUSED(frame);
     Q_UNUSED(frameNumber);
@@ -580,7 +581,7 @@ void Vehicle::_handleCollisionAvoidance(const cv::Mat& frame, unsigned long long
     _collisionAvoidanceFactGroup.foeRawx()->setRawValue(foe->getFoE().x);
     _collisionAvoidanceFactGroup.foeRawy()->setRawValue(foe->getFoE().y);
     _collisionAvoidanceFactGroup.inlierRatio()->setRawValue(foe->getInlierProportion()*1000);
-    _collisionAvoidanceFactGroup.collisionLevel()->setRawValue(collisionLevel);
+    _collisionAvoidanceFactGroup.collisionLevel()->setRawValue(detectorResult->getCollisionLevel());
     _collisionAvoidanceFactGroup.avgDivergence()->setRawValue(avgDivergence);
     _collisionAvoidanceFactGroup.divergence()->setRawValue(lastDivergence);
 }
