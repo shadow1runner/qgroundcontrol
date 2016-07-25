@@ -1024,7 +1024,7 @@ Rectangle {
                 QGCCheckBox {
                     text:       "Auto resume (=reset+start) after collision"
                     anchors.verticalCenter: parent.verticalCenter
-                    checked:    _controller.AutoResumeAfterCollision && _controller.withholdCollisionActionw
+                    checked:    _controller.AutoResumeAfterCollision && _controller.withholdCollisionAction
                     onClicked: {
                         _controller.AutoResumeAfterCollision = checked
                     }

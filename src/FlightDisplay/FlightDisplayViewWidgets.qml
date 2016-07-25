@@ -506,6 +506,13 @@ Item {
                 }
 
                 QGCButton {
+                    text:       qsTr("Reset CA")
+                    onClicked:  {
+                        _activeVehicle.resetCollisionAvoidance()
+                    }
+                }
+
+                QGCButton {
                     text:       (_activeVehicle && _activeVehicle.guidedModeSupported && _activeVehicle.collisionAvoidanceActive) ? qsTr("Pause CA") : qsTr("Start CA")
                     // visible:    _activeVehicle && _activeVehicle.guidedModeSupported && _activeVehicle.armed
                     onClicked:  {
@@ -513,13 +520,6 @@ Item {
                             _activeVehicle.pauseCollisionAvoidance()
                         else
                             _activeVehicle.startCollisionAvoidance()
-                    }
-                }
-
-                QGCButton {
-                    text:       qsTr("Reset CA")
-                    onClicked:  {
-                        _activeVehicle.resetCollisionAvoidance()
                     }
                 }
             } // Row
