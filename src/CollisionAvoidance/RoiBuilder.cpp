@@ -59,7 +59,8 @@ void RoiBuilder::_altitudeChanged(UASInterface*, double altitudeAMSL, double alt
 
     // for unknown reasons the climbrate values seem to be alternating, even though the MAV is steadily climbing/descending -> correct it heurisitcally
     // fun fact though: the `Analyze` widget of QGC does not show these alternating values, even though the very same values are published
-    if(_altitudeRelative>altitudeRelative && climbRate>0.0)
+    if((_altitudeRelative>altitudeRelative && climbRate>0.0) ||
+       (_altitudeRelative<altitudeRelative && climbRate<0.0))
         _climbRate = -climbRate;
     else
         _climbRate = climbRate;
