@@ -33,35 +33,6 @@ Rectangle {
             anchors.margins:    ScreenTools.defaultFontPixelWidth
             spacing:            ScreenTools.defaultFontPixelHeight / 2
 
-
-            QGCLabel {
-                text:   qsTr("Collision Avoidance Settings")
-                font.pixelSize: ScreenTools.mediumFontPixelSize
-            }
-            Rectangle {
-                height: 1
-                width:  parent.width
-                color:  qgcPal.button
-            }
-            Item {
-                height: ScreenTools.defaultFontPixelHeight
-                width:  parent.width
-            }
-
-            QGCLabel {
-                text:   qsTr("Data Source")
-                font.pixelSize: ScreenTools.mediumFontPixelSize
-            }
-            Rectangle {
-                height: 1
-                width:  parent.width/2
-                color:  qgcPal.button
-            }
-            Item {
-                height: ScreenTools.defaultFontPixelHeight / 2
-                width:  parent.width
-            }
-
             Row {
                 QGCLabel {
                     id:     useRecordedVideoInsteadOfDeviceLabel
@@ -657,11 +628,6 @@ Rectangle {
                 }
             }
 
-            Item {
-                height: ScreenTools.defaultFontPixelHeight / 2
-                width:  parent.width
-            }
-
             //-----------------------------------------------------------------
             //-- undistortFrames
             Item {
@@ -693,33 +659,6 @@ Rectangle {
                         _controller.ocamModelPath = ocamModelPathField.text
                     }
                 }
-            }
-
-            Item {
-                height: ScreenTools.defaultFontPixelHeight / 2
-                width:  parent.width
-            }
-
-            //-- WithholdCollisionAction
-            Row {
-                spacing:    ScreenTools.defaultFontPixelWidth
-                QGCCheckBox {
-                    text:       "Withhold Collision Action (Debug only!)"
-                    anchors.verticalCenter: parent.verticalCenter
-                    checked:    _controller.withholdCollisionAction
-                    onClicked: {
-                        _controller.withholdCollisionAction = checked
-                    }
-                }
-                Item {
-                    height: ScreenTools.defaultFontPixelHeight / 2
-                    width: ScreenTools.defaultFontPixelHeight / 2
-                }
-            }
-
-            Item {
-                height: ScreenTools.defaultFontPixelHeight
-                width:  parent.width
             }
 
             //-- RoiEnabled
@@ -1052,6 +991,28 @@ Rectangle {
             }
 
             Item {
+                height: ScreenTools.defaultFontPixelHeight
+                width:  parent.width
+            }
+
+            //-- WithholdCollisionAction
+            Row {
+                spacing:    ScreenTools.defaultFontPixelWidth
+                QGCCheckBox {
+                    text:       "Withhold Collision Action (Debug only!)"
+                    anchors.verticalCenter: parent.verticalCenter
+                    checked:    _controller.withholdCollisionAction
+                    onClicked: {
+                        _controller.withholdCollisionAction = checked
+                    }
+                }
+                Item {
+                    height: ScreenTools.defaultFontPixelHeight / 2
+                    width: ScreenTools.defaultFontPixelHeight / 2
+                }
+            }
+
+            Item {
                 height: ScreenTools.defaultFontPixelHeight / 2
                 width:  parent.width
             }           
@@ -1075,7 +1036,7 @@ Rectangle {
             Row {
                 spacing:    ScreenTools.defaultFontPixelWidth
                 QGCCheckBox {
-                    text:       "Display all frames in UI (includes skipped ones)"
+                    text:       "Display all frames in UI (including skipped ones)"
                     anchors.verticalCenter: parent.verticalCenter
                     checked:    _controller.displayBadFramesInUi
                     onClicked: {
@@ -1096,7 +1057,7 @@ Rectangle {
             Row {
                 spacing:    ScreenTools.defaultFontPixelWidth
                 QGCLabel {
-                    text:   qsTr("Optical Flow Visualization - Factor (dx, dy):")
+                    text:   qsTr("Optical Flow Visualization Factor (dx, dy):")
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 QGCTextField {
@@ -1160,6 +1121,9 @@ Rectangle {
             //-----------------------------------------------------------------
             //-- clearOldFramesEnabled
             Row {
+                QGCLabel {
+                    text:           "   "
+                }
                 spacing:    ScreenTools.defaultFontPixelWidth
                 QGCCheckBox {
                     text:       "Clear old persisted frames on start"
@@ -1185,6 +1149,9 @@ Rectangle {
             //-----------------------------------------------------------------
             //-- writeRawFrames
             Row {
+                QGCLabel {
+                    text:           "   "
+                }
                 spacing:    ScreenTools.defaultFontPixelWidth
                 QGCCheckBox {
                     text:       "Write raw frames to:"
@@ -1220,6 +1187,9 @@ Rectangle {
             //-----------------------------------------------------------------
             //-- writeBadFrames
             Row {
+                QGCLabel {
+                    text:           "   "
+                }
                 spacing:    ScreenTools.defaultFontPixelWidth
                 QGCCheckBox {
                     text:       "Write skipped frames to:"
@@ -1255,6 +1225,9 @@ Rectangle {
             //-----------------------------------------------------------------
             //-- writeGoodFrames
             Row {
+                QGCLabel {
+                    text:           "   "
+                }
                 spacing:    ScreenTools.defaultFontPixelWidth
                 QGCCheckBox {
                     text:       "Write good frames (i.e. with an FoE) to:"
@@ -1290,6 +1263,9 @@ Rectangle {
             //-----------------------------------------------------------------
             //-- writeHistogramFrames
             Row {
+                QGCLabel {
+                    text:           "   "
+                }
                 spacing:    ScreenTools.defaultFontPixelWidth
                 QGCCheckBox {
                     text:       "Write histogram frames to:"
@@ -1325,6 +1301,9 @@ Rectangle {
             //-----------------------------------------------------------------
             //-- writeOpticalFlowFrames
             Row {
+                QGCLabel {
+                    text:           "   "
+                }
                 spacing:    ScreenTools.defaultFontPixelWidth
                 QGCCheckBox {
                     text:       "Write optical flow frames to:"
@@ -1360,6 +1339,9 @@ Rectangle {
             //-----------------------------------------------------------------
             //-- writeUiFrames
             Row {
+                QGCLabel {
+                    text:           "   "
+                }
                 spacing:    ScreenTools.defaultFontPixelWidth
                 QGCCheckBox {
                     text:       "Write UI frames to:"
