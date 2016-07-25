@@ -975,6 +975,22 @@ Rectangle {
                 }
             }
 
+            Row {
+                QGCLabel {
+                    text:           "   "
+                }
+                spacing:    ScreenTools.defaultFontPixelWidth
+                QGCCheckBox {
+                    id:     useRoiSolelyForDescendDetectionField
+                    text:   "Use ROI solely for Descend detection"
+                    anchors.verticalCenter: parent.verticalCenter
+                    checked:    _controller.UseRoiSolelyForDescendDetection
+                    onClicked: {
+                        _controller.UseRoiSolelyForDescendDetection = checked
+                    }
+                }
+            }
+
             //-----------------------------------------------------------------
             //-- ClimbRateValueThreshold
             Row {

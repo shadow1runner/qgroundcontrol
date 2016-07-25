@@ -62,6 +62,7 @@ public:
    Q_PROPERTY(double MaxRollAngleDegrees     READ getMaxRollAngleDegrees WRITE setMaxRollAngleDegrees NOTIFY MaxRollAngleDegreesChanged);
    Q_PROPERTY(int RoiWidthPx                 READ getRoiWidthPx WRITE setRoiWidthPx NOTIFY RoiWidthPxChanged);
    Q_PROPERTY(int RoiHeightPx                READ getRoiHeightPx WRITE setRoiHeightPx NOTIFY RoiHeightPxChanged);
+   Q_PROPERTY(bool UseRoiSolelyForDescendDetection READ getUseRoiSolelyForDescendDetection WRITE setUseRoiSolelyForDescendDetection NOTIFY UseRoiSolelyForDescendDetectionChanged);
    Q_PROPERTY(double ClimbRateValueThreshold READ getClimbRateValueThreshold WRITE setClimbRateValueThreshold NOTIFY ClimbRateValueThresholdChanged);
 
    Q_PROPERTY(QString csvFilePath                  READ getCsvFilePath WRITE setCsvFilePath NOTIFY csvFilePathChanged);
@@ -102,12 +103,13 @@ public:
     const QString     getRawFramesPath() const                    { return _settings.RawFramesPath; }
     const QString     getUiFramesPath() const                     { return _settings.UiFramesPath; }
 
-    bool              getRoiEnabled() const                    { return _settings.RoiEnabled; }
-    double              getMaxPitchAngleDegrees() const                    { return _settings.MaxPitchAngleDegrees; }
-    double              getMaxRollAngleDegrees() const                    { return _settings.MaxRollAngleDegrees; }
-    int              getRoiWidthPx() const                    { return _settings.RoiWidthPx; }
-    int              getRoiHeightPx() const                    { return _settings.RoiHeightPx; }
-    double              getClimbRateValueThreshold() const                    { return _settings.ClimbRateValueThreshold; }
+    bool   getRoiEnabled()                      const { return _settings.RoiEnabled; }
+    double getMaxPitchAngleDegrees()            const { return _settings.MaxPitchAngleDegrees; }
+    double getMaxRollAngleDegrees()             const { return _settings.MaxRollAngleDegrees; }
+    int    getRoiWidthPx()                      const { return _settings.RoiWidthPx; }
+    int    getRoiHeightPx()                     const { return _settings.RoiHeightPx; }
+    bool   getUseRoiSolelyForDescendDetection() const { return _settings.UseRoiSolelyForDescendDetection; }
+    double getClimbRateValueThreshold()         const { return _settings.ClimbRateValueThreshold; }
 
     const QString     getCsvFilePath() const                     { return _settings.CsvFilePath; }
 
@@ -153,6 +155,7 @@ signals:
   void MaxRollAngleDegreesChanged(double value);
   void RoiWidthPxChanged(int value);
   void RoiHeightPxChanged(int value);
+  void UseRoiSolelyForDescendDetectionChanged(bool value);
   void ClimbRateValueThresholdChanged(double value);
 
   void csvFilePathChanged(QString value);
@@ -198,6 +201,7 @@ public slots:
     void setMaxRollAngleDegrees(double value)     { _settings.MaxRollAngleDegrees = value; _settings.storeSettings(); emit MaxRollAngleDegreesChanged(value); }
     void setRoiWidthPx(int value)                 { _settings.RoiWidthPx = value; _settings.storeSettings(); emit RoiWidthPxChanged(value); }
     void setRoiHeightPx(int value)                { _settings.RoiHeightPx = value; _settings.storeSettings(); emit RoiHeightPxChanged(value); }
+    void setUseRoiSolelyForDescendDetection(bool value) { _settings.UseRoiSolelyForDescendDetection = value; _settings.storeSettings(); emit UseRoiSolelyForDescendDetectionChanged(value); }
     void setClimbRateValueThreshold(double value) { _settings.ClimbRateValueThreshold = value; _settings.storeSettings(); emit ClimbRateValueThresholdChanged(value); }
 
     void setCsvFilePath(QString value)           { _settings.CsvFilePath = value; _settings.storeSettings(); emit csvFilePathChanged(value);  }
