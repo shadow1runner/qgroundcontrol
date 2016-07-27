@@ -23,6 +23,9 @@ RoiBuilder::RoiBuilder(CollisionAvoidanceSettings& settings, QGCToolbox* toolbox
 
 void RoiBuilder::_initializeRoiHelpers() 
 {
+    if(!_settings.UndistortFrames)
+        return;
+
     auto& ocamModel = _settings.getOcamModel();
     
     auto divisor = pow(2, _settings.SubsampleAmount);

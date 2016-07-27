@@ -67,7 +67,7 @@ OwnFlowGrapher::~OwnFlowGrapher()
 }
 
 
-void OwnFlowGrapher::_handleCollisionAvoidance(const cv::Mat& frame, unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, std::shared_ptr<hw::CollisionDetectorResult> detectorResult, double lastDivergence, double avgDivergence)
+void OwnFlowGrapher::_handleCollisionAvoidance(const cv::Mat& frame, unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, std::shared_ptr<hw::CollisionDetectorResult> detectorResult, double lastDivergence, double avgDivergence, const cv::Mat& convertedColorFrame)
 {
     Q_UNUSED(frame);
     Q_UNUSED(frameNumber);
@@ -88,7 +88,8 @@ void OwnFlowGrapher::_handleCollisionAvoidanceBadFrame(
     const cv::Mat& badFrame, 
     unsigned long long skipFrameCount, 
     unsigned long long totalFrameCount,
-    std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured)
+    std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured,
+    const cv::Mat& convertedColorFrame)
 {
     Q_UNUSED(badFrame);
     Q_UNUSED(foeMeasured);
