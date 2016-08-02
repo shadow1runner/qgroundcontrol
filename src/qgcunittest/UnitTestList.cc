@@ -33,6 +33,7 @@
 #include "CollisionAvoidanceTestGoPro.h"
 #include "CollisionAvoidanceTestBoscamNormalLense.h"
 #include "CollisionAvoidanceTestBoscamCheapFisheye.h"
+#include "CollisionAvoidanceTestBoscamLongFisheye.h"
 
 UT_REGISTER_TEST(FactSystemTestGeneric)
 UT_REGISTER_TEST(FactSystemTestPX4)
@@ -54,6 +55,7 @@ UT_REGISTER_TEST(ParameterLoaderTest)
 UT_REGISTER_TEST(CollisionAvoidanceTestGoPro)
 UT_REGISTER_TEST(CollisionAvoidanceTestBoscamNormalLense)
 UT_REGISTER_TEST(CollisionAvoidanceTestBoscamCheapFisheye)
+UT_REGISTER_TEST(CollisionAvoidanceTestBoscamLongFisheye)
 
 // List of unit test which are currently disabled.
 // If disabling a new test, include reason in comment.
