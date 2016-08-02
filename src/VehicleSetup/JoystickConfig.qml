@@ -381,7 +381,7 @@ QGCView {
 
                         Column {
                             spacing: ScreenTools.defaultFontPixelHeight / 3
-                            visible: !_activeVehicle.sub
+                            visible: _activeVehicle.supportsThrottleModeCenterZero
 
                             ExclusiveGroup { id: throttleModeExclusiveGroup }
 
@@ -399,6 +399,18 @@ QGCView {
                                 checked:        _activeJoystick.throttleMode == 1
 
                                 onClicked: _activeJoystick.throttleMode = 1
+                            }
+                        }
+
+                        Column {
+                            spacing: ScreenTools.defaultFontPixelHeight / 3
+
+                            QGCCheckBox {
+                                id:         exponential
+                                checked:    _activeJoystick.exponential
+                                text:       qsTr("Use exponential curve on roll, pitch, yaw")
+
+                                onClicked:  _activeJoystick.exponential = checked
                             }
                         }
 
@@ -449,8 +461,8 @@ QGCView {
                             if (buttonActionRepeater.itemAt(index)) {
                                 buttonActionRepeater.itemAt(index).pressed = pressed
                             }
-                            if (subButtonActionRepeater.itemAt(index)) {
-                                subButtonActionRepeater.itemAt(index).pressed = pressed
+                            if (jsButtonActionRepeater.itemAt(index)) {
+                                jsButtonActionRepeater.itemAt(index).pressed = pressed
                             }
                         }
                     }
@@ -474,7 +486,7 @@ QGCView {
 
                             Row {
                                 spacing: ScreenTools.defaultFontPixelWidth
-                                visible: (_activeVehicle.manualControlReservedButtonCount == -1 ? false : modelData >= _activeVehicle.manualControlReservedButtonCount) && !_activeVehicle.sub
+                                visible: (_activeVehicle.manualControlReservedButtonCount == -1 ? false : modelData >= _activeVehicle.manualControlReservedButtonCount) && !_activeVehicle.supportsJSButton
 
                                 property bool pressed
 
@@ -516,7 +528,7 @@ QGCView {
 
                         Row {
                             spacing: ScreenTools.defaultFontPixelWidth
-                            visible: _activeVehicle.sub
+                            visible: _activeVehicle.supportsJSButton
 
                             QGCLabel {
                                 horizontalAlignment:    Text.AlignHCenter
@@ -536,12 +548,12 @@ QGCView {
                         } // Row
 
                         Repeater {
-                            id:     subButtonActionRepeater
+                            id:     jsButtonActionRepeater
                             model:  _activeJoystick.totalButtonCount
 
                             Row {
                                 spacing: ScreenTools.defaultFontPixelWidth
-                                visible: _activeVehicle.sub
+                                visible: _activeVehicle.supportsJSButton
 
                                 property bool pressed
 
@@ -564,14 +576,14 @@ QGCView {
                                 }
 
                                 FactComboBox {
-                                    id:         mainSubButtonActionCombo
+                                    id:         mainJSButtonActionCombo
                                     width:      ScreenTools.defaultFontPixelWidth * 15
                                     fact:       controller.parameterExists(-1, "BTN"+index+"_FUNCTION") ? controller.getParameterFact(-1, "BTN" + index + "_FUNCTION") : null;
                                     indexModel: false
                                 }
 
                                 FactComboBox {
-                                    id:         shiftSubButtonActionCombo
+                                    id:         shiftJSButtonActionCombo
                                     width:      ScreenTools.defaultFontPixelWidth * 15
                                     fact:       controller.parameterExists(-1, "BTN"+index+"_SFUNCTION") ? controller.getParameterFact(-1, "BTN" + index + "_SFUNCTION") : null;
                                     indexModel: false
