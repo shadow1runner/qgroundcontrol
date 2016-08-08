@@ -111,6 +111,7 @@ int main(int argc, char *argv[])
     AppMessages::installHandler();
 
 #ifndef __mobile__
+#ifndef QT_DEBUG
     //-- Test for another instance already running. If that's the case, we simply exit.
     QHostAddress host("127.0.0.1");
     QUdpSocket socket;
@@ -118,6 +119,7 @@ int main(int argc, char *argv[])
         qWarning() << "Another instance already running. Exiting.";
         exit(-1);
     }
+#endif
 #endif
 
 #ifdef Q_OS_MAC
