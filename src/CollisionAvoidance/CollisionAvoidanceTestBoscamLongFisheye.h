@@ -15,13 +15,13 @@ private slots:
     void cleanup(); 
 
     // FPV videos, 90 deg down
-//     void _5mHover();
-//     void fastFenceOverfly();
-//     void fenceCrash2();
-//     void fenceCrash();
-//     void fenceHover2();
-//     void fenceHover();
-//     void houseCrash();
+    void _5mHover();
+    void fastFenceOverfly();
+    void fenceCrash2();
+    void fenceCrash();
+    void fenceHover2();
+    void fenceHover();
+    void houseCrash();
     void balconyCrash();
 
 //     // FPV videos, 45 deg down
