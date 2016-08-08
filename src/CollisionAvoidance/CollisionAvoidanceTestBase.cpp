@@ -29,7 +29,6 @@ void CollisionAvoidanceTestBase::_init()
     settings.WriteToOutputEnabled = false;
     settings.UndistortFrames = false;
     settings.ClearOldFramesEnabled = false;
-    settings.UndistortFrames = false;
     settings.InlierProportionThresholdEnabled = true;
     settings.InlierProportionThreshold = 0.003;
 
@@ -54,8 +53,16 @@ void CollisionAvoidanceTestBase::_testCa(CollisionAvoidanceSettings& settings, Q
 {
 	OwnFlowWorker worker(settings, toolbox);
     auto* ownFlow = worker.ownFlow();
+
+    auto caTriggered = false;
+
+    // make sure that the latest & gratest ocam model is used (if `UndistortFrames` is true)
+    settings.reloadOcamModel();
+
     connect(ownFlow, &hw::OwnFlow::collisionImmanent,
-            this, [ownFlow, this, &settings, dto] (const cv::Mat& frame, unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, std::shared_ptr<hw::CollisionDetectorResult> detectorResult, double lastDivergence, double avgDivergence) {
+            this, [ownFlow, this, &settings, dto, &caTriggered] (const cv::Mat& frame, unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, std::shared_ptr<hw::CollisionDetectorResult> detectorResult, double lastDivergence, double avgDivergence) {
+
+                caTriggered = true;
 
             	Q_UNUSED(frame);
             	Q_UNUSED(foeFiltered);
@@ -76,4 +83,7 @@ void CollisionAvoidanceTestBase::_testCa(CollisionAvoidanceSettings& settings, Q
 			});
 
 	worker.start();
+
+    // sleep(1); // wait for the lambda above to be invoked (if at all)
+    // QVERIFY(caTriggered == dto.shouldTriggerCollisionImmanent);
 }
