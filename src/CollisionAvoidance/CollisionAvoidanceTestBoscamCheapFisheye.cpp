@@ -25,7 +25,7 @@ void CollisionAvoidanceTestBoscamCheapFisheye::init(void)
 
     // set Boscam fisheye with IR fiter specific camera settings
     settings.UndistortFrames = true;
-    settings.OcamModelPath = "/home/helli/d/m/qgroundcontrol/src/CollisionAvoidance/opticalflow/OCamCalib/calibrationFrames/ir_a3_2/calib_results480p.txt";
+    settings.OcamModelPath = "/home/helli/d/m/qgroundcontrol/src/CollisionAvoidance/opticalflow/OCamCalib/calibrationFrames/cheapFisheye/ir_a3_2/calib_results480p.txt";
 }
 
 void CollisionAvoidanceTestBoscamCheapFisheye::cleanup(void)
