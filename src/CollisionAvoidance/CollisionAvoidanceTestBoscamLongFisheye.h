@@ -22,18 +22,16 @@ private slots:
     void fenceHover2();
     void fenceHover();
     void houseCrash();
-    void balconyCrash();
+    void balconyCrash(); // works well, all the others above are not that well :S
 
-//     // FPV videos, 45 deg down
-//     void _45deg_5mHover();
-//     void _45deg_fastFenceOverfly();
-//     void _45deg_fenceCrash2();
+    // FPV videos, 45 deg down
+    void _45deg_5mHover(); // veeeeery bad one
     void _45deg_fenceCrash3();
-//     void _45deg_fenceCrash();
-//     void _45deg_houseHover2();
-//     void _45deg_houseHover();
-//     void _45deg_noCaHover();
-//     void _45deg_slowFenceOverfly();
+    void _45deg_fenceCrash();
+    void _45deg_houseHover2();
+    void _45deg_houseHover();
+    void _45deg_noCaHover();
+    void _45deg_slowFenceOverfly();
  };
 
 #endif

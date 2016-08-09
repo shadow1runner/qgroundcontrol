@@ -58,6 +58,9 @@ void CollisionAvoidanceTestBoscamLongFisheye::fastFenceOverfly()
 
     CollisionAvoidanceTestSettingsDto dto;
     dto.shouldTriggerCollisionImmanent = false;
+    // the video looks good at the beginning, but then the quadcopter goes so fast that the algorithm can't detect any proper collision frames any more
+    // TAKEAWAY: does not work for high velocities
+    // TODO: what's high?
 
     CollisionAvoidanceTestBase::_testCa(settings, qgcApp()->toolbox(), dto);
 }
@@ -68,9 +71,7 @@ void CollisionAvoidanceTestBoscamLongFisheye::fenceCrash2()
     settings.setFileName("/home/helli/d/m/qgroundcontrol/src/CollisionAvoidance/opticalflow/res/boscam/fisheye/longFisheye/90degDown/fenceCrash2.avi");
 
     CollisionAvoidanceTestSettingsDto dto;
-    dto.shouldTriggerCollisionImmanent = true;
-    dto.lowerFrameNumberBound = 45;
-    dto.upperFrameNumberBound = 60;
+    dto.shouldTriggerCollisionImmanent = false;
 
     CollisionAvoidanceTestBase::_testCa(settings, qgcApp()->toolbox(), dto);
 }
@@ -81,9 +82,7 @@ void CollisionAvoidanceTestBoscamLongFisheye::fenceCrash()
     settings.setFileName("/home/helli/d/m/qgroundcontrol/src/CollisionAvoidance/opticalflow/res/boscam/fisheye/longFisheye/90degDown/fenceCrash.avi");
 
     CollisionAvoidanceTestSettingsDto dto;
-    dto.shouldTriggerCollisionImmanent = true;
-    dto.lowerFrameNumberBound = 45;
-    dto.upperFrameNumberBound = 90;
+    dto.shouldTriggerCollisionImmanent = false; // sometimes gives false positive at the last 30 frames though
 
     CollisionAvoidanceTestBase::_testCa(settings, qgcApp()->toolbox(), dto);
 }
@@ -107,9 +106,7 @@ void CollisionAvoidanceTestBoscamLongFisheye::fenceHover()
     settings.setFileName("/home/helli/d/m/qgroundcontrol/src/CollisionAvoidance/opticalflow/res/boscam/fisheye/longFisheye/90degDown/fenceHover.avi");
 
     CollisionAvoidanceTestSettingsDto dto;
-    dto.shouldTriggerCollisionImmanent = true;
-    dto.lowerFrameNumberBound = 45;
-    dto.upperFrameNumberBound = 60;
+    dto.shouldTriggerCollisionImmanent = false;
 
     CollisionAvoidanceTestBase::_testCa(settings, qgcApp()->toolbox(), dto);
 }
@@ -120,9 +117,7 @@ void CollisionAvoidanceTestBoscamLongFisheye::houseCrash()
     settings.setFileName("/home/helli/d/m/qgroundcontrol/src/CollisionAvoidance/opticalflow/res/boscam/fisheye/longFisheye/90degDown/houseCrash.avi");
 
     CollisionAvoidanceTestSettingsDto dto;
-    dto.shouldTriggerCollisionImmanent = true;
-    dto.lowerFrameNumberBound = 45;
-    dto.upperFrameNumberBound = 60;
+    dto.shouldTriggerCollisionImmanent = false;
 
     CollisionAvoidanceTestBase::_testCa(settings, qgcApp()->toolbox(), dto);
 }
@@ -136,48 +131,22 @@ void CollisionAvoidanceTestBoscamLongFisheye::balconyCrash()
     dto.shouldTriggerCollisionImmanent = true;
     dto.lowerFrameNumberBound = 60;
     dto.upperFrameNumberBound = 85;
+    // TODO: this is BY FAR the best video
 
     CollisionAvoidanceTestBase::_testCa(settings, qgcApp()->toolbox(), dto);
 }
 
-// void CollisionAvoidanceTestBoscamLongFisheye::_45deg_5mHover()
-// {
-//     CollisionAvoidanceSettings& settings = CollisionAvoidanceSettings::getInstance();
-//     settings.setFileName("/home/helli/d/m/qgroundcontrol/src/CollisionAvoidance/opticalflow/res/boscam/fisheye/longFisheye/45degDown/5mHover.avi");
+void CollisionAvoidanceTestBoscamLongFisheye::_45deg_5mHover()
+{
+    CollisionAvoidanceSettings& settings = CollisionAvoidanceSettings::getInstance();
+    settings.setFileName("/home/helli/d/m/qgroundcontrol/src/CollisionAvoidance/opticalflow/res/boscam/fisheye/longFisheye/45degDown/5mHover.avi");
 
-//     CollisionAvoidanceTestSettingsDto dto;
-//     dto.shouldTriggerCollisionImmanent = true;
-//     dto.lowerFrameNumberBound = 45;
-//     dto.upperFrameNumberBound = 60;
+    CollisionAvoidanceTestSettingsDto dto;
+    dto.shouldTriggerCollisionImmanent = false;
+    // todo: triggers way too early even though it shouldn't do at all
 
-//     CollisionAvoidanceTestBase::_testCa(settings, qgcApp()->toolbox(), dto);    
-// }
-
-// void CollisionAvoidanceTestBoscamLongFisheye::_45deg_fastFenceOverfly()
-// {
-//     CollisionAvoidanceSettings& settings = CollisionAvoidanceSettings::getInstance();
-//     settings.setFileName("/home/helli/d/m/qgroundcontrol/src/CollisionAvoidance/opticalflow/res/boscam/fisheye/longFisheye/45degDown/fastFenceOverfly.avi");
-
-//     CollisionAvoidanceTestSettingsDto dto;
-//     dto.shouldTriggerCollisionImmanent = true;
-//     dto.lowerFrameNumberBound = 45;
-//     dto.upperFrameNumberBound = 60;
-
-//     CollisionAvoidanceTestBase::_testCa(settings, qgcApp()->toolbox(), dto);    
-// }
-
-// void CollisionAvoidanceTestBoscamLongFisheye::_45deg_fenceCrash2()
-// {
-//     CollisionAvoidanceSettings& settings = CollisionAvoidanceSettings::getInstance();
-//     settings.setFileName("/home/helli/d/m/qgroundcontrol/src/CollisionAvoidance/opticalflow/res/boscam/fisheye/longFisheye/45degDown/fenceCrash2.avi");
-
-//     CollisionAvoidanceTestSettingsDto dto;
-//     dto.shouldTriggerCollisionImmanent = true;
-//     dto.lowerFrameNumberBound = 45;
-//     dto.upperFrameNumberBound = 60;
-
-//     CollisionAvoidanceTestBase::_testCa(settings, qgcApp()->toolbox(), dto);    
-// }
+    CollisionAvoidanceTestBase::_testCa(settings, qgcApp()->toolbox(), dto);    
+}
 
 void CollisionAvoidanceTestBoscamLongFisheye::_45deg_fenceCrash3()
 {
@@ -192,68 +161,64 @@ void CollisionAvoidanceTestBoscamLongFisheye::_45deg_fenceCrash3()
     CollisionAvoidanceTestBase::_testCa(settings, qgcApp()->toolbox(), dto);    
 }
 
-// void CollisionAvoidanceTestBoscamLongFisheye::_45deg_fenceCrash()
-// {
-//     CollisionAvoidanceSettings& settings = CollisionAvoidanceSettings::getInstance();
-//     settings.setFileName("/home/helli/d/m/qgroundcontrol/src/CollisionAvoidance/opticalflow/res/boscam/fisheye/longFisheye/45degDown/fenceCrash.avi");
+void CollisionAvoidanceTestBoscamLongFisheye::_45deg_fenceCrash()
+{
+    CollisionAvoidanceSettings& settings = CollisionAvoidanceSettings::getInstance();
+    settings.setFileName("/home/helli/d/m/qgroundcontrol/src/CollisionAvoidance/opticalflow/res/boscam/fisheye/longFisheye/45degDown/fenceCrash.avi");
 
-//     CollisionAvoidanceTestSettingsDto dto;
-//     dto.shouldTriggerCollisionImmanent = true;
-//     dto.lowerFrameNumberBound = 45;
-//     dto.upperFrameNumberBound = 60;
+    CollisionAvoidanceTestSettingsDto dto;
+    dto.shouldTriggerCollisionImmanent = false;
 
-//     CollisionAvoidanceTestBase::_testCa(settings, qgcApp()->toolbox(), dto);    
-// }
+    CollisionAvoidanceTestBase::_testCa(settings, qgcApp()->toolbox(), dto);    
+}
 
-// void CollisionAvoidanceTestBoscamLongFisheye::_45deg_houseHover2()
-// {
-//     CollisionAvoidanceSettings& settings = CollisionAvoidanceSettings::getInstance();
-//     settings.setFileName("/home/helli/d/m/qgroundcontrol/src/CollisionAvoidance/opticalflow/res/boscam/fisheye/longFisheye/45degDown/houseHover2.avi");
+void CollisionAvoidanceTestBoscamLongFisheye::_45deg_houseHover2()
+{
+    CollisionAvoidanceSettings& settings = CollisionAvoidanceSettings::getInstance();
+    settings.setFileName("/home/helli/d/m/qgroundcontrol/src/CollisionAvoidance/opticalflow/res/boscam/fisheye/longFisheye/45degDown/houseHover2.avi");
 
-//     CollisionAvoidanceTestSettingsDto dto;
-//     dto.shouldTriggerCollisionImmanent = true;
-//     dto.lowerFrameNumberBound = 45;
-//     dto.upperFrameNumberBound = 60;
+    CollisionAvoidanceTestSettingsDto dto;
+    dto.shouldTriggerCollisionImmanent = false;
 
-//     CollisionAvoidanceTestBase::_testCa(settings, qgcApp()->toolbox(), dto);    
-// }
+    CollisionAvoidanceTestBase::_testCa(settings, qgcApp()->toolbox(), dto);    
+}
 
-// void CollisionAvoidanceTestBoscamLongFisheye::_45deg_houseHover()
-// {
-//     CollisionAvoidanceSettings& settings = CollisionAvoidanceSettings::getInstance();
-//     settings.setFileName("/home/helli/d/m/qgroundcontrol/src/CollisionAvoidance/opticalflow/res/boscam/fisheye/longFisheye/45degDown/houseHover.avi");
+void CollisionAvoidanceTestBoscamLongFisheye::_45deg_houseHover()
+{
+    CollisionAvoidanceSettings& settings = CollisionAvoidanceSettings::getInstance();
+    settings.setFileName("/home/helli/d/m/qgroundcontrol/src/CollisionAvoidance/opticalflow/res/boscam/fisheye/longFisheye/45degDown/houseHover.avi");
 
-//     CollisionAvoidanceTestSettingsDto dto;
-//     dto.shouldTriggerCollisionImmanent = true;
-//     dto.lowerFrameNumberBound = 45;
-//     dto.upperFrameNumberBound = 60;
+    CollisionAvoidanceTestSettingsDto dto;
+    dto.shouldTriggerCollisionImmanent = true;
+    dto.lowerFrameNumberBound = 270;
+    dto.upperFrameNumberBound = 290;
+    // TODO # 274 is all in the black :S
 
-//     CollisionAvoidanceTestBase::_testCa(settings, qgcApp()->toolbox(), dto);    
-// }
+    CollisionAvoidanceTestBase::_testCa(settings, qgcApp()->toolbox(), dto);    
+}
 
-// void CollisionAvoidanceTestBoscamLongFisheye::_45deg_noCaHover()
-// {
-//     CollisionAvoidanceSettings& settings = CollisionAvoidanceSettings::getInstance();
-//     settings.setFileName("/home/helli/d/m/qgroundcontrol/src/CollisionAvoidance/opticalflow/res/boscam/fisheye/longFisheye/45degDown/noCaHover.avi");
+void CollisionAvoidanceTestBoscamLongFisheye::_45deg_noCaHover()
+{
+    CollisionAvoidanceSettings& settings = CollisionAvoidanceSettings::getInstance();
+    settings.setFileName("/home/helli/d/m/qgroundcontrol/src/CollisionAvoidance/opticalflow/res/boscam/fisheye/longFisheye/45degDown/noCaHover.avi");
 
-//     CollisionAvoidanceTestSettingsDto dto;
-//     dto.shouldTriggerCollisionImmanent = true;
-//     dto.lowerFrameNumberBound = 45;
-//     dto.upperFrameNumberBound = 60;
+    CollisionAvoidanceTestSettingsDto dto;
+    dto.shouldTriggerCollisionImmanent = false;
+    // TODO: this video triggers due to too high avgDivergence, and also quite early
 
-//     CollisionAvoidanceTestBase::_testCa(settings, qgcApp()->toolbox(), dto);    
-// }
+    CollisionAvoidanceTestBase::_testCa(settings, qgcApp()->toolbox(), dto);    
+}
 
-// void CollisionAvoidanceTestBoscamLongFisheye::_45deg_slowFenceOverfly()
-// {
-//     CollisionAvoidanceSettings& settings = CollisionAvoidanceSettings::getInstance();
-//     settings.setFileName("/home/helli/d/m/qgroundcontrol/src/CollisionAvoidance/opticalflow/res/boscam/fisheye/longFisheye/45degDown/slowFenceOverfly.avi");
+void CollisionAvoidanceTestBoscamLongFisheye::_45deg_slowFenceOverfly()
+{
+    CollisionAvoidanceSettings& settings = CollisionAvoidanceSettings::getInstance();
+    settings.setFileName("/home/helli/d/m/qgroundcontrol/src/CollisionAvoidance/opticalflow/res/boscam/fisheye/longFisheye/45degDown/slowFenceOverfly.avi");
 
-//     CollisionAvoidanceTestSettingsDto dto;
-//     dto.shouldTriggerCollisionImmanent = true;
-//     dto.lowerFrameNumberBound = 45;
-//     dto.upperFrameNumberBound = 60;
+    CollisionAvoidanceTestSettingsDto dto;
+    dto.shouldTriggerCollisionImmanent = true;
+    dto.lowerFrameNumberBound = 55;
+    dto.upperFrameNumberBound = 70;
 
-//     CollisionAvoidanceTestBase::_testCa(settings, qgcApp()->toolbox(), dto);    
+    CollisionAvoidanceTestBase::_testCa(settings, qgcApp()->toolbox(), dto);    
 
-// }
+}
