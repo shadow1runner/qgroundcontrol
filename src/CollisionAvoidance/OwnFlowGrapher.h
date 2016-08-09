@@ -20,6 +20,7 @@ class OwnFlowGrapher : public QObject
 private:
   const CollisionAvoidanceSettings& _settings;
   std::ofstream csvFile;
+  std::ofstream csvPerformanceFile;
 
 public:
   explicit OwnFlowGrapher(hw::OwnFlow* const ownFlow, QGCToolbox* toolbox, const CollisionAvoidanceSettings& settings, QObject *parent = 0);
@@ -56,6 +57,9 @@ private:
   void writeCsvHeader();
   void logBadFrameToCsv(unsigned long long frameNumber, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured);
   void logGoodFrameToCsv(unsigned long long frameNumber, std::shared_ptr<cv::Point2i> foeFiltered, std::shared_ptr<hw::FocusOfExpansionDto> foe, std::shared_ptr<hw::CollisionDetectorResult> detectorResult, double lastDivergence, double avgDivergence);
-};
 
+  void writePerformanceCsvHeader();
+  void logPerformanceToCsv(double fps, std::shared_ptr<AvgWatch> allWatch, std::shared_ptr<AvgWatch> colliderWatch, std::shared_ptr<AvgWatch> collisionDetectorWatch, std::shared_ptr<AvgWatch> foeWatch, std::shared_ptr<AvgWatch> kalmanWatch, std::shared_ptr<AvgWatch> opticalFlowWatch);
+
+};
 #endif // OWNFLOWGRAPHER_H

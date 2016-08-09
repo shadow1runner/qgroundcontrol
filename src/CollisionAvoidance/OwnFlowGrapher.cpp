@@ -58,12 +58,20 @@ OwnFlowGrapher::OwnFlowGrapher(hw::OwnFlow* const ownFlow, QGCToolbox* toolbox, 
         throw new std::invalid_argument(_settings.CsvFilePath.toStdString());
     }
 
+    csvPerformanceFile.open("./ca/peformance.csv", ofstream::out | ofstream::trunc);
+    if(!csvPerformanceFile.is_open())
+    {
+        throw new std::invalid_argument("./ca/peformance.csv");
+    }
+
     writeCsvHeader();
+    writePerformanceCsvHeader();
 }
 
 OwnFlowGrapher::~OwnFlowGrapher()
 {
     csvFile.close();
+    csvPerformanceFile.close();
 }
 
 
@@ -103,13 +111,13 @@ void OwnFlowGrapher::_handleCollisionAvoidanceBadFrame(
 void OwnFlowGrapher::_handleCollisionAvoidanceFrameTimings(
     std::shared_ptr<AvgWatch> allWatch,
     std::shared_ptr<AvgWatch> colliderWatch,
-    std::shared_ptr<AvgWatch> divWatch,
+    std::shared_ptr<AvgWatch> collisionDetectorWatch,
     std::shared_ptr<AvgWatch> foeWatch,
     std::shared_ptr<AvgWatch> kalmanWatch,
     std::shared_ptr<AvgWatch> opticalFlowWatch)
 {
     emit valueChanged(getUASID(), "collidingTime", "s", QVariant(colliderWatch->elapsedLast()/1e9), getUnixTime());
-    emit valueChanged(getUASID(), "divergenceTime", "s", QVariant(divWatch->elapsedLast()/1e9), getUnixTime());
+    emit valueChanged(getUASID(), "detectorTime", "s", QVariant(collisionDetectorWatch->elapsedLast()/1e9), getUnixTime());
     emit valueChanged(getUASID(), "foeTime", "s", QVariant(foeWatch->elapsedLast()/1e9), getUnixTime());
     emit valueChanged(getUASID(), "kalmanTime", "s", QVariant(kalmanWatch->elapsedLast()/1e9), getUnixTime());
     emit valueChanged(getUASID(), "opticalFlowTime", "s", QVariant(opticalFlowWatch->elapsedLast()/1e9), getUnixTime());
@@ -117,6 +125,15 @@ void OwnFlowGrapher::_handleCollisionAvoidanceFrameTimings(
     auto sec = allWatch->elapsedLast()/1e9;
     auto fps = 1.0/sec;
     emit valueChanged(getUASID(),"fps","-",QVariant(fps), getUnixTime());
+
+    logPerformanceToCsv(
+        fps,
+        allWatch,
+        colliderWatch,
+        collisionDetectorWatch,
+        foeWatch,
+        kalmanWatch,
+        opticalFlowWatch);
 }
 
 void OwnFlowGrapher::_activeVehicleChanged(Vehicle* activeVehicle)
@@ -191,4 +208,38 @@ void OwnFlowGrapher::logGoodFrameToCsv(unsigned long long frameNumber, std::shar
     csvFile << "," << foe->getNumberOfInliers();
     csvFile << "," << foe->getNumberOfParticles();
     csvFile << std::endl;
+}
+
+void OwnFlowGrapher::writePerformanceCsvHeader()
+{
+    csvPerformanceFile << "#";
+    csvPerformanceFile << ",fps";
+    csvPerformanceFile << ",total ms";
+    csvPerformanceFile << ",opticalFlow ms";
+    csvPerformanceFile << ",colliding ms";
+    csvPerformanceFile << ",foeTime ms";
+    csvPerformanceFile << ",kalmanTime ms";
+    csvPerformanceFile << ",detector ms";
+    csvPerformanceFile << std::endl;
+}
+
+void OwnFlowGrapher::logPerformanceToCsv(
+    double fps,
+    std::shared_ptr<AvgWatch> allWatch,
+    std::shared_ptr<AvgWatch> colliderWatch,
+    std::shared_ptr<AvgWatch> collisionDetectorWatch,
+    std::shared_ptr<AvgWatch> foeWatch,
+    std::shared_ptr<AvgWatch> kalmanWatch,
+    std::shared_ptr<AvgWatch> opticalFlowWatch)
+{
+    static unsigned long frameNumber = 0;
+    csvPerformanceFile << frameNumber++;
+    csvPerformanceFile << "," << fps;
+    csvPerformanceFile << "," << allWatch->elapsedLast()/1e6;
+    csvPerformanceFile << "," << opticalFlowWatch->elapsedLast()/1e6;
+    csvPerformanceFile << "," << colliderWatch->elapsedLast()/1e6;
+    csvPerformanceFile << "," << foeWatch->elapsedLast()/1e6;
+    csvPerformanceFile << "," << kalmanWatch->elapsedLast()/1e6;
+    csvPerformanceFile << "," << collisionDetectorWatch->elapsedLast()/1e6;
+    csvPerformanceFile << std::endl;
 }
