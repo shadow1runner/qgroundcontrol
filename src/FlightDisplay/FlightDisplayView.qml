@@ -98,11 +98,11 @@ QGCView {
             _flightMap.zoomLevel = _savedZoomLevel - 3
         }
 
-        QGroundControl.saveBoolGlobalSetting(_mainIsMapKey, _mainIsMap)
         QGroundControl.saveGlobalSetting(_flightMapContainerStateKey, _flightMapContainer.state)
         QGroundControl.saveGlobalSetting(_flightVideoStateKey, _flightVideo.state)
         QGroundControl.saveGlobalSetting(_flightCollisionAvoidanceStateKey, _flightCollisionAvoidance.state)
-    }
+        QGroundControl.saveBoolGlobalSetting(_mainIsMapKey, _mainIsMap)
+        }
 
     function findComponentByState(state) { // returns one of _flightMapContainer, _flightVideo or _flightCollisionAvoidance - only one can have the searched-for `state`
         if(_flightMapContainer.state===state)
