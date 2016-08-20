@@ -30,6 +30,7 @@
 #include "FileManagerTest.h"
 #include "TCPLinkTest.h"
 #include "ParameterLoaderTest.h"
+#include "MissionCommandTreeTest.h"
 #include "CollisionAvoidanceTestGoPro.h"
 #include "CollisionAvoidanceTestBoscamNormalLense.h"
 #include "CollisionAvoidanceTestBoscamCheapFisheye.h"
@@ -52,6 +53,7 @@ UT_REGISTER_TEST(RadioConfigTest)
 UT_REGISTER_TEST(TCPLinkTest)
 UT_REGISTER_TEST(FileManagerTest)
 UT_REGISTER_TEST(ParameterLoaderTest)
+UT_REGISTER_TEST(MissionCommandTreeTest)
 UT_REGISTER_TEST(CollisionAvoidanceTestGoPro)
 UT_REGISTER_TEST(CollisionAvoidanceTestBoscamNormalLense)
 UT_REGISTER_TEST(CollisionAvoidanceTestBoscamCheapFisheye)
