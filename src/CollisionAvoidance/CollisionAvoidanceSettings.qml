@@ -208,7 +208,7 @@ Rectangle {
                         validator:          IntValidator {bottom: 1; top: 6;}
                         onEditingFinished: {
                             var subsampleAmount = parseInt(text)
-                            if(subsampleAmount >= 1 && subsampleAmount <= 6)
+                            if(subsampleAmount >= 0 && subsampleAmount <= 6)
                                 _controller.subsampleAmount = subsampleAmount
                         }
                     }
@@ -489,10 +489,10 @@ Rectangle {
                         anchors.verticalCenter: parent.verticalCenter
                         showUnits:          true
                         unitsLabel:         "%"
-                        validator:          DoubleValidator {bottom: 0.1; top: 100.0; decimals: 2;}
+                        validator:          DoubleValidator {bottom: 0.1; top: 100000.0; decimals: 2;}
                         onEditingFinished: {
                             var divergenceThreshold = parseFloat(text)
-                            if(divergenceThreshold >= 0.1 && divergenceThreshold <= 100.0)
+                            if(divergenceThreshold >= 0.1 && divergenceThreshold <= 100000.0)
                                 _controller.divergenceThreshold = divergenceThreshold/100
                         }
                     }
@@ -552,10 +552,10 @@ Rectangle {
                         anchors.verticalCenter: parent.verticalCenter
                         showUnits:          true
                         unitsLabel:         "%"
-                        validator:          DoubleValidator {bottom: 0.1; top: 100.0; decimals: 2;}
+                        validator:          DoubleValidator {bottom: 0.1; top: 100000.0; decimals: 2;}
                         onEditingFinished: {
                             var avgDivergenceThreshold = parseFloat(text)
-                            if(avgDivergenceThreshold >= 0.1 && avgDivergenceThreshold <= 100.0)
+                            if(avgDivergenceThreshold >= 0.1 && avgDivergenceThreshold <= 100000.0)
                                 _controller.avgDivergenceThreshold = avgDivergenceThreshold/100
                         }
                     }
