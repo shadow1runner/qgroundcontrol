@@ -118,6 +118,7 @@ bool MissionCommandUIInfo::friendlyEdit(void) const
 
 QString MissionCommandUIInfo::friendlyName(void) const
 {
+    return QString(); // hack, otherwise there's always a seg fault
     if (_infoMap.contains(_friendlyNameJsonKey)) {
         return _infoMap[_friendlyNameJsonKey].toString();
     } else {
