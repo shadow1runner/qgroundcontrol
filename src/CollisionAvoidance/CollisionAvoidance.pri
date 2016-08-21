@@ -6,6 +6,7 @@ HEADERS += \
     $$PWD/opticalflow/config.h \
     $$PWD/opticalflow/Converter.h \
     $$PWD/opticalflow/Divergence.h \
+    $$PWD/opticalflow/AffineMotionModel.h \
     $$PWD/opticalflow/DivergenceHistory.h \
     $$PWD/opticalflow/FocusOfExpansionCalculator.h \
     $$PWD/opticalflow/FocusOfExpansionDto.h \
@@ -42,6 +43,7 @@ SOURCES += \
     $$PWD/opticalflow/BufferedFrameGrabber.cpp \
     $$PWD/opticalflow/Converter.cpp \
     $$PWD/opticalflow/Divergence.cpp \
+    $$PWD/opticalflow/AffineMotionModel.cpp \
     $$PWD/opticalflow/DivergenceHistory.cpp \
     $$PWD/opticalflow/FocusOfExpansionCalculator.cpp \
     $$PWD/opticalflow/FocusOfExpansionDto.cpp \
