@@ -34,22 +34,43 @@ SurveyMissionItem::SurveyMissionItem(Vehicle* vehicle, QObject* parent)
     : ComplexMissionItem(vehicle, parent)
     , _sequenceNumber(0)
     , _dirty(false)
-    , _cameraTrigger(false)
+    , _cameraTrigger(true)
     , _gridAltitudeRelative(true)
     , _surveyDistance(0.0)
     , _cameraShots(0)
     , _coveredArea(0.0)
-    , _gridAltitudeFact (0, "Altitude:",        FactMetaData::valueTypeDouble)
-    , _gridAngleFact    (0, "Grid angle:",      FactMetaData::valueTypeDouble)
-    , _gridSpacingFact  (0, "Grid spacing:",    FactMetaData::valueTypeDouble)
-    , _cameraTriggerDistanceFact(0, "Camera trigger distance", FactMetaData::valueTypeDouble)
+
+    , _gridAltitudeFact         (0, "Altitude:",                FactMetaData::valueTypeDouble)
+    , _gridAngleFact            (0, "Grid angle:",              FactMetaData::valueTypeDouble)
+    , _gridSpacingFact          (0, "Grid spacing:",            FactMetaData::valueTypeDouble)
+    , _cameraTriggerDistanceFact(0, "Camera trigger distance",  FactMetaData::valueTypeDouble)
+
+    , _gridAltitudeMetaData         (FactMetaData::valueTypeDouble)
+    , _gridAngleMetaData            (FactMetaData::valueTypeDouble)
+    , _gridSpacingMetaData          (FactMetaData::valueTypeDouble)
+    , _cameraTriggerDistanceMetaData(FactMetaData::valueTypeDouble)
 {
     _gridAltitudeFact.setRawValue(25);
     _gridSpacingFact.setRawValue(10);
     _cameraTriggerDistanceFact.setRawValue(25);
 
-    connect(&_gridSpacingFact,  &Fact::valueChanged, this, &SurveyMissionItem::_generateGrid);
-    connect(&_gridAngleFact,    &Fact::valueChanged, this, &SurveyMissionItem::_generateGrid);
+    _gridAltitudeMetaData.setRawUnits("m");
+    _gridAngleMetaData.setRawUnits("deg");
+    _gridSpacingMetaData.setRawUnits("m");
+    _cameraTriggerDistanceMetaData.setRawUnits("m");
+
+    _gridAltitudeMetaData.setDecimalPlaces(1);
+    _gridAngleMetaData.setDecimalPlaces(1);
+    _gridSpacingMetaData.setDecimalPlaces(2);
+    _cameraTriggerDistanceMetaData.setDecimalPlaces(2);
+
+    _gridAltitudeFact.setMetaData(&_gridAltitudeMetaData);
+    _gridAngleFact.setMetaData(&_gridAngleMetaData);
+    _gridSpacingFact.setMetaData(&_gridSpacingMetaData);
+    _cameraTriggerDistanceFact.setMetaData(&_cameraTriggerDistanceMetaData);
+
+    connect(&_gridSpacingFact,              &Fact::valueChanged, this, &SurveyMissionItem::_generateGrid);
+    connect(&_gridAngleFact,                &Fact::valueChanged, this, &SurveyMissionItem::_generateGrid);
     connect(&_cameraTriggerDistanceFact,    &Fact::valueChanged, this, &SurveyMissionItem::_generateGrid);
 
     connect(this, &SurveyMissionItem::cameraTriggerChanged, this, &SurveyMissionItem::_cameraTriggerChanged);
@@ -78,7 +99,7 @@ void SurveyMissionItem::_setCameraShots(int cameraShots)
 {
     if (_cameraShots != cameraShots) {
         _cameraShots = cameraShots;
-        emit cameraShotsChanged(_cameraShots);
+        emit cameraShotsChanged(this->cameraShots());
     }
 }
 
@@ -517,8 +538,8 @@ void SurveyMissionItem::_gridGenerator(const QList<QPointF>& polygonPoints,  QLi
     // Create set of rotated parallel lines within the expanded bounding rect. Make the lines larger than the
     // bounding box to guarantee intersection.
     QList<QLineF> lineList;
-    float x = largeBoundRect.topLeft().x();
     float gridSpacing = _gridSpacingFact.rawValue().toDouble();
+    float x = largeBoundRect.topLeft().x() - (gridSpacing / 2);
     while (x < largeBoundRect.bottomRight().x()) {
         float yTop =    largeBoundRect.topLeft().y() - 100.0;
         float yBottom = largeBoundRect.bottomRight().y() + 100.0;
@@ -611,4 +632,10 @@ void SurveyMissionItem::_cameraTriggerChanged(void)
         // If we have grid turn on/off camera trigger will add/remove two camera trigger mission items
         emit lastSequenceNumberChanged(lastSequenceNumber());
     }
+    emit cameraShotsChanged(cameraShots());
+}
+
+int SurveyMissionItem::cameraShots(void) const
+{
+    return _cameraTrigger ? _cameraShots : 0;
 }
