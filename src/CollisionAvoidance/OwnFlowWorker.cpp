@@ -14,7 +14,7 @@ OwnFlowWorker::OwnFlowWorker(CollisionAvoidanceSettings& settings, QGCToolbox* t
     , _frameGrabber(new hw::BufferedFrameGrabber(settings, 1, [](cv::Mat input) {return input;}, this))
     , _converter(settings)
     , _roiBuilder(settings, toolbox)
-    , _ownFlow(settings, toolbox, &_roiBuilder)
+    , _ownFlow(settings, &_roiBuilder)
     , _grapher(&_ownFlow, toolbox, settings)
     , _framePersister(settings)
 { 
