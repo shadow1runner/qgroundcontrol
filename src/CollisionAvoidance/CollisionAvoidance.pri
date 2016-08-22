@@ -142,6 +142,10 @@ LIBS += \
     -lboost_regex
 
 #-------------------------------------------------------------------------------------
+# eigne
+INCLUDEPATH += \
+    $$PWD/opticalflow/libs/Eigen
+#-------------------------------------------------------------------------------------
 
 DISTFILES += \
     $$PWD/FlightDisplayViewCollisionAvoidance.qml \
