@@ -661,6 +661,34 @@ Rectangle {
                 }
             }
 
+            //-----------------------------------------------------------------
+            //-- UseLegacyDivergence
+            Row {
+                spacing:    ScreenTools.defaultFontPixelWidth
+                QGCCheckBox {
+                    text:       "Use Legacy Divergence (instead of affine divergence)"
+                    anchors.verticalCenter: parent.verticalCenter
+                    checked:    _controller.useLegacyDivergence
+                    onClicked: {
+                        _controller.useLegacyDivergence = checked
+                    }
+                }
+            }
+
+            //-----------------------------------------------------------------
+            //-- UseCollisionLevelDegradation
+            Row {
+                spacing:    ScreenTools.defaultFontPixelWidth
+                QGCCheckBox {
+                    text:       "Let Collision Level degrade over time"
+                    anchors.verticalCenter: parent.verticalCenter
+                    checked:    _controller.useCollisionLevelDegradation
+                    onClicked: {
+                        _controller.useCollisionLevelDegradation = checked
+                    }
+                }
+            }
+
             //-- RoiEnabled
             Row {
                 spacing:    ScreenTools.defaultFontPixelWidth

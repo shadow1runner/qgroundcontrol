@@ -38,6 +38,8 @@ public:
    Q_PROPERTY(int divergenceHistoryBufferSize       READ getDivergenceHistoryBufferSize WRITE setDivergenceHistoryBufferSize NOTIFY divergenceHistoryBufferSizeChanged);
    Q_PROPERTY(bool undistortFrames                  READ getUndistortFrames WRITE setUndistortFrames NOTIFY undistortFramesChanged);
    Q_PROPERTY(QString ocamModelPath                 READ getOcamModelPath WRITE setOcamModelPath NOTIFY ocamModelPathChanged);
+   Q_PROPERTY(bool useLegacyDivergence              READ getUseLegacyDivergence WRITE setUseLegacyDivergence NOTIFY UseLegacyDivergenceChanged);
+   Q_PROPERTY(bool useCollisionLevelDegradation     READ getUseCollisionLevelDegradation WRITE setUseCollisionLevelDegradation NOTIFY UseCollisionLevelDegradationChanged);
 
    Q_PROPERTY(bool withholdCollisionAction          READ getWithholdCollisionAction WRITE setWithholdCollisionAction NOTIFY withholdCollisionActionChanged);
    Q_PROPERTY(bool AutoResumeAfterCollision         READ getAutoResumeAfterCollision WRITE setAutoResumeAfterCollision NOTIFY AutoResumeAfterCollisionChanged);
@@ -87,6 +89,8 @@ public:
 
     bool              getUndistortFrames() const         { return _settings.UndistortFrames; }
     const QString     getOcamModelPath() const           { return _settings.OcamModelPath; }
+    bool              getUseLegacyDivergence() const         { return _settings.UseLegacyDivergence; }
+    bool              getUseCollisionLevelDegradation() const         { return _settings.UseCollisionLevelDegradation; }
 
     bool              getWithholdCollisionAction() const { return _settings.WithholdCollisionAction; }
     bool              getAutoResumeAfterCollision() const { return _settings.AutoResumeAfterCollision; }
@@ -137,6 +141,8 @@ signals:
 
   void undistortFramesChanged(bool value);
   void ocamModelPathChanged(QString value);
+  void UseLegacyDivergenceChanged(bool value);
+  void UseCollisionLevelDegradationChanged(bool value);
 
   void withholdCollisionActionChanged(bool value);
   void AutoResumeAfterCollisionChanged(bool value);
@@ -186,6 +192,8 @@ public slots:
     void setDivergenceHistoryBufferSize(int value)          { _settings.DivergenceHistoryBufferSize = value; _settings.storeSettings(); emit divergenceHistoryBufferSizeChanged(value); }
     void setUndistortFrames(bool value)                     { _settings.UndistortFrames = value; _settings.storeSettings(); emit undistortFramesChanged(value); }
     void setOcamModelPath(QString value)                    { _settings.OcamModelPath = value; _settings.storeSettings(); emit ocamModelPathChanged(value); }
+    void setUseLegacyDivergence(bool value)                 { _settings.UseLegacyDivergence = value; _settings.storeSettings(); emit UseLegacyDivergenceChanged(value); }
+    void setUseCollisionLevelDegradation(bool value)        { _settings.UseCollisionLevelDegradation = value; _settings.storeSettings(); emit UseCollisionLevelDegradationChanged(value); }
 
     void setWithholdCollisionAction(bool value)             { _settings.WithholdCollisionAction = value; _settings.storeSettings(); emit withholdCollisionActionChanged(value); }
     void setAutoResumeAfterCollision(bool value)            { _settings.AutoResumeAfterCollision = value; _settings.storeSettings(); emit AutoResumeAfterCollisionChanged(value); }
