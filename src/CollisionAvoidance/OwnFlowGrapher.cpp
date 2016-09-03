@@ -97,15 +97,17 @@ void OwnFlowGrapher::_handleCollisionAvoidanceBadFrame(
     unsigned long long skipFrameCount, 
     unsigned long long totalFrameCount,
     std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured,
+    double avgDivergence,
     const cv::Mat& convertedColorFrame)
 {
     Q_UNUSED(badFrame);
     Q_UNUSED(foeMeasured);
 
-    logBadFrameToCsv(totalFrameCount, foeMeasured);
+    logBadFrameToCsv(totalFrameCount, avgDivergence, foeMeasured);
 
     emit valueChanged(getUASID(), "skipFrameRatio", "-", QVariant(skipFrameCount/(double)totalFrameCount), getUnixTime());
     emit valueChanged(getUASID(), "skipFrames", "-", QVariant(skipFrameCount), getUnixTime());
+    emit valueChanged(getUASID(), "avgDivergence","-",QVariant(avgDivergence), getUnixTime());
 }
 
 void OwnFlowGrapher::_handleCollisionAvoidanceFrameTimings(
@@ -173,14 +175,14 @@ void OwnFlowGrapher::writeCsvHeader()
     csvFile << std::endl;
 }
 
-void OwnFlowGrapher::logBadFrameToCsv(unsigned long long frameNumber, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured)
+void OwnFlowGrapher::logBadFrameToCsv(unsigned long long frameNumber, double avgDivergence, std::shared_ptr<hw::FocusOfExpansionDto> foeMeasured)
 {
     csvFile << frameNumber;
     csvFile << ","; // << static_cast<int>(CollisionLevel);
     csvFile << ","; // << CollisionHelper::toString(CollisionLevel);
     csvFile << ","; // << detectorResult->getEvaluationResultText();
     csvFile << ","; // << lastDivergence;
-    csvFile << ","; // << avgDivergence;
+    csvFile << "," << avgDivergence;
     csvFile << ","; // << foeFiltered->x;
     csvFile << ","; // << foeFiltered->y;
     csvFile << "," << foeMeasured->getInlierProportion();
