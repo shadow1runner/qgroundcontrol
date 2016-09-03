@@ -16,11 +16,15 @@ void CollisionAvoidanceTestBoscamLongFisheye::init(void)
 
     CollisionAvoidanceSettings& settings = CollisionAvoidanceSettings::getInstance();
 
+    // settings for affine divergence
+    settings.DivergenceThreshold = 0.03;
+    settings.AvgDivergenceThreshold = 0.02;
+
+    // settings for hw::Divergence
+    // settings.DivergenceThreshold = 0.20;
+    // settings.AvgDivergenceThreshold = 0.16;
+    
     // set Boscam (normal lense) specific camera settings
-
-
-    settings.DivergenceThreshold = 0.20;
-    settings.AvgDivergenceThreshold = 0.16;
     settings.SubsampleAmount = 2; // Boscam has a lower resolution than the GoPro
     settings.WindowSize = 6; // otherwise there would hardly be any frame with big enough inlier ratio
     settings.RawFrameRotation = 1; // rotate 90 degree right
@@ -129,8 +133,8 @@ void CollisionAvoidanceTestBoscamLongFisheye::balconyCrash()
 
     CollisionAvoidanceTestSettingsDto dto;
     dto.shouldTriggerCollisionImmanent = true;
-    dto.lowerFrameNumberBound = 60;
-    dto.upperFrameNumberBound = 85;
+    dto.lowerFrameNumberBound = 70;
+    dto.upperFrameNumberBound = 95;
     // TODO: this is BY FAR the best video
 
     CollisionAvoidanceTestBase::_testCa(settings, qgcApp()->toolbox(), dto);
