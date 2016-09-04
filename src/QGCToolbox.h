@@ -32,6 +32,7 @@ class QGCApplication;
 class QGCImageProvider;
 class UASMessageHandler;
 class QGCPositionManager;
+class VideoManager;
 class OwnFlowHandler;
 class CollisionAvoidanceDataProvider;
 
@@ -57,6 +58,7 @@ public:
     UASMessageHandler*          uasMessageHandler(void)         { return _uasMessageHandler; }
     FollowMe*                   followMe(void)                  { return _followMe; }
     QGCPositionManager*         qgcPositionManager(void)        { return _qgcPositionManager; }
+    VideoManager*               videoManager(void)              { return _videoManager; }
     OwnFlowHandler*             ownFlowHandler(void)            { return _ownFlowHandler; }
     CollisionAvoidanceDataProvider*  collisionAvoidanceDataProvider(void)         { return _collisionAvoidanceDataProvider; }
 #ifndef __mobile__
@@ -83,6 +85,7 @@ private:
     UASMessageHandler*          _uasMessageHandler;
     FollowMe*                   _followMe;
     QGCPositionManager*         _qgcPositionManager;
+    VideoManager*               _videoManager;
     OwnFlowHandler*             _ownFlowHandler;
     CollisionAvoidanceDataProvider*          _collisionAvoidanceDataProvider;
 

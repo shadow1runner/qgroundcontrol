@@ -14,6 +14,7 @@ import QtQuick.Controls.Styles  1.2
 import QtQuick.Dialogs          1.2
 import QtLocation               5.3
 import QtPositioning            5.2
+import QtMultimedia             5.5
 
 import QGroundControl               1.0
 import QGroundControl.FlightDisplay 1.0
@@ -34,32 +35,11 @@ QGCView {
 
     QGCPalette { id: qgcPal; colorGroupEnabled: enabled }
 
-    property var _activeVehicle:    QGroundControl.multiVehicleManager.activeVehicle
-
-    readonly property real _defaultRoll:                0
-    readonly property real _defaultPitch:               0
-    readonly property real _defaultHeading:             0
-    readonly property real _defaultAltitudeAMSL:        0
-    readonly property real _defaultGroundSpeed:         0
-    readonly property real _defaultAirSpeed:            0
-
-    readonly property string _mapName:                          "FlightDisplayView"
-    readonly property string _showMapBackgroundKey:             "/showMapBackground"
-    readonly property string _mainIsMapKey:                     "MainFlyWindowIsMap"
-    readonly property string _LeftPipVisibleKey:                "IsPIPVisible"
-    readonly property string _RightPipVisibleKey:               "IsCollisionPIPVisible"
-    readonly property string _flightMapContainerStateKey:       "FlightMapContainerState"
-    readonly property string _flightVideoStateKey:              "FlightVideoState"
-    readonly property string _flightCollisionAvoidanceStateKey: "FlightCollisionAvoidanceState"
-
-    property bool _isLeftPipVisible:                    QGroundControl.loadBoolGlobalSetting(_LeftPipVisibleKey, true)
-    property bool _isRightPipVisible:                   QGroundControl.loadBoolGlobalSetting(_RightPipVisibleKey, true)
-    
-    property bool _mainIsMap:                           QGroundControl.loadBoolGlobalSetting(_mainIsMapKey, true)
+    property var _activeVehicle:        QGroundControl.multiVehicleManager.activeVehicle
+    property bool _mainIsMap:           QGroundControl.videoManager.hasVideo ? QGroundControl.loadBoolGlobalSetting(_mainIsMapKey,  true) : true
     property string _flightMapContainerState:           QGroundControl.loadGlobalSetting(_flightMapContainerStateKey, "full")
     property string _flightVideoState:                  QGroundControl.loadGlobalSetting(_flightVideoStateKey, "leftPip")
     property string _flightCollisionAvoidanceState:     QGroundControl.loadGlobalSetting(_flightCollisionAvoidanceStateKey, "rightPip")
-
 
     property real _roll:                _activeVehicle ? _activeVehicle.roll.value    : _defaultRoll
     property real _pitch:               _activeVehicle ? _activeVehicle.pitch.value   : _defaultPitch
@@ -74,11 +54,31 @@ QGCView {
 
     property real _savedZoomLevel:      0
 
-    FlightDisplayViewController { id: _controller }
+    property real pipSize:              mainWindow.width * 0.2
+
+    readonly property bool      isBackgroundDark:       _mainIsMap ? (_flightMap ? _flightMap.isSatelliteMap : true) : true
+    readonly property real      _defaultRoll:           0
+    readonly property real      _defaultPitch:          0
+    readonly property real      _defaultHeading:        0
+    readonly property real      _defaultAltitudeAMSL:   0
+    readonly property real      _defaultGroundSpeed:    0
+    readonly property real      _defaultAirSpeed:       0
+    readonly property string    _mapName:               "FlightDisplayView"
+    readonly property string    _showMapBackgroundKey:  "/showMapBackground"
+    readonly property string    _mainIsMapKey:          "MainFlyWindowIsMap"
+    readonly property string _LeftPipVisibleKey:                "IsPIPVisible"
+    readonly property string _RightPipVisibleKey:               "IsCollisionPIPVisible"
+    readonly property string _flightMapContainerStateKey:       "FlightMapContainerState"
+    readonly property string _flightVideoStateKey:              "FlightVideoState"
+    readonly property string _flightCollisionAvoidanceStateKey: "FlightCollisionAvoidanceState"
+
+    property bool _isLeftPipVisible:                    QGroundControl.loadBoolGlobalSetting(_LeftPipVisibleKey, true)
+    property bool _isRightPipVisible:                   QGroundControl.loadBoolGlobalSetting(_RightPipVisibleKey, true)
+
     CollisionAvoidanceController { id: _caController }
 
     function doStateTransition(sender) { // sender can either be `_leftPipControl` or `_rightPipControl`
-        var mode = (sender===_leftPipControl ? "leftPip" : "rightPip")
+        var mode = (sender===_rightPipControl ? "rightPip" : "leftPip")
         var maximizeMe  = findComponentByState(mode)
         var minimizeMe = findComponentByState("full")
 
@@ -102,15 +102,15 @@ QGCView {
         QGroundControl.saveGlobalSetting(_flightVideoStateKey, _flightVideo.state)
         QGroundControl.saveGlobalSetting(_flightCollisionAvoidanceStateKey, _flightCollisionAvoidance.state)
         QGroundControl.saveBoolGlobalSetting(_mainIsMapKey, _mainIsMap)
-        }
+    }
 
     function findComponentByState(state) { // returns one of _flightMapContainer, _flightVideo or _flightCollisionAvoidance - only one can have the searched-for `state`
         if(_flightMapContainer.state===state)
             return _flightMapContainer
-       if(_flightVideo.state===state)
-            return _flightVideo
         if(_flightCollisionAvoidance.state===state)
             return _flightCollisionAvoidance
+        if(_flightVideo.state===state)
+             return _flightVideo
     }
 
     function px4JoystickCheck() {
@@ -120,12 +120,12 @@ QGCView {
     }
 
     function setPipVisibility(id, state) {
-        if(id===_leftPipControl) {
-            _isLeftPipVisible = state;
-            QGroundControl.saveBoolGlobalSetting(_LeftPipVisibleKey, state)
-        } else if(id===_rightPipControl) {
+        if(id===_rightPipControl) {
             _isRightPipVisible = state;
             QGroundControl.saveBoolGlobalSetting(_RightPipVisibleKey, state)
+        } else if(id===_leftPipControl) {
+            _isLeftPipVisible = state;
+            QGroundControl.saveBoolGlobalSetting(_LeftPipVisibleKey, state)
         }
     }
 
@@ -152,8 +152,8 @@ QGCView {
         widgetsLoader.source = "FlightDisplayViewWidgets.qml"
         // init states
         _flightMapContainer.state =       _flightMapContainerState
-        _flightVideo.state =              _flightVideoState
         _flightCollisionAvoidance.state = _flightCollisionAvoidanceState
+        _flightVideo.state =              _flightVideoState
 
         px4JoystickCheck()
     }
@@ -205,9 +205,14 @@ QGCView {
         }
 
         //-- Video View
-        FlightDisplayViewVideo {
-            id:                             _flightVideo
-            anchors.margins:                0
+        Item {
+            id:             _flightVideo
+            // z:              _mainIsMap ? _panel.z + 2 : _panel.z + 1
+            // width:          !_mainIsMap ? _panel.width  : pipSize
+            // height:         !_mainIsMap ? _panel.height : pipSize * (9/16)
+            // anchors.left:   _panel.left
+            // anchors.bottom: _panel.bottom
+            // visible:        QGroundControl.videoManager.hasVideo && (!_mainIsMap || _isPipVisible)
             states: [
                 State {
                     name:   "leftPip"
@@ -237,6 +242,18 @@ QGCView {
                     }
                 }
             ]
+            //-- Video Streaming
+            FlightDisplayViewVideo {
+                anchors.fill:   parent
+                visible:        QGroundControl.videoManager.isGStreamer
+            }
+            //-- UVC Video (USB Camera or Video Device)
+            Loader {
+                id:             cameraLoader
+                anchors.fill:   parent
+                visible:        !QGroundControl.videoManager.isGStreamer && ((parent.state==="leftPip" && _isLeftPipVisible) || (parent.state==="rightPip" && _isRightPipVisible)) 
+                source:         QGroundControl.videoManager.uvcEnabled ? "qrc:/qml/FlightDisplayViewUVC.qml" : "qrc:/qml/FlightDisplayViewDummy.qml"
+            }
         }
 
         //-- Collision Avoidance View
@@ -271,7 +288,7 @@ QGCView {
                         visible:            _caController.hasCollisionAvoidanceStream && _isRightPipVisible
                     }
                 }
-            ]
+            ]            
         }
 
         QGCPipable {
@@ -330,10 +347,10 @@ QGCView {
         Loader {
             id:                         virtualJoystickMultiTouch
             z:                          _panel.z + 5
-            width:                      parent.width  - (_leftPipControl.width / 2)
+            width:                      parent.width  - (_rightPipControl.width / 2)
             height:                     Math.min(parent.height * 0.25, ScreenTools.defaultFontPixelWidth * 16)
             visible:                    QGroundControl.virtualTabletJoystick
-            anchors.bottom:             _leftPipControl.top
+            anchors.bottom:             _rightPipControl.top
             anchors.bottomMargin:       ScreenTools.defaultFontPixelHeight * 2
             anchors.horizontalCenter:   widgetsLoader.horizontalCenter
             source:                     "qrc:/qml/VirtualJoystick.qml"

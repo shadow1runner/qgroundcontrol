@@ -27,6 +27,7 @@
 #include "QGCMapEngineManager.h"
 #include "FollowMe.h"
 #include "PositionManager.h"
+#include "VideoManager.h"
 #include "OwnFlowHandler.h"
 #include "CollisionAvoidanceDataProvider.h"
 
@@ -50,6 +51,7 @@ QGCToolbox::QGCToolbox(QGCApplication* app)
     , _uasMessageHandler(NULL)
     , _followMe(NULL)
     , _qgcPositionManager(NULL)
+    , _videoManager(NULL)
     , _ownFlowHandler(NULL)
     , _collisionAvoidanceDataProvider(NULL)
     , _ownFlowHandlerThread(NULL)
@@ -73,6 +75,7 @@ QGCToolbox::QGCToolbox(QGCApplication* app)
     _uasMessageHandler =        new UASMessageHandler(app);
     _qgcPositionManager =       new QGCPositionManager(app);
     _followMe =                 new FollowMe(app);
+    _videoManager =             new VideoManager(app);
     _collisionAvoidanceDataProvider = new CollisionAvoidanceDataProvider(app);
     _ownFlowHandler =           new OwnFlowHandler(app);
 
@@ -100,10 +103,12 @@ QGCToolbox::QGCToolbox(QGCApplication* app)
     _collisionAvoidanceDataProvider->setToolbox(this);
     _ownFlowHandler->setToolbox(this);
     _qgcPositionManager->setToolbox(this);
+    _videoManager->setToolbox(this);
 }
 
 QGCToolbox::~QGCToolbox()
 {
+    delete _videoManager;
     delete _audioOutput;
     delete _autopilotPluginManager;
     delete _factSystem;
