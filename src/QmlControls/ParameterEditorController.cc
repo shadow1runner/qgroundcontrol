@@ -14,6 +14,7 @@
 #include "ParameterEditorController.h"
 #include "AutoPilotPluginManager.h"
 #include "QGCApplication.h"
+#include "ParameterManager.h"
 
 #ifndef __mobile__
 #include "QGCFileDialog.h"
@@ -28,7 +29,7 @@ ParameterEditorController::ParameterEditorController(void)
     : _currentComponentId(_vehicle->defaultComponentId())
     , _parameters(new QmlObjectListModel(this))
 {
-    const QMap<int, QMap<QString, QStringList> >& groupMap = _autopilot->getGroupMap();
+    const QMap<int, QMap<QString, QStringList> >& groupMap = _vehicle->getParameterManager()->getGroupMap();
     foreach (int componentId, groupMap.keys()) {
         _componentIds += QString("%1").arg(componentId);
     }
@@ -48,14 +49,14 @@ ParameterEditorController::~ParameterEditorController()
 
 QStringList ParameterEditorController::getGroupsForComponent(int componentId)
 {
-    const QMap<int, QMap<QString, QStringList> >& groupMap = _autopilot->getGroupMap();
+    const QMap<int, QMap<QString, QStringList> >& groupMap = _vehicle->getParameterManager()->getGroupMap();
 
     return groupMap[componentId].keys();
 }
 
 QStringList ParameterEditorController::getParametersForGroup(int componentId, QString group)
 {
-    const QMap<int, QMap<QString, QStringList> >& groupMap = _autopilot->getGroupMap();
+    const QMap<int, QMap<QString, QStringList> >& groupMap = _vehicle->getParameterManager()->getGroupMap();
 
     return groupMap[componentId][group];
 }
@@ -68,7 +69,7 @@ QStringList ParameterEditorController::searchParametersForComponent(int componen
         if (searchText.isEmpty()) {
             list += paramName;
         } else {
-            Fact* fact = _autopilot->getParameterFact(componentId, paramName);
+            Fact* fact = _vehicle->getParameterFact(componentId, paramName);
             
             if (searchInName && fact->name().contains(searchText, Qt::CaseInsensitive)) {
                 list += paramName;
@@ -187,13 +188,13 @@ void ParameterEditorController::_updateParameters(void)
     QObjectList newParameterList;
 
     if (_searchText.isEmpty()) {
-        const QMap<int, QMap<QString, QStringList> >& groupMap = _autopilot->getGroupMap();
+        const QMap<int, QMap<QString, QStringList> >& groupMap = _vehicle->getParameterManager()->getGroupMap();
         foreach (const QString& parameter, groupMap[_currentComponentId][_currentGroup]) {
-            newParameterList.append(_autopilot->getParameterFact(_currentComponentId, parameter));
+            newParameterList.append(_vehicle->getParameterFact(_currentComponentId, parameter));
         }
     } else {
         foreach(const QString &parameter, _autopilot->parameterNames(_vehicle->defaultComponentId())) {
-            Fact* fact = _autopilot->getParameterFact(_vehicle->defaultComponentId(), parameter);
+            Fact* fact = _vehicle->getParameterFact(_vehicle->defaultComponentId(), parameter);
             if (fact->name().contains(_searchText, Qt::CaseInsensitive) ||
                     fact->shortDescription().contains(_searchText, Qt::CaseInsensitive) ||
                     fact->longDescription().contains(_searchText, Qt::CaseInsensitive)) {

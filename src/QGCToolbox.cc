@@ -78,10 +78,10 @@ QGCToolbox::QGCToolbox(QGCApplication* app)
     _videoManager =             new VideoManager(app);
     _collisionAvoidanceDataProvider = new CollisionAvoidanceDataProvider(app);
     _ownFlowHandler =           new OwnFlowHandler(app);
+}
 
-    _ownFlowHandlerThread = new QThread();
-    _ownFlowHandlerThread->setObjectName("OwnFlowHandler");
-
+void QGCToolbox::setChildToolboxes(void)
+{
     _audioOutput->setToolbox(this);
     _autopilotPluginManager->setToolbox(this);
     _factSystem->setToolbox(this);

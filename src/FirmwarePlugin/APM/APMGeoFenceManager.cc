@@ -12,7 +12,7 @@
 #include "FirmwarePlugin.h"
 #include "MAVLinkProtocol.h"
 #include "QGCApplication.h"
-#include "ParameterLoader.h"
+#include "ParameterManager.h"
 
 const char* APMGeoFenceManager::_fenceTotalParam =     "FENCE_TOTAL";
 const char* APMGeoFenceManager::_fenceActionParam =    "FENCE_ACTION";
@@ -30,7 +30,11 @@ APMGeoFenceManager::APMGeoFenceManager(Vehicle* vehicle)
     , _fenceTypeFact(NULL)
 {
     connect(_vehicle,                       &Vehicle::mavlinkMessageReceived,   this, &APMGeoFenceManager::_mavlinkMessageReceived);
-    connect(_vehicle->getParameterLoader(), &ParameterLoader::parametersReady,  this, &APMGeoFenceManager::_parametersReady);
+    connect(_vehicle->getParameterManager(), &ParameterManager::parametersReady,  this, &APMGeoFenceManager::_parametersReady);
+
+    if (_vehicle->getParameterManager()->parametersAreReady()) {
+        _parametersReady();
+    }
 }
 
 APMGeoFenceManager::~APMGeoFenceManager()
@@ -40,6 +44,10 @@ APMGeoFenceManager::~APMGeoFenceManager()
 
 void APMGeoFenceManager::sendToVehicle(void)
 {
+    if (_vehicle->isOfflineEditingVehicle()) {
+        return;
+    }
+
     if (_readTransactionInProgress) {
         _sendError(InternalError, QStringLiteral("Geo-Fence write attempted while read in progress."));
         return;
@@ -82,6 +90,10 @@ void APMGeoFenceManager::sendToVehicle(void)
 
 void APMGeoFenceManager::loadFromVehicle(void)
 {
+    if (_vehicle->isOfflineEditingVehicle()) {
+        return;
+    }
+
     _polygon.clear();
 
     if (!_geoFenceSupported()) {
@@ -313,4 +325,11 @@ bool APMGeoFenceManager::polygonSupported(void) const
     }
 
     return false;
+}
+
+QString APMGeoFenceManager::editorQml(void) const
+{
+    return _vehicle->multiRotor() ?
+                QStringLiteral("qrc:/FirmwarePlugin/APM/CopterGeoFenceEditor.qml") :
+                QStringLiteral("qrc:/FirmwarePlugin/APM/PlaneGeoFenceEditor.qml");
 }

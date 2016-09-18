@@ -128,6 +128,7 @@ QGCApplication* QGCApplication::_app = NULL;
 
 const char* QGCApplication::parameterFileExtension =    "params";
 const char* QGCApplication::missionFileExtension =      "mission";
+const char* QGCApplication::fenceFileExtension =        "fence";
 const char* QGCApplication::telemetryFileExtension =     "tlog";
 
 const char* QGCApplication::_deleteAllSettingsKey           = "DeleteAllSettingsNextBoot";
@@ -309,7 +310,7 @@ QGCApplication::QGCApplication(int &argc, char* argv[], bool unitTesting)
         settings.setValue(_settingsVersionKey, QGC_SETTINGS_VERSION);
 
         // Clear parameter cache
-        QDir paramDir(ParameterLoader::parameterCacheDir());
+        QDir paramDir(ParameterManager::parameterCacheDir());
         paramDir.removeRecursively();
         paramDir.mkpath(paramDir.absolutePath());
     } else {
@@ -347,6 +348,7 @@ QGCApplication::QGCApplication(int &argc, char* argv[], bool unitTesting)
     initializeVideoStreaming(argc, argv);
 
     _toolbox = new QGCToolbox(this);
+    _toolbox->setChildToolboxes();
 }
 
 QGCApplication::~QGCApplication()

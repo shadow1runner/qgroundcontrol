@@ -66,6 +66,8 @@ public:
 #endif
 
 private:
+    void setChildToolboxes(void);
+
     GAudioOutput*               _audioOutput;
     AutoPilotPluginManager*     _autopilotPluginManager;
     FactSystem*                 _factSystem;
@@ -90,6 +92,8 @@ private:
     CollisionAvoidanceDataProvider*          _collisionAvoidanceDataProvider;
 
     QThread* _ownFlowHandlerThread;
+
+    friend class QGCApplication;
 };
 
 /// This is the base class for all tools

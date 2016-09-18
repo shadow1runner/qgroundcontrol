@@ -119,6 +119,7 @@ Map {
         onMapTypeChanged:   updateActiveMapType()
     }
 
+    /// Ground Station location
     MapQuickItem {
         anchorPoint.x:  sourceItem.width  / 2
         anchorPoint.y:  sourceItem.height / 2
@@ -221,8 +222,7 @@ Map {
 
             var polygonPath = polygonDrawerPolygon.path
             polygonPath.pop() // get rid of drag coordinate
-            polygonDrawer._clearPolygon()
-            polygonDrawer.drawingPolygon = false
+            _cancelCapturePolygon()
             polygonDrawer._callbackObject.polygonCaptureFinished(polygonPath)
             return true
         }
@@ -292,12 +292,27 @@ Map {
         }
 
         function finishAdjustPolygon() {
+            _cancelAdjustPolygon()
+            polygonDrawer._callbackObject.polygonAdjustFinished()
+        }
+
+        /// Cancels an in progress draw or adjust
+        function cancelPolygonEdit() {
+            _cancelAdjustPolygon()
+            _cancelCapturePolygon()
+        }
+
+        function _cancelAdjustPolygon() {
             polygonDrawer.adjustingPolygon = false
             for (var i=0; i<polygonDrawer._vertexDragList.length; i++) {
                 polygonDrawer._vertexDragList[i].destroy()
             }
             polygonDrawer._vertexDragList = []
-            polygonDrawer._callbackObject.polygonAdjustFinished()
+        }
+
+        function _cancelCapturePolygon() {
+            polygonDrawer._clearPolygon()
+            polygonDrawer.drawingPolygon = false
         }
 
         function _clearPolygon() {
