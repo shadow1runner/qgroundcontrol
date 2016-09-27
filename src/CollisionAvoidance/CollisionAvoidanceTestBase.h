@@ -12,10 +12,19 @@ class CollisionAvoidanceTestBase : public UnitTest
 {
     Q_OBJECT
     
+private:
+    int _numberOfFrames = -1;
+    
 public:
     CollisionAvoidanceTestBase(void);
 
+protected slots:
+    void isPausedChanged(bool isPaused);
+
 protected:
+	bool _caTriggered = false;
+	CollisionAvoidanceTestSettingsDto* _dto;
+
     void _init();
     void _cleanup(void);
     void _testCa(CollisionAvoidanceSettings& settings, QGCToolbox* toolbox, CollisionAvoidanceTestSettingsDto& dto);
