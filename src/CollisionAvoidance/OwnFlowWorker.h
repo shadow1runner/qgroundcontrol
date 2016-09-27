@@ -40,6 +40,7 @@ public:
 
     hw::OwnFlow* ownFlow();
     OwnFlowGrapher* ownFlowGrapher();
+    hw::BufferedFrameGrabber* bufferedFrameGrabber();
 
 public slots:
     void start();

@@ -95,6 +95,11 @@ OwnFlowGrapher* OwnFlowWorker::ownFlowGrapher() {
     return &_grapher;
 }
 
+hw::BufferedFrameGrabber* OwnFlowWorker::bufferedFrameGrabber() {
+    return _frameGrabber;
+}
+
+
 void OwnFlowWorker::start() 
 {
     qDebug() << "Starting OwnFlowWorker on Thread" << QThread::currentThreadId();
