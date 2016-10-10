@@ -150,7 +150,7 @@ Rectangle {
                     currentIndex:       _controller.rawFrameRotation
 
                     onActivated: {
-                      _controller.rawFrameRotation = Boolean(index) //fileNameDeviceModel.get(index).value
+                      _controller.rawFrameRotation = index //fileNameDeviceModel.get(index).value
                     }
                 }
             }
