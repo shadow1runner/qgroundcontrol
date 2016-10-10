@@ -246,7 +246,7 @@ QGCView {
         QGCMobileFileDialog {
             openDialog:         true
             fileExtension:      _syncDropDownController.fileExtension
-            onFilenameReturned: _syncDropDownController.loadFromfile(filename)
+            onFilenameReturned: _syncDropDownController.loadFromFile(filename)
         }
     }
 
@@ -256,7 +256,7 @@ QGCView {
         QGCMobileFileDialog {
             openDialog:         false
             fileExtension:      _syncDropDownController.fileExtension
-            onFilenameReturned: _syncDropDownController.saveToFile()
+            onFilenameReturned: _syncDropDownController.saveToFile(filename)
         }
     }
 
@@ -672,7 +672,7 @@ QGCView {
                             }
 
                             onInsert: {
-                                var sequenceNumber = missionController.insertSimpleMissionItem(editorMap.center, insertAfterIndex)
+                                var sequenceNumber = missionController.insertSimpleMissionItem(editorMap.center, index)
                                 setCurrentItem(sequenceNumber)
                             }
 
