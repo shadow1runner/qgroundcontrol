@@ -33,10 +33,10 @@ Rectangle {
     QGCPalette { id: qgcPal }
 
     Component.onCompleted: {
-        //-- Default to General Settings
-        __rightPanel.source = "GeneralSettings.qml"
-        _generalButton.checked = true
-        panelActionGroup.current = _generalButton
+        //-- Default to CA Settings
+        __rightPanel.source = "CollisionAvoidanceSettings.qml"
+        _caButton.checked = true
+        panelActionGroup.current = _caButton
     }
 
     QGCFlickable {
@@ -169,8 +169,8 @@ Rectangle {
             }
 
             QGCButton {
-                anchors.left:   parent.left
-                anchors.right:  parent.right
+                id:             _caButton
+                height:         _buttonHeight
                 text:           qsTr("CA")
                 exclusiveGroup: panelActionGroup
                 onClicked: {
