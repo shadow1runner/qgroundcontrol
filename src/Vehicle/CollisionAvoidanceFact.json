@@ -1,76 +1,72 @@
-{
-    "version": 1,
-
-    "properties": [
-        {
-            "name":             "foeEkfx",
-            "shortDescription": "FoE (EKF) x",
-            "type":             "uint32",
-            "decimalPlaces":    1,
-            "units":            "px"
-        },
-        {
-            "name":             "foeEkfy",
-            "shortDescription": "FoE (EKF) y",
-            "type":             "uint32",
-            "decimalPlaces":    1,
-            "units":            "px"
-        },
-        {
-            "name":             "foeRawx",
-            "shortDescription": "FoE x",
-            "type":             "uint32",
-            "decimalPlaces":    1,
-            "units":            "px"
-        },
-        {
-            "name":             "foeRawy",
-            "shortDescription": "FoE y",
-            "type":             "uint32",
-            "decimalPlaces":    1,
-            "units":            "px"
-        },
-        {
-            "name":             "divergence",
-            "shortDescription": "Divergence (Last)",
-            "type":             "double",
-            "decimalPlaces":    3,
-            "units":            "-"
-        },
-        {
-            "name":             "avgDivergence",
-            "shortDescription": "Divergence (AVG)",
-            "type":             "double",
-            "decimalPlaces":    3,
-            "units":            "-"
-        },
-        {
-            "name":             "collisionLevel",
-            "shortDescription": "CollisionLevel",
-            "type":             "uint32",
-            "decimalPlaces":    1,
-            "units":            "-"
-        },
-        {
-            "name":             "inlierRatio",
-            "shortDescription": "Inlier Ratio",
-            "type":             "double",
-            "decimalPlaces":    2,
-            "units":            "‰"
-        },
-        {
-            "name":             "fps",
-            "shortDescription": "FPS",
-            "type":             "double",
-            "decimalPlaces":    2,
-            "units":            "fps"
-        },
-        {
-            "name":             "skipRatio",
-            "shortDescription": "Skip Ratio",
-            "type":             "double",
-            "decimalPlaces":    0,
-            "units":            "%"
-        }
-    ]
-}
+[
+    {
+        "decimalPlaces": 1,
+        "name": "foeEkfx",
+        "shortDescription": "FoE (EKF) x",
+        "type": "uint32",
+        "units": "px"
+    },
+    {
+        "decimalPlaces": 1,
+        "name": "foeEkfy",
+        "shortDescription": "FoE (EKF) y",
+        "type": "uint32",
+        "units": "px"
+    },
+    {
+        "decimalPlaces": 1,
+        "name": "foeRawx",
+        "shortDescription": "FoE x",
+        "type": "uint32",
+        "units": "px"
+    },
+    {
+        "decimalPlaces": 1,
+        "name": "foeRawy",
+        "shortDescription": "FoE y",
+        "type": "uint32",
+        "units": "px"
+    },
+    {
+        "decimalPlaces": 3,
+        "name": "divergence",
+        "shortDescription": "Divergence (Last)",
+        "type": "double",
+        "units": "-"
+    },
+    {
+        "decimalPlaces": 3,
+        "name": "avgDivergence",
+        "shortDescription": "Divergence (AVG)",
+        "type": "double",
+        "units": "-"
+    },
+    {
+        "decimalPlaces": 1,
+        "name": "collisionLevel",
+        "shortDescription": "CollisionLevel",
+        "type": "uint32",
+        "units": "-"
+    },
+    {
+        "decimalPlaces": 2,
+        "name": "inlierRatio",
+        "shortDescription": "Inlier Ratio",
+        "type": "double",
+        "units": "‰"
+    },
+    {
+        "decimalPlaces": 2,
+        "name": "fps",
+        "shortDescription": "FPS",
+        "type": "double",
+        "units": "fps"
+    },
+    {
+        "decimalPlaces": 0,
+        "name": "skipRatio",
+        "shortDescription": "Skip Ratio",
+        "type": "double",
+        "units": "%"
+    }
+]
