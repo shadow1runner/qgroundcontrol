@@ -58,10 +58,10 @@ OwnFlowGrapher::OwnFlowGrapher(hw::OwnFlow* const ownFlow, QGCToolbox* toolbox, 
         throw new std::invalid_argument(_settings.CsvFilePath.toStdString());
     }
 
-    csvPerformanceFile.open("./ca/peformance.csv", ofstream::out | ofstream::trunc);
+    csvPerformanceFile.open("./ca/performance.csv", ofstream::out | ofstream::trunc);
     if(!csvPerformanceFile.is_open())
     {
-        throw new std::invalid_argument("./ca/peformance.csv");
+        throw new std::invalid_argument("./ca/performance.csv");
     }
 
     writeCsvHeader();

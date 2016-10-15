@@ -160,6 +160,6 @@ void OwnFlowWorker::reset()
     pause();
     QThread::msleep(100);
     _frameGrabber->reset();
-    // _framePersister.clearFrameDirectoryIfSettingsEnabled();
+    _framePersister.increaseResetCount();
     QMetaObject::invokeMethod(&_ownFlow, "reset");
 }
