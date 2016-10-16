@@ -28,10 +28,9 @@ void RoiBuilder::_initializeRoiHelpers()
 
     auto& ocamModel = _settings.getOcamModel();
     
-    auto divisor = pow(2, _settings.SubsampleAmount);
-    _frameSize = ocamModel.getFrameSize();
-    _lenseCenter = ocamModel.getLenseCenter();
-    _frameCenter = ocamModel.getFrameCenter();
+    _frameSize = ocamModel.getCroppedFrameSize();
+    _lenseCenter = ocamModel.getCroppedLensCenter();
+    _frameCenter = ocamModel.getCroppedFrameCenter();
     
 #ifdef USE_LENSE_CENTER_INSTEAD_OF_FRAME_CENTER
     auto p1 = _frameSize.height - _lenseCenter.y;
@@ -91,10 +90,10 @@ double RoiBuilder::_toDegrees(double rad)
 
 void RoiBuilder::_calculateRoi(double rollDegree, double pitchDegree)
 {
-    if(!_roiHelpersInitialized) {
+    // if(!_roiHelpersInitialized) {
         _initializeRoiHelpers();
-        _roiHelpersInitialized = true;
-    }
+    //     _roiHelpersInitialized = true;
+    // }
 
     // given: _climbRate, roll, pitch; imageSize and omni camera center
     // target: calculate image roi where a FOE (after KF) for a possible obstacle __should__ be
