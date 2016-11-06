@@ -567,6 +567,10 @@ public:
 
     int  flowImageIndex() { return _flowImageIndex; }
 
+    //-- Mavlink Logging
+    void startMavlinkLog();
+    void stopMavlinkLog();
+
     int  collisionAvoidanceImageIndex()              { return _collisionAvoidanceImageIndex; }
     int  collisionAvoidanceRawImageIndex()           { return _collisionAvoidanceRawImageIndex; }
     void increaseCollisionAvoidanceImageIndex (void) { ++_collisionAvoidanceImageIndex; emit collisionAvoidanceImageIndexChanged(); }
@@ -730,6 +734,9 @@ signals:
     void mavlinkScaledImu2(mavlink_message_t message);
     void mavlinkScaledImu3(mavlink_message_t message);
 
+    // Mavlink Log Download
+    void mavlinkLogData (Vehicle* vehicle, uint8_t target_system, uint8_t target_component, uint16_t sequence, uint8_t first_message, QByteArray data, bool acked);
+
 private slots:
     void _mavlinkMessageReceived(LinkInterface* link, mavlink_message_t message);
     void _linkInactiveOrDeleted(LinkInterface* link);
@@ -781,7 +788,7 @@ private:
     void _handleVibration(mavlink_message_t& message);
     void _handleExtendedSysState(mavlink_message_t& message);
     void _handleCommandAck(mavlink_message_t& message);
-    void _handleAutopilotVersion(mavlink_message_t& message);
+    void _handleAutopilotVersion(LinkInterface* link, mavlink_message_t& message);
     void _handleHilActuatorControls(mavlink_message_t& message);
     void _missionManagerError(int errorCode, const QString& errorMsg);
     void _geoFenceManagerError(int errorCode, const QString& errorMsg);
@@ -791,6 +798,9 @@ private:
     void _connectionActive(void);
     void _say(const QString& text);
     QString _vehicleIdSpeech(void);
+    void _handleMavlinkLoggingData(mavlink_message_t& message);
+    void _handleMavlinkLoggingDataAcked(mavlink_message_t& message);
+    void _ackMavlinkLogData(uint16_t sequence);
 
 private:
     int     _id;                    ///< Mavlink system id

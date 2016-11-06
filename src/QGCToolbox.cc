@@ -28,6 +28,7 @@
 #include "FollowMe.h"
 #include "PositionManager.h"
 #include "VideoManager.h"
+#include "MAVLinkLogManager.h"
 #include "OwnFlowHandler.h"
 #include "CollisionAvoidanceDataProvider.h"
 
@@ -52,6 +53,7 @@ QGCToolbox::QGCToolbox(QGCApplication* app)
     , _followMe(NULL)
     , _qgcPositionManager(NULL)
     , _videoManager(NULL)
+    , _mavlinkLogManager(NULL)
     , _ownFlowHandler(NULL)
     , _collisionAvoidanceDataProvider(NULL)
     , _ownFlowHandlerThread(NULL)
@@ -76,6 +78,7 @@ QGCToolbox::QGCToolbox(QGCApplication* app)
     _qgcPositionManager =       new QGCPositionManager(app);
     _followMe =                 new FollowMe(app);
     _videoManager =             new VideoManager(app);
+    _mavlinkLogManager =        new MAVLinkLogManager(app);
     _collisionAvoidanceDataProvider = new CollisionAvoidanceDataProvider(app);
     _ownFlowHandler =           new OwnFlowHandler(app);
 }
@@ -104,11 +107,13 @@ void QGCToolbox::setChildToolboxes(void)
     _ownFlowHandler->setToolbox(this);
     _qgcPositionManager->setToolbox(this);
     _videoManager->setToolbox(this);
+    _mavlinkLogManager->setToolbox(this);
 }
 
 QGCToolbox::~QGCToolbox()
 {
     delete _videoManager;
+    delete _mavlinkLogManager;
     delete _audioOutput;
     delete _autopilotPluginManager;
     delete _factSystem;
