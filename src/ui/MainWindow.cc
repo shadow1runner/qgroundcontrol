@@ -43,7 +43,6 @@
 #include "QGCImageProvider.h"
 
 #ifndef __mobile__
-#include "QGCDataPlot2D.h"
 #include "Linecharts.h"
 #include "QGCUASFileViewMulti.h"
 #include "UASQuickView.h"
@@ -58,7 +57,7 @@
 #include "OwnFlowGrapher.h"
 #endif
 
-#ifndef __ios__
+#ifndef NO_SERIAL_LINK
 #include "SerialLink.h"
 #endif
 
@@ -460,28 +459,7 @@ void MainWindow::storeSettings()
 
 void MainWindow::configureWindowName()
 {
-    QList<QHostAddress> hostAddresses = QNetworkInterface::allAddresses();
-    QString windowname = qApp->applicationName() + " " + qApp->applicationVersion();
-
-    // XXX we do have UDP MAVLink heartbeat broadcast now in SITL and will have it on the
-    // WIFI radio, so people should not be in need any more of knowing their IP.
-    // this can go once we are certain its not needed any more.
-    #if 0
-    bool prevAddr = false;
-    windowname.append(" (" + QHostInfo::localHostName() + ": ");
-    for (int i = 0; i < hostAddresses.size(); i++)
-    {
-        // Exclude loopback IPv4 and all IPv6 addresses
-        if (hostAddresses.at(i) != QHostAddress("127.0.0.1") && !hostAddresses.at(i).toString().contains(":"))
-        {
-            if(prevAddr) windowname.append("/");
-            windowname.append(hostAddresses.at(i).toString());
-            prevAddr = true;
-        }
-    }
-    windowname.append(")");
-    #endif
-    setWindowTitle(windowname);
+    setWindowTitle(qApp->applicationName() + " " + qApp->applicationVersion());
 }
 
 /**

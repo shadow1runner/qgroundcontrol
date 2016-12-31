@@ -10,6 +10,7 @@
 
 import QtQuick          2.5
 import QtQuick.Controls 1.3
+import QtQuick.Layouts  1.2
 
 import QGroundControl.ScreenTools   1.0
 import QGroundControl.Controls      1.0
@@ -70,7 +71,7 @@ Rectangle {
     property string _gradientText:      _statusValid ? _gradientPercent.toFixed(0) + "%" : " "
     property string _azimuthText:       _statusValid ? Math.round(_azimuth) : " "
     property string _missionDistanceText: _missionValid ? QGroundControl.metersToAppSettingsDistanceUnits(_missionDistance).toFixed(2) + " " + QGroundControl.appSettingsDistanceUnitsString : " "
-    property string _missionTimeText:     _missionValid ? _missionTime.toFixed(0) + "s" : " "
+    property string _missionTimeText:     _missionValid ? Number(_missionTime / 60).toFixed(1) + " min" : " "
     property string _missionMaxTelemetryText:  _missionValid ? QGroundControl.metersToAppSettingsDistanceUnits(_missionMaxTelemetry).toFixed(2) + " " + QGroundControl.appSettingsDistanceUnitsString : " "
     property string _hoverDistanceText: _missionValid ? QGroundControl.metersToAppSettingsDistanceUnits(_hoverDistance).toFixed(2) + " " + QGroundControl.appSettingsDistanceUnitsString : " "
     property string _cruiseDistanceText: _missionValid ? QGroundControl.metersToAppSettingsDistanceUnits(_cruiseDistance).toFixed(2) + " " + QGroundControl.appSettingsDistanceUnitsString : " "
@@ -89,14 +90,14 @@ Rectangle {
         anchors.margins:    _margins
         spacing:            _margins
 
-        Grid {
-            id:                 valueGrid
-            columns:            2
-            columnSpacing:      _margins
+        GridLayout {
+            id:                     valueGrid
+            columns:                2
+            rowSpacing:             0
+            columnSpacing:          _margins
             anchors.verticalCenter: parent.verticalCenter
 
-            QGCLabel { text: qsTr("Selected waypoint") }
-            QGCLabel { text: qsTr(" ") }
+            QGCLabel { text: qsTr("Selected waypoint"); Layout.columnSpan: 2 }
 
             QGCLabel { text: qsTr("Distance:") }
             QGCLabel { text: _distanceText }
@@ -111,7 +112,7 @@ Rectangle {
             QGCLabel { text: _azimuthText }
         }
 
-        ListView {
+        QGCListView {
             id:                     statusListView
             model:                  missionItems
             highlightMoveDuration:  250

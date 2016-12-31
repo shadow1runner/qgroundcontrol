@@ -82,6 +82,14 @@ Map {
         scaleText.text = text
     }
 
+    function setVisibleRegion(region) {
+        // This works around a bug on Qt where if you set a visibleRegion and then the user moves or zooms the map
+        // and then you set the same visibleRegion the map will not move/scale appropriately since it thinks there
+        // is nothing to do.
+        _map.visibleRegion = QtPositioning.rectangle(QtPositioning.coordinate(0, 0), QtPositioning.coordinate(0, 0))
+        _map.visibleRegion = region
+    }
+
     zoomLevel:                  18
     center:                     QGroundControl.lastKnownHomePosition
     gesture.flickDeceleration:  3000
@@ -349,8 +357,17 @@ Map {
                     // Add first coordinate
                     polygonPath.push(clickCoordinate)
                 } else {
-                    // Update finalized coordinate
-                    polygonPath[polygonDrawerPolygon.path.length - 1] = clickCoordinate
+                    // Add subsequent coordinate
+                    if (ScreenTools.isMobile) {
+                        // Since mobile has no mouse, the onPositionChangedHandler will not fire. We have to add the coordinate
+                        // here instead.
+                        polygonDrawer.justClicked = false
+                        polygonPath.push(clickCoordinate)
+                    } else {
+                        // The onPositionChanged handler for mouse movement will have already added the coordinate to the array.
+                        // Just update it to the final position
+                        polygonPath[polygonDrawerPolygon.path.length - 1] = clickCoordinate
+                    }
                 }
                 polygonDrawerPolygonSet.path = polygonPath
                 polygonDrawerPolygon.path = polygonPath
@@ -360,10 +377,15 @@ Map {
         }
 
         onPositionChanged: {
+            if (ScreenTools.isMobile) {
+                // We don't track mouse drag on mobile
+                return
+            }
             if (polygonDrawerPolygon.path.length) {
                 var dragCoordinate = _map.toCoordinate(Qt.point(mouse.x, mouse.y))
                 var polygonPath = polygonDrawerPolygon.path
                 if (polygonDrawer.justClicked){
+                    // Add new drag coordinate
                     polygonPath.push(dragCoordinate)
                     polygonDrawer.justClicked = false
                 }

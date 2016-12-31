@@ -45,6 +45,7 @@ QGroundControlQmlGlobal::QGroundControlQmlGlobal(QGCApplication* app)
     , _missionCommandTree(NULL)
     , _videoManager(NULL)
     , _mavlinkLogManager(NULL)
+    , _corePlugin(NULL)
     , _virtualTabletJoystick(false)
     , _baseFontPointSize(0.0)
 {
@@ -73,6 +74,7 @@ void QGroundControlQmlGlobal::setToolbox(QGCToolbox* toolbox)
     _missionCommandTree     = toolbox->missionCommandTree();
     _videoManager           = toolbox->videoManager();
     _mavlinkLogManager      = toolbox->mavlinkLogManager();
+    _corePlugin             = toolbox->corePlugin();
 }
 
 void QGroundControlQmlGlobal::saveGlobalSetting (const QString& key, const QString& value)
@@ -153,8 +155,8 @@ void QGroundControlQmlGlobal::stopAllMockLinks(void)
 #ifdef QT_DEBUG
     LinkManager* linkManager = qgcApp()->toolbox()->linkManager();
 
-    for (int i=0; i<linkManager->links()->count(); i++) {
-        LinkInterface* link = linkManager->links()->value<LinkInterface*>(i);
+    for (int i=0; i<linkManager->links().count(); i++) {
+        LinkInterface* link = linkManager->links()[i];
         MockLink* mockLink = qobject_cast<MockLink*>(link);
 
         if (mockLink) {

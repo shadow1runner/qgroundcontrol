@@ -31,6 +31,7 @@
 #include "ParameterManagerTest.h"
 #include "MissionCommandTreeTest.h"
 #include "LogDownloadTest.h"
+#include "SendMavCommandTest.h"
 
 #include "CollisionAvoidanceTestGoPro.h"
 #include "CollisionAvoidanceTestBoscamNormalLense.h"
@@ -56,6 +57,7 @@ UT_REGISTER_TEST(TCPLinkTest)
 UT_REGISTER_TEST(ParameterManagerTest)
 UT_REGISTER_TEST(MissionCommandTreeTest)
 UT_REGISTER_TEST(LogDownloadTest)
+UT_REGISTER_TEST(SendMavCommandTest)
 UT_REGISTER_TEST(CollisionAvoidanceTestGoPro)
 UT_REGISTER_TEST(CollisionAvoidanceTestBoscamNormalLense)
 UT_REGISTER_TEST(CollisionAvoidanceTestBoscamCheapFisheye)

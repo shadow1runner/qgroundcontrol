@@ -57,7 +57,7 @@ MAVLinkProtocol::MAVLinkProtocol(QGCApplication* app)
 #ifndef __mobile__
     , _logSuspendError(false)
     , _logSuspendReplay(false)
-    , _logPromptForSave(false)
+    , _vehicleWasArmed(false)
     , _tempLogFile(QString("%2.%3").arg(_tempLogFileTemplate).arg(_logFileExtension))
 #endif
     , _linkMgr(NULL)
@@ -159,7 +159,7 @@ void MAVLinkProtocol::receiveBytes(LinkInterface* link, QByteArray b)
     // Since receiveBytes signals cross threads we can end up with signals in the queue
     // that come through after the link is disconnected. For these we just drop the data
     // since the link is closed.
-    if (!_linkMgr->links()->contains(link)) {
+    if (!_linkMgr->containsLink(link)) {
         return;
     }
 
@@ -169,29 +169,14 @@ void MAVLinkProtocol::receiveBytes(LinkInterface* link, QByteArray b)
 
     int mavlinkChannel = link->mavlinkChannel();
 
-    static int mavlink09Count = 0;
     static int nonmavlinkCount = 0;
-    static bool decodedFirstPacket = false;
-    static bool warnedUser = false;
     static bool checkedUserNonMavlink = false;
     static bool warnedUserNonMavlink = false;
 
     for (int position = 0; position < b.size(); position++) {
         unsigned int decodeState = mavlink_parse_char(mavlinkChannel, (uint8_t)(b[position]), &message, &status);
 
-        if ((uint8_t)b[position] == 0x55) mavlink09Count++;
-        if ((mavlink09Count > 100) && !decodedFirstPacket && !warnedUser)
-        {
-            warnedUser = true;
-            // Obviously the user tries to use a 0.9 autopilot
-            // with QGroundControl built for version 1.0
-            emit protocolStatusMessage(tr("MAVLink Protocol"), tr("There is a MAVLink Version or Baud Rate Mismatch. "
-                                                                  "Your MAVLink device seems to use the deprecated version 0.9, while QGroundControl only supports version 1.0+. "
-                                                                  "Please upgrade the MAVLink version of your autopilot. "
-                                                                  "If your autopilot is using version 1.0, check if the baud rates of QGroundControl and your autopilot are the same."));
-        }
-
-        if (decodeState == 0 && !decodedFirstPacket)
+        if (decodeState == 0 && !link->decodedFirstMavlinkPacket())
         {
             nonmavlinkCount++;
             if (nonmavlinkCount > 2000 && !warnedUserNonMavlink)
@@ -212,16 +197,13 @@ void MAVLinkProtocol::receiveBytes(LinkInterface* link, QByteArray b)
         }
         if (decodeState == 1)
         {
-            if(!decodedFirstPacket) {
+            if (!link->decodedFirstMavlinkPacket()) {
                 mavlink_status_t* mavlinkStatus = mavlink_get_channel_status(mavlinkChannel);
                 if (!(mavlinkStatus->flags & MAVLINK_STATUS_FLAG_IN_MAVLINK1) && (mavlinkStatus->flags & MAVLINK_STATUS_FLAG_OUT_MAVLINK1)) {
-                    qDebug() << "switch to mavlink 2.0" << mavlinkStatus << mavlinkChannel << mavlinkStatus->flags;
+                    qDebug() << "Switching outbound to mavlink 2.0 due to incoming mavlink 2.0 packet:" << mavlinkStatus << mavlinkChannel << mavlinkStatus->flags;
                     mavlinkStatus->flags &= ~MAVLINK_STATUS_FLAG_OUT_MAVLINK1;
-                } else if ((mavlinkStatus->flags & MAVLINK_STATUS_FLAG_IN_MAVLINK1) && !(mavlinkStatus->flags & MAVLINK_STATUS_FLAG_OUT_MAVLINK1)) {
-                    qDebug() << "switch to mavlink 1.0" << mavlinkStatus << mavlinkChannel << mavlinkStatus->flags;
-                    mavlinkStatus->flags |= MAVLINK_STATUS_FLAG_OUT_MAVLINK1;
                 }
-                decodedFirstPacket = true;
+                link->setDecodedFirstMavlinkPacket(true);
             }
 
             if(message.msgid == MAVLINK_MSG_ID_RADIO_STATUS)
@@ -283,11 +265,11 @@ void MAVLinkProtocol::receiveBytes(LinkInterface* link, QByteArray b)
                 }
 
                 // Check for the vehicle arming going by. This is used to trigger log save.
-                if (!_logPromptForSave && message.msgid == MAVLINK_MSG_ID_HEARTBEAT) {
+                if (!_vehicleWasArmed && message.msgid == MAVLINK_MSG_ID_HEARTBEAT) {
                     mavlink_heartbeat_t state;
                     mavlink_msg_heartbeat_decode(&message, &state);
                     if (state.base_mode & MAV_MODE_FLAG_DECODE_POSITION_SAFETY) {
-                        _logPromptForSave = true;
+                        _vehicleWasArmed = true;
                     }
                 }
             }
@@ -429,11 +411,7 @@ void MAVLinkProtocol::_startLogging(void)
                 return;
             }
 
-            if (_app->promptFlightDataSaveNotArmed()) {
-                _logPromptForSave = true;
-            }
-
-            qDebug() << "Temp log" << _tempLogFile.fileName() << _logPromptForSave;
+            qDebug() << "Temp log" << _tempLogFile.fileName();
 
             _logSuspendError = false;
         }
@@ -444,13 +422,13 @@ void MAVLinkProtocol::_stopLogging(void)
 {
     if (_closeLogFile()) {
         // If the signals are not connected it means we are running a unit test. In that case just delete log files
-        if (_logPromptForSave && _app->promptFlightDataSave()) {
+        if ((_vehicleWasArmed || _app->promptFlightDataSaveNotArmed()) && _app->promptFlightDataSave()) {
             emit saveTempFlightDataLog(_tempLogFile.fileName());
         } else {
             QFile::remove(_tempLogFile.fileName());
         }
     }
-    _logPromptForSave = false;
+    _vehicleWasArmed = false;
 }
 
 /// @brief Checks the temp directory for log files which may have been left there.

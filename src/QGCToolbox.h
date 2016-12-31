@@ -14,7 +14,6 @@
 #include <QObject>
 #include <QThread>
 
-class AutoPilotPluginManager;
 class FactSystem;
 class FirmwarePluginManager;
 class FlightMapSettings;
@@ -34,6 +33,7 @@ class UASMessageHandler;
 class QGCPositionManager;
 class VideoManager;
 class MAVLinkLogManager;
+class QGCCorePlugin;
 class OwnFlowHandler;
 class CollisionAvoidanceDataProvider;
 
@@ -44,7 +44,6 @@ public:
     QGCToolbox(QGCApplication* app);
     ~QGCToolbox();
 
-    AutoPilotPluginManager*     autopilotPluginManager(void)    { return _autopilotPluginManager; }
     FirmwarePluginManager*      firmwarePluginManager(void)     { return _firmwarePluginManager; }
     FlightMapSettings*          flightMapSettings(void)         { return _flightMapSettings; }
     GAudioOutput*               audioOutput(void)               { return _audioOutput; }
@@ -61,6 +60,7 @@ public:
     QGCPositionManager*         qgcPositionManager(void)        { return _qgcPositionManager; }
     VideoManager*               videoManager(void)              { return _videoManager; }
     MAVLinkLogManager*          mavlinkLogManager(void)         { return _mavlinkLogManager; }
+    QGCCorePlugin*              corePlugin(void)                { return _corePlugin; }
     OwnFlowHandler*             ownFlowHandler(void)            { return _ownFlowHandler; }
     CollisionAvoidanceDataProvider*  collisionAvoidanceDataProvider(void)         { return _collisionAvoidanceDataProvider; }
 
@@ -70,9 +70,10 @@ public:
 
 private:
     void setChildToolboxes(void);
+    void _scanAndLoadPlugins(QGCApplication *app);
+
 
     GAudioOutput*               _audioOutput;
-    AutoPilotPluginManager*     _autopilotPluginManager;
     FactSystem*                 _factSystem;
     FirmwarePluginManager*      _firmwarePluginManager;
     FlightMapSettings*          _flightMapSettings;
@@ -92,6 +93,7 @@ private:
     QGCPositionManager*         _qgcPositionManager;
     VideoManager*               _videoManager;
     MAVLinkLogManager*          _mavlinkLogManager;
+    QGCCorePlugin*              _corePlugin;
     OwnFlowHandler*             _ownFlowHandler;
     CollisionAvoidanceDataProvider*          _collisionAvoidanceDataProvider;
 
