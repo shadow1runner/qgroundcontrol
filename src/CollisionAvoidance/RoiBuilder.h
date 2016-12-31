@@ -19,7 +19,7 @@ class RoiBuilder : public QObject
     CollisionAvoidanceSettings& _settings;
     QGCToolbox * const _toolbox;
     
-    UAS* _activeUas = nullptr;
+    Vehicle* _activeVehicle = nullptr;
     double _climbRate = 0.0;
     double _altitudeRelative = 0.0;
 

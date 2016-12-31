@@ -47,10 +47,10 @@ void RoiBuilder::_activeVehicleChanged(Vehicle* activeVehicle)
 {
     if(activeVehicle!=nullptr)
     {
-        _activeUas = activeVehicle->uas(); // might be NULL
-        if(_activeUas!=nullptr) { 
-            connect((UASInterface*)_activeUas, &UASInterface::altitudeChanged, this, &RoiBuilder::_altitudeChanged);
-            connect((UASInterface*)_activeUas, SIGNAL(attitudeChanged(UASInterface*,double,double,double,quint64)), this, SLOT(_attitudeChanged(UASInterface*, double, double, double, quint64)));
+        _activeVehicle = activeVehicle; // might be NULL
+        if(_activeVehicle!=nullptr) {
+            connect((UASInterface*)_activeVehicle->uas(), &UASInterface::altitudeChanged, this, &RoiBuilder::_altitudeChanged);
+            connect((UASInterface*)_activeVehicle->uas(), SIGNAL(attitudeChanged(UASInterface*,double,double,double,quint64)), this, SLOT(_attitudeChanged(UASInterface*, double, double, double, quint64)));
         }
     }
 }
