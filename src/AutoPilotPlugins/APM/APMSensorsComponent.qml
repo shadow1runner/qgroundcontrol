@@ -155,7 +155,7 @@ SetupPage {
             Component.onCompleted: {
                 var usingUDP = controller.usingUDPLink()
                 if (usingUDP) {
-                    showMessage("Sensor Calibration", "Performing sensor calibration over a WiFi connection is known to be unreliable. You should disconnect and perform calibration using a direct USB connection instead.", StandardButton.Ok)
+                    showMessage("Sensor Calibration", "Performing sensor calibration over a WiFi connection can be unreliable. If you run into problems try using a direct USB connection instead.", StandardButton.Ok)
                 }
             }
 
@@ -218,7 +218,7 @@ SetupPage {
                         spacing:            Math.round(ScreenTools.defaultFontPixelHeight / 4)
 
                         QGCLabel {
-                            text: "Compass " + index + " " +
+                            text: "Compass " + (index+1) + " " +
                                   (sensorParams.rgCompassPrimary[index] ? "(primary" : "(secondary") +
                                   (sensorParams.rgCompassExternalParamAvailable[index] ?
                                        (sensorParams.rgCompassExternal[index] ? ", external" : ", internal" ) :
@@ -272,7 +272,7 @@ SetupPage {
                     visible: sensorParams.rgCompassAvailable[index]
 
                     QGCLabel {
-                        text: "Compass " + index + " " +
+                        text: "Compass " + (index+1) + " " +
                               (sensorParams.rgCompassPrimary[index] ? "(primary" : "(secondary") +
                               (sensorParams.rgCompassExternalParamAvailable[index] ?
                                    (sensorParams.rgCompassExternal[index] ? ", external" : ", internal" ) :

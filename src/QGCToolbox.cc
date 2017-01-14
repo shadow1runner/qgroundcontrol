@@ -15,7 +15,6 @@
 #ifndef __mobile__
 #include "GPSManager.h"
 #endif
-#include "HomePositionManager.h"
 #include "JoystickManager.h"
 #include "LinkManager.h"
 #include "MAVLinkProtocol.h"
@@ -45,7 +44,6 @@ QGCToolbox::QGCToolbox(QGCApplication* app)
 #ifndef __mobile__
     , _gpsManager(NULL)
 #endif
-    , _homePositionManager(NULL)
     , _imageProvider(NULL)
     , _joystickManager(NULL)
     , _linkManager(NULL)
@@ -72,7 +70,6 @@ QGCToolbox::QGCToolbox(QGCApplication* app)
 #ifndef __mobile__
     _gpsManager =               new GPSManager(app);
 #endif
-    _homePositionManager =      new HomePositionManager(app);
     _imageProvider =            new QGCImageProvider(app);
     _joystickManager =          new JoystickManager(app);
     _linkManager =              new LinkManager(app);
@@ -99,7 +96,6 @@ void QGCToolbox::setChildToolboxes(void)
 #ifndef __mobile__
     _gpsManager->setToolbox(this);
 #endif
-    _homePositionManager->setToolbox(this);
     _imageProvider->setToolbox(this);
     _joystickManager->setToolbox(this);
     _linkManager->setToolbox(this);
@@ -124,7 +120,6 @@ QGCToolbox::~QGCToolbox()
     delete _factSystem;
     delete _firmwarePluginManager;
     delete _flightMapSettings;
-    delete _homePositionManager;
     delete _joystickManager;
     delete _linkManager;
     delete _mavlinkProtocol;

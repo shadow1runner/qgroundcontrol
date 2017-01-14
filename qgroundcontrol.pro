@@ -423,7 +423,6 @@ HEADERS += \
     src/FlightMap/Widgets/ValuesWidgetController.h \
     src/FollowMe/FollowMe.h \
     src/GAudioOutput.h \
-    src/HomePositionManager.h \
     src/Joystick/Joystick.h \
     src/Joystick/JoystickManager.h \
     src/JsonHelper.h \
@@ -588,7 +587,6 @@ SOURCES += \
     src/FlightMap/Widgets/ValuesWidgetController.cc \
     src/FollowMe/FollowMe.cc \
     src/GAudioOutput.cc \
-    src/HomePositionManager.cc \
     src/Joystick/Joystick.cc \
     src/Joystick/JoystickManager.cc \
     src/JsonHelper.cc \
@@ -796,6 +794,7 @@ APMFirmwarePlugin {
         src/AutoPilotPlugins/APM/APMFlightModesComponent.h \
         src/AutoPilotPlugins/APM/APMFlightModesComponentController.h \
         src/AutoPilotPlugins/APM/APMLightsComponent.h \
+        src/AutoPilotPlugins/APM/APMSubFrameComponent.h \
         src/AutoPilotPlugins/APM/APMPowerComponent.h \
         src/AutoPilotPlugins/APM/APMRadioComponent.h \
         src/AutoPilotPlugins/APM/APMSafetyComponent.h \
@@ -822,6 +821,7 @@ APMFirmwarePlugin {
         src/AutoPilotPlugins/APM/APMFlightModesComponent.cc \
         src/AutoPilotPlugins/APM/APMFlightModesComponentController.cc \
         src/AutoPilotPlugins/APM/APMLightsComponent.cc \
+        src/AutoPilotPlugins/APM/APMSubFrameComponent.cc \
         src/AutoPilotPlugins/APM/APMPowerComponent.cc \
         src/AutoPilotPlugins/APM/APMRadioComponent.cc \
         src/AutoPilotPlugins/APM/APMSafetyComponent.cc \

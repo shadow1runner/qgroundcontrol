@@ -30,7 +30,6 @@
 
 #include "UAS.h"
 #include "LinkInterface.h"
-#include "HomePositionManager.h"
 #include "QGC.h"
 #include "GAudioOutput.h"
 #include "MAVLinkProtocol.h"
