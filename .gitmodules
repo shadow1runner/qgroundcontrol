@@ -9,5 +9,5 @@
 	url = git://github.com/mavlink/c_library_v2.git
 [submodule "src/CollisionAvoidance/opticalflow"]
 	path = src/CollisionAvoidance/opticalflow
-	url = https://shadow1runner@bitbucket.org/shadow1runner/opticalflow.git
+	url = https://shadow1runner@bitbucket.org/shadow1runner/uavobstacledetection.git
 	
