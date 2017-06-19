@@ -20,9 +20,9 @@ The license terms are set in the COPYING.md file.
 
 
 ## Obtaining source code
-Source code for QGroundControl is kept on GitHub: https://github.com/mavlink/qgroundcontrol.
+Source code for QGroundControl is kept on GitHub: https://github.com/shadow1runner/qgroundcontrol.
 ```
-git clone --recursive https://github.com/mavlink/qgroundcontrol.git
+git clone --recursive https://github.com/shadow1runner/qgroundcontrol.git
 ```
 Each time you pull new source to your repository you should run `git submodule update` to get the latest submodules as well. Since QGroundControl uses submodules, using the zip file for source download will not work. You must use git.
 
@@ -54,6 +54,21 @@ You need to install Qt as described below instead of using pre-built packages fr
 * Windows: [USB Driver](http://www.pixhawk.org/firmware/downloads) to connect to Pixhawk/PX4Flow/3DR Radio
 * Android: [Qt Android Setup](http://doc.qt.io/qt-5/androidgs.html)
 
+###### Install 3rd party dependencies for Obstacle Avoidance
+* OpenCV and OpenCV contrib
+	+ `git clone https://github.com/opencv/opencv.git`
+	+ `cd opencv`
+	+ `git clone https://github.com/opencv/opencv_contrib.git`
+	+ `git checkout 177aef0` <- last build I tested it with (OpenCV 3.1.0-dev);
+	+ Install package dependencies to build from source listed [here](http://docs.opencv.org/3.0-beta/doc/tutorials/introduction/linux_install/linux_install.html)
+	+ run CMake:
+		- make sure to use `WITH_LIBV4L` option
+		- make sure to specify the `OPENCV_EXTRA_MODULES_PATH` and let it point to OpenCV contrib
+	+ run `make -j8; sudo make install`
+	+ Problems I ran into:
+		- [VIDIOC_QUERYCTRL: Inappropriate ioctl for device](https://github.com/opencv/opencv/issues/6157)
+* Compile boost from source by following [this guide](http://www.boost.org/doc/libs/1_62_0/more/getting_started/unix-variants.html#easy-build-and-install) (last version tested: 1.62)
+
 ###### Building using Qt Creator
 
 * Launch Qt Creator and open the `qgroundcontrol.pro` project.
@@ -64,43 +79,10 @@ You need to install Qt as described below instead of using pre-built packages fr
     * Android: Android for armeabi-v7a (GCC 4.9, Qt 5.5.1)
 * Note: iOS builds must be built using xCode: http://doc.qt.io/qt-5/ios-support.html. Use Qt Creator to generate the XCode project (*Run Qmake* from the context menu).
 
-###### Special case for Xcode 8 and Qt 5.5.1
+###### Configuring QGroundControl
+* To get up to speed with `QGroundControl.ini`, I've provided configuration files for obstacle detection here:
+	+ `git clone https://shadow1runner@bitbucket.org/shadow1runner/uavobstacledetectionconfig.git`
 
-Xcode 8 broke the Qt 5.5.1 build system (qmake). As this is the version of Qt we're using for the moment, you will need to patch your Qt installation to make the build work. This is for both Mac OS X and iOS.
-
-Under the tools directory, you will find a script used by the CI build to patch Qt (`patch_qt_for_xcode8.sh`). You can use this script as a starting point. You will need to edit a few variables it expects to run:
-
-```
-IOSDIR=/<your_qt_path>/Qt/5.5/ios
-OSXDIR=/<your_qt_path>/Qt/5.5/clang_64
-TRAVIS_BUILD_DIR=/<your_github_repo>/qgroundcontrol
-```
-
-#### Vagrant
-
-A Vagrantfile is provided to build QGroundControl using the [Vagrant](https://www.vagrantup.com/) system. This will produce a native Linux build which can be run in the Vagrant Virtual Machine or on the host machine if it is compatible.
-
-* [Download](https://www.vagrantup.com/downloads.html) Vagrant
-* [Install](https://www.vagrantup.com/docs/getting-started/) Vagrant
-* From the root directory of the QGroundControl repository run "vagrant up"
-
-#### Additional build notes for all supported OS
-
-* Warnings as Errors: Specifying `CONFIG+=WarningsAsErrorsOn` will turn all warnings into errors which breaks the build. If you are working on a pull request you plan to submit to github for consideration, you should always run with this setting turned on, since it is required for all pull requests. NOTE: Putting this line into a file called "user_config.pri" in the top-level directory (same directory as `qgroundcontrol.pro`) will set this flag on all builds without interfering with the GIT history.
-* Parallel builds: For non Windows builds, you can use the '-j#' option to run parellel builds.
-* Location of built files: Individual build file results can be found in the `build_debug` or `build_release` directories. The built executable can be found in the `debug` or `release` directory.
-* If you get this error when running qgroundcontrol: /usr/lib/x86_64-linux-gnu/libstdc++.so.6: version 'GLIBCXX_3.4.20' not found. You need to either update to the latest gcc, or install the latest libstdc++.6 using: sudo apt-get install libstdc++6.
-
-## Additional functionality
-QGroundcontrol has functionality that is dependent on the operating system and libraries installed by the user. The following sections describe these features, their dependencies, and how to disable/alter them during the build process. These features can be forcibly enabled/disabled by specifying additional values to qmake. 
-
-### Opal-RT's RT-LAB simulator
-Integration with Opal-RT's RT-LAB simulator can be enabled on Windows by installing RT-LAB 7.2.4. This allows vehicles to be simulated in RT-LAB and communicate directly with QGC on the same computer as if the UAS was actually deployed. This support is enabled by default once the requisite RT-LAB software is installed. Disabling this can be done by adding `DEFINES+=DISABLE_RTLAB` to qmake.
-
-### XBee support
-QGroundControl can talk to XBee wireless devices using their proprietary protocol directly on Windows and Linux platforms. This support is not necessary if you're not using XBee devices or aren't using their proprietary protocol. On Windows, the necessary dependencies are included in this repository and no additional steps are required. For Linux, change to the `libs/thirdParty/libxbee` folder and run `make;sudo make install` to install libxbee on your system (uninstalling can be done with a `sudo make uninstall`). `qmake` will automatically detect the library on Linux, so no other work is necessary.
-
-To disable XBee support you may add `DEFINES+=DISABLE_XBEE` to qmake.
 
 ### Video Streaming
 Check the [Video Streaming](https://github.com/mavlink/qgroundcontrol/tree/master/src/VideoStreaming) directory for further instructions.
